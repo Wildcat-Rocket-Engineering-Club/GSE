@@ -62,7 +62,7 @@ def serial_loop():
                 pressure = (w + 1) * 300
 
                 # Fake valve state for color test
-                valve_state = 1 if pressure > 300 else 0
+                valve_state = 1 if pressure > 50 else 0
 
                 socketio.emit('telemetry', {
                     'pressure': pressure,

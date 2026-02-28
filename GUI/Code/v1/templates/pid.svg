@@ -4,7 +4,7 @@
           stroke="black" stroke-width="3"
           fill="red"/>
 
-  <text id="pressure_text"
+  <text id="pressure1_text"
         x="200"
         y="155"
         font-size="24"
