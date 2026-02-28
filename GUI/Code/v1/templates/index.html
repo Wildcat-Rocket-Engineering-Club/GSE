@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rocket HMI Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body style="background-color:black;">
+
+    <div id="svg_container">
+        {% include 'pid.svg' %}
+    </div>
+
+    <script>
+        var socket = io();
+
+        socket.on('telemetry', function(data) {
+
+            // Update pressure text
+            document.getElementById("pressure_text")
+                .textContent = data.pressure.toFixed(1) + " PSI";
+
+            // Change tank color
+            if (data.valve == 1) {
+                document.getElementById("tank_circle")
+                    .setAttribute("fill", "green");
+            } else {
+                document.getElementById("tank_circle")
+                    .setAttribute("fill", "red");
+            }
+        });
+    </script>
+
+</body>
+</html>

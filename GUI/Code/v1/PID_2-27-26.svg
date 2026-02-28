@@ -1,0 +1,1439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920.57 987.37">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 16.48px;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12 {
+        fill: #333;
+      }
+
+      .cls-1, .cls-2, .cls-13, .cls-4, .cls-5, .cls-6, .cls-14, .cls-7, .cls-15, .cls-16, .cls-8, .cls-10, .cls-17, .cls-11, .cls-12, .cls-18 {
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+      }
+
+      .cls-19 {
+        letter-spacing: 0em;
+      }
+
+      .cls-20 {
+        letter-spacing: 0em;
+      }
+
+      .cls-21 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-2 {
+        font-size: 23.54px;
+      }
+
+      .cls-22 {
+        letter-spacing: 0em;
+      }
+
+      .cls-23 {
+        letter-spacing: 0em;
+      }
+
+      .cls-24 {
+        letter-spacing: .02em;
+      }
+
+      .cls-25 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-13 {
+        font-size: 15.3px;
+      }
+
+      .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18 {
+        fill: red;
+      }
+
+      .cls-26 {
+        stroke-dasharray: 13.89 6.95;
+      }
+
+      .cls-26, .cls-27, .cls-28, .cls-29, .cls-30, .cls-31, .cls-32, .cls-33 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cls-26, .cls-27, .cls-33 {
+        stroke: #cc0;
+        stroke-width: .57px;
+      }
+
+      .cls-34 {
+        letter-spacing: .01em;
+      }
+
+      .cls-35 {
+        letter-spacing: .02em;
+      }
+
+      .cls-36 {
+        letter-spacing: 0em;
+      }
+
+      .cls-37 {
+        letter-spacing: 0em;
+      }
+
+      .cls-38 {
+        letter-spacing: 0em;
+      }
+
+      .cls-39 {
+        letter-spacing: .02em;
+      }
+
+      .cls-4, .cls-15 {
+        font-size: 13.91px;
+      }
+
+      .cls-28 {
+        stroke-dasharray: 0 2.78;
+      }
+
+      .cls-28, .cls-29, .cls-31, .cls-32 {
+        stroke-width: .71px;
+      }
+
+      .cls-28, .cls-30, .cls-31 {
+        stroke: #333;
+      }
+
+      .cls-40 {
+        letter-spacing: 0em;
+      }
+
+      .cls-41 {
+        letter-spacing: 0em;
+      }
+
+      .cls-42 {
+        letter-spacing: 0em;
+      }
+
+      .cls-5 {
+        font-size: 49.45px;
+      }
+
+      .cls-29 {
+        stroke: #139b48;
+        stroke-dasharray: 6.56 9.85;
+      }
+
+      .cls-43 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-44 {
+        letter-spacing: 0em;
+      }
+
+      .cls-45 {
+        letter-spacing: -.04em;
+      }
+
+      .cls-46 {
+        letter-spacing: -.04em;
+      }
+
+      .cls-47 {
+        letter-spacing: .01em;
+      }
+
+      .cls-48 {
+        letter-spacing: .01em;
+      }
+
+      .cls-49 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-50 {
+        letter-spacing: 0em;
+      }
+
+      .cls-51 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-52 {
+        letter-spacing: 0em;
+      }
+
+      .cls-6 {
+        font-size: 12.36px;
+      }
+
+      .cls-53 {
+        letter-spacing: 0em;
+      }
+
+      .cls-54 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-14, .cls-10 {
+        font-size: 18.15px;
+      }
+
+      .cls-55 {
+        letter-spacing: 0em;
+      }
+
+      .cls-56 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-57 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-58 {
+        letter-spacing: 0em;
+      }
+
+      .cls-59 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-60 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-61 {
+        letter-spacing: 0em;
+      }
+
+      .cls-62 {
+        letter-spacing: 0em;
+      }
+
+      .cls-63 {
+        letter-spacing: .01em;
+      }
+
+      .cls-64 {
+        letter-spacing: 0em;
+      }
+
+      .cls-7 {
+        font-size: 18.54px;
+      }
+
+      .cls-65 {
+        letter-spacing: 0em;
+      }
+
+      .cls-16 {
+        font-size: 17.7px;
+      }
+
+      .cls-8, .cls-18 {
+        font-size: 21.63px;
+      }
+
+      .cls-9 {
+        fill-rule: evenodd;
+      }
+
+      .cls-66 {
+        letter-spacing: 0em;
+      }
+
+      .cls-67 {
+        letter-spacing: 0em;
+      }
+
+      .cls-68 {
+        letter-spacing: 0em;
+      }
+
+      .cls-69 {
+        letter-spacing: 0em;
+      }
+
+      .cls-70 {
+        letter-spacing: 0em;
+      }
+
+      .cls-71 {
+        letter-spacing: 0em;
+      }
+
+      .cls-72 {
+        letter-spacing: 0em;
+      }
+
+      .cls-73 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-74 {
+        letter-spacing: 0em;
+      }
+
+      .cls-75 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-76 {
+        letter-spacing: 0em;
+      }
+
+      .cls-17, .cls-12 {
+        font-size: 23.18px;
+      }
+
+      .cls-77 {
+        letter-spacing: 0em;
+      }
+
+      .cls-78 {
+        letter-spacing: 0em;
+      }
+
+      .cls-11 {
+        font-size: 30.9px;
+      }
+
+      .cls-79 {
+        letter-spacing: 0em;
+      }
+
+      .cls-80 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-81 {
+        letter-spacing: .01em;
+      }
+
+      .cls-82 {
+        letter-spacing: 0em;
+      }
+
+      .cls-83 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-84 {
+        letter-spacing: 0em;
+      }
+
+      .cls-85 {
+        letter-spacing: 0em;
+      }
+
+      .cls-86 {
+        letter-spacing: 0em;
+      }
+
+      .cls-87 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-88 {
+        letter-spacing: .01em;
+      }
+
+      .cls-89 {
+        letter-spacing: 0em;
+      }
+
+      .cls-90 {
+        letter-spacing: 0em;
+      }
+
+      .cls-32 {
+        stroke: red;
+      }
+
+      .cls-91 {
+        letter-spacing: -.04em;
+      }
+
+      .cls-92 {
+        letter-spacing: 0em;
+      }
+
+      .cls-93 {
+        letter-spacing: 0em;
+      }
+
+      .cls-94 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-95 {
+        letter-spacing: .02em;
+      }
+
+      .cls-96 {
+        letter-spacing: 0em;
+      }
+
+      .cls-97 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-98 {
+        letter-spacing: 0em;
+      }
+
+      .cls-99 {
+        letter-spacing: -.07em;
+      }
+
+      .cls-100 {
+        letter-spacing: 0em;
+      }
+
+      .cls-101 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-102 {
+        letter-spacing: 0em;
+      }
+
+      .cls-103 {
+        letter-spacing: .01em;
+      }
+
+      .cls-33 {
+        stroke-dasharray: 0 11.12;
+      }
+
+      .cls-104 {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g id="Plumbing">
+    <g id="LINE">
+      <line class="cls-31" x1="1599.74" y1="190.64" x2="1599.74" y2="353.65"/>
+    </g>
+    <g id="LINE-2" data-name="LINE">
+      <line class="cls-31" x1="1796.66" y1="190.64" x2="1796.66" y2="353.65"/>
+    </g>
+    <g id="ELLIPSE">
+      <path class="cls-31" d="M1796.66,190.64c0-24.17-44.08-43.76-98.46-43.76s-98.46,19.59-98.46,43.76"/>
+    </g>
+    <g id="ELLIPSE-2" data-name="ELLIPSE">
+      <path class="cls-31" d="M1796.66,353.65c0,12.08-44.08,21.88-98.46,21.88s-98.46-9.8-98.46-21.88"/>
+    </g>
+    <g id="MTEXT">
+      <text class="cls-11" transform="translate(1735.29 267.22)"><tspan x="0" y="0">N</tspan></text>
+      <text class="cls-8" transform="translate(1756.02 274.15)"><tspan x="0" y="0">2</tspan></text>
+      <text class="cls-11" transform="translate(1770.61 267.22)"><tspan x="0" y="0">O</tspan></text>
+    </g>
+    <g id="MTEXT-2" data-name="MTEXT">
+      <text class="cls-11" transform="translate(1602.91 266.13)"><tspan x="0" y="0">N</tspan></text>
+      <text class="cls-8" transform="translate(1623.65 273.06)"><tspan x="0" y="0">2</tspan></text>
+      <text class="cls-11" transform="translate(1638.24 266.13)"><tspan x="0" y="0">O</tspan></text>
+    </g>
+    <g id="MTEXT-3" data-name="MTEXT">
+      <text class="cls-12" transform="translate(1668.43 292.67)"><tspan x="0" y="0">FUEL</tspan></text>
+    </g>
+    <g id="LINE-3" data-name="LINE">
+      <line class="cls-31" x1="1665.38" y1="186.27" x2="1665.38" y2="375.53"/>
+    </g>
+    <g id="LINE-4" data-name="LINE">
+      <line class="cls-31" x1="1731.02" y1="375.53" x2="1731.02" y2="186.27"/>
+    </g>
+    <g id="LINE-5" data-name="LINE">
+      <line class="cls-31" x1="1665.38" y1="221.27" x2="1731.02" y2="221.27"/>
+    </g>
+    <g id="LINE-6" data-name="LINE">
+      <line class="cls-31" x1="1731.02" y1="199.39" x2="1665.38" y2="199.39"/>
+    </g>
+    <g id="LINE-7" data-name="LINE">
+      <line class="cls-31" x1="1687.26" y1="199.39" x2="1665.38" y2="221.27"/>
+    </g>
+    <g id="LINE-8" data-name="LINE">
+      <line class="cls-31" x1="1687.26" y1="221.27" x2="1709.14" y2="199.39"/>
+    </g>
+    <g id="LINE-9" data-name="LINE">
+      <line class="cls-31" x1="1731.02" y1="199.39" x2="1709.14" y2="221.27"/>
+    </g>
+    <g id="LINE-10" data-name="LINE">
+      <line class="cls-31" x1="1709.14" y1="221.27" x2="1731.02" y2="221.27"/>
+    </g>
+    <g id="LINE-11" data-name="LINE">
+      <line class="cls-31" x1="1304.35" y1="511.19" x2="1304.35" y2="576.83"/>
+    </g>
+    <g id="LINE-12" data-name="LINE">
+      <line class="cls-31" x1="1322.95" y1="511.19" x2="1322.95" y2="576.83"/>
+    </g>
+    <g id="CIRCLE">
+      <circle class="cls-31" cx="1584.97" cy="103.12" r="16.41"/>
+    </g>
+    <g id="MTEXT-4" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1570.67 108.04)"><tspan x="0" y="0">S</tspan><tspan class="cls-24" x="6.86" y="0">R</tspan><tspan class="cls-102" x="14.56" y="0">V</tspan></text>
+    </g>
+    <g id="LINE-13" data-name="LINE">
+      <line class="cls-31" x1="1601.38" y1="103.12" x2="1623.26" y2="103.12"/>
+    </g>
+    <g id="CIRCLE-2" data-name="CIRCLE">
+      <circle class="cls-31" cx="1585.51" cy="140.86" r="16.41"/>
+    </g>
+    <g id="MTEXT-5" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1576.14 145.79)"><tspan x="0" y="0">PT</tspan></text>
+    </g>
+    <g id="CIRCLE-3" data-name="CIRCLE">
+      <circle class="cls-31" cx="1731.02" cy="486.03" r="16.41"/>
+    </g>
+    <g id="MTEXT-6" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1716.72 490.95)"><tspan x="0" y="0">S</tspan><tspan class="cls-24" x="6.86" y="0">R</tspan><tspan class="cls-102" x="14.56" y="0">V</tspan></text>
+    </g>
+    <g id="CIRCLE-4" data-name="CIRCLE">
+      <circle class="cls-31" cx="1809.79" cy="487.12" r="16.41"/>
+    </g>
+    <g id="MTEXT-7" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1795.49 492.04)"><tspan x="0" y="0">S</tspan><tspan class="cls-24" x="6.86" y="0">R</tspan><tspan class="cls-102" x="14.56" y="0">V</tspan></text>
+    </g>
+    <g id="LINE-14" data-name="LINE">
+      <line class="cls-31" x1="1610.34" y1="541.82" x2="1786.06" y2="541.82"/>
+    </g>
+    <g id="LINE-15" data-name="LINE">
+      <line class="cls-31" x1="1786.06" y1="541.82" x2="1786.06" y2="639.44"/>
+    </g>
+    <g id="LINE-16" data-name="LINE">
+      <line class="cls-31" x1="1610.34" y1="541.82" x2="1610.34" y2="639.44"/>
+    </g>
+    <g id="LINE-17" data-name="LINE">
+      <line class="cls-31" x1="1610.34" y1="639.44" x2="1659.15" y2="698.01"/>
+    </g>
+    <g id="LINE-18" data-name="LINE">
+      <line class="cls-31" x1="1786.06" y1="639.44" x2="1737.25" y2="698.01"/>
+    </g>
+    <g id="LINE-19" data-name="LINE">
+      <line class="cls-31" x1="1659.15" y1="698.01" x2="1600.58" y2="795.63"/>
+    </g>
+    <g id="LINE-20" data-name="LINE">
+      <line class="cls-31" x1="1737.25" y1="698.01" x2="1795.82" y2="795.63"/>
+    </g>
+    <g id="LINE-21" data-name="LINE">
+      <line class="cls-31" x1="1600.58" y1="795.63" x2="1795.82" y2="795.63"/>
+    </g>
+    <g id="CIRCLE-5" data-name="CIRCLE">
+      <circle class="cls-31" cx="1659.91" cy="517.75" r="16.41"/>
+    </g>
+    <g id="MTEXT-8" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1647.95 522.68)"><tspan x="0" y="0">IGN</tspan></text>
+    </g>
+    <g id="CIRCLE-6" data-name="CIRCLE">
+      <circle class="cls-31" cx="1842.61" cy="552.76" r="16.41"/>
+    </g>
+    <g id="MTEXT-9" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1833.23 557.69)"><tspan x="0" y="0">PT</tspan></text>
+    </g>
+    <g id="LINE-22" data-name="LINE">
+      <line class="cls-31" x1="1785.72" y1="552.76" x2="1826.2" y2="552.76"/>
+    </g>
+    <g id="LINE-23" data-name="LINE">
+      <line class="cls-31" x1="1769.31" y1="487.12" x2="1793.38" y2="487.12"/>
+    </g>
+    <g id="LINE-24" data-name="LINE">
+      <line class="cls-31" x1="1698.2" y1="486.03" x2="1714.61" y2="486.03"/>
+    </g>
+    <g id="LINE-25" data-name="LINE">
+      <line class="cls-31" x1="1698.2" y1="431.33" x2="1698.2" y2="375.53"/>
+    </g>
+    <g id="LINE-26" data-name="LINE">
+      <line class="cls-31" x1="1769.31" y1="435.7" x2="1769.31" y2="368.97"/>
+    </g>
+    <g id="LINE-27" data-name="LINE">
+      <line class="cls-31" x1="1304.35" y1="544.01" x2="1279.19" y2="544.01"/>
+    </g>
+    <g id="LINE-28" data-name="LINE">
+      <line class="cls-31" x1="1339.36" y1="544.01" x2="1322.95" y2="544.01"/>
+    </g>
+    <g id="LINE-29" data-name="LINE">
+      <line class="cls-31" x1="1336.08" y1="544.01" x2="1462.98" y2="544.01"/>
+    </g>
+    <g id="MTEXT-10" data-name="MTEXT">
+      <text class="cls-5" transform="translate(1250.77 49.88)"><tspan x="0" y="0">En</tspan><tspan class="cls-65" x="51.77" y="0">g</tspan><tspan x="79.11" y="0">ine</tspan></text>
+      <text class="cls-5" transform="translate(1272.44 108.23)"><tspan x="0" y="0">P&amp;ID</tspan></text>
+    </g>
+    <g id="MTEXT-11" data-name="MTEXT">
+      <text class="cls-11" transform="translate(1639.33 624.97)"><tspan x="0" y="0">ENGINE</tspan></text>
+    </g>
+    <g id="LINE-30" data-name="LINE">
+      <line class="cls-31" x1="1457.51" y1="441.72" x2="1413.75" y2="419.84"/>
+    </g>
+    <g id="LINE-31" data-name="LINE">
+      <line class="cls-31" x1="1457.51" y1="441.72" x2="1413.75" y2="441.72"/>
+    </g>
+    <g id="LINE-32" data-name="LINE">
+      <line class="cls-31" x1="1413.75" y1="463.6" x2="1457.51" y2="441.72"/>
+    </g>
+    <g id="LINE-33" data-name="LINE">
+      <line class="cls-31" x1="1617.24" y1="46.78" x2="1573.48" y2="24.9"/>
+    </g>
+    <g id="LINE-34" data-name="LINE">
+      <line class="cls-31" x1="1617.24" y1="46.78" x2="1573.48" y2="46.78"/>
+    </g>
+    <g id="LINE-35" data-name="LINE">
+      <line class="cls-31" x1="1573.48" y1="68.66" x2="1617.24" y2="46.78"/>
+    </g>
+    <g id="LINE-36" data-name="LINE">
+      <line class="cls-31" x1="1511.12" y1="432.42" x2="1511.12" y2="416.01"/>
+    </g>
+    <g id="LINE-37" data-name="LINE">
+      <line class="cls-31" x1="1502.37" y1="416.01" x2="1519.87" y2="416.01"/>
+    </g>
+    <g id="LWPOLYLINE">
+      <rect class="cls-31" x="1490.88" y="343.8" width="37.2" height="14.22"/>
+    </g>
+    <g id="MTEXT-12" data-name="MTEXT">
+      <text class="cls-4" transform="translate(1490.02 355.84)"><tspan class="cls-71" x="0" y="0">P</tspan><tspan class="cls-84" x="7.27" y="0">Y</tspan><tspan class="cls-40" x="14.7" y="0">R</tspan><tspan x="22.22" y="0">O</tspan></text>
+    </g>
+    <g id="LINE-38" data-name="LINE">
+      <line class="cls-31" x1="1509.48" y1="362.4" x2="1509.48" y2="358.03"/>
+    </g>
+    <g id="CIRCLE-7" data-name="CIRCLE">
+      <circle class="cls-31" cx="1749.62" cy="88.9" r="18.6"/>
+    </g>
+    <g id="LWPOLYLINE-2" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="1749.62 70.3 1759.09 53.89 1740.14 53.89 1749.62 70.3"/>
+    </g>
+    <g id="LWPOLYLINE-3" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="1749.62 123.91 1759.09 140.32 1740.14 140.32 1749.62 123.91"/>
+    </g>
+    <g id="LINE-39" data-name="LINE">
+      <line class="cls-28" x1="1749.62" y1="123.91" x2="1749.62" y2="107.5"/>
+    </g>
+    <g id="LINE-40" data-name="LINE">
+      <line class="cls-31" x1="1760.01" y1="42.95" x2="1803.77" y2="21.07"/>
+    </g>
+    <g id="LINE-41" data-name="LINE">
+      <line class="cls-31" x1="1760.01" y1="42.95" x2="1803.77" y2="42.95"/>
+    </g>
+    <g id="LINE-42" data-name="LINE">
+      <line class="cls-31" x1="1803.77" y1="64.83" x2="1760.01" y2="42.95"/>
+    </g>
+    <g id="MTEXT-13" data-name="MTEXT">
+      <text class="cls-8" transform="translate(1647.69 116.25)"><tspan class="cls-49" x="0" y="0">V</tspan><tspan class="cls-78" x="11.36" y="0">e</tspan><tspan class="cls-76" x="22.2" y="0">n</tspan><tspan x="34.12" y="0">t</tspan></text>
+    </g>
+    <g id="MTEXT-14" data-name="MTEXT">
+      <text class="cls-8" transform="translate(1776.24 85.62)"><tspan class="cls-80" x="0" y="0">P</tspan><tspan class="cls-22" x="11.16" y="0">r</tspan><tspan x="18.02" y="0">essu</tspan><tspan class="cls-20" x="57.91" y="0">r</tspan><tspan class="cls-78" x="64.77" y="0">e</tspan></text>
+      <text class="cls-8" transform="translate(1776.24 111.14)"><tspan class="cls-62" x="0" y="0">R</tspan><tspan x="11.73" y="0">elief</tspan></text>
+    </g>
+    <g id="MTEXT-15" data-name="MTEXT">
+      <text class="cls-8" transform="translate(1386.22 412.18)"><tspan class="cls-98" x="0" y="0">D</tspan><tspan class="cls-23" x="14.47" y="0">ump</tspan></text>
+    </g>
+    <g id="LINE-43" data-name="LINE">
+      <line class="cls-31" x1="1565.82" y1="441.72" x2="1565.82" y2="371.92"/>
+    </g>
+    <g id="LINE-44" data-name="LINE">
+      <line class="cls-31" x1="1565.82" y1="402.33" x2="1612.86" y2="402.33"/>
+    </g>
+    <g id="LINE-45" data-name="LINE">
+      <line class="cls-31" x1="1612.86" y1="364.59" x2="1612.86" y2="402.33"/>
+    </g>
+    <g id="LINE-46" data-name="LINE">
+      <line class="cls-31" x1="1632.01" y1="438.98" x2="1632.01" y2="481.65"/>
+    </g>
+    <g id="LINE-47" data-name="LINE">
+      <line class="cls-31" x1="1632.01" y1="481.65" x2="1462.98" y2="481.65"/>
+    </g>
+    <g id="LINE-48" data-name="LINE">
+      <line class="cls-31" x1="1749.62" y1="53.89" x2="1749.62" y2="42.95"/>
+    </g>
+    <g id="LINE-49" data-name="LINE">
+      <line class="cls-31" x1="1749.62" y1="42.95" x2="1760.56" y2="42.95"/>
+    </g>
+    <g id="LINE-50" data-name="LINE">
+      <line class="cls-31" x1="1632.56" y1="46.78" x2="1616.69" y2="46.78"/>
+    </g>
+    <g id="LINE-51" data-name="LINE">
+      <line class="cls-31" x1="1632.56" y1="46.78" x2="1632.56" y2="52.8"/>
+    </g>
+    <g id="LINE-52" data-name="LINE">
+      <line class="cls-31" x1="1615.05" y1="167.12" x2="1615.05" y2="140.86"/>
+    </g>
+    <g id="LINE-53" data-name="LINE">
+      <line class="cls-31" x1="1601.92" y1="140.86" x2="1615.05" y2="140.86"/>
+    </g>
+    <g id="LINE-54" data-name="LINE">
+      <line class="cls-31" x1="1453.69" y1="372.25" x2="1409.92" y2="350.37"/>
+    </g>
+    <g id="LINE-55" data-name="LINE">
+      <line class="cls-31" x1="1453.69" y1="372.25" x2="1409.92" y2="372.25"/>
+    </g>
+    <g id="LINE-56" data-name="LINE">
+      <line class="cls-31" x1="1409.92" y1="394.13" x2="1453.69" y2="372.25"/>
+    </g>
+    <g id="LINE-57" data-name="LINE">
+      <line class="cls-31" x1="1749.62" y1="153.45" x2="1749.62" y2="140.32"/>
+    </g>
+    <g id="LINE-58" data-name="LINE">
+      <line class="cls-31" x1="1660.45" y1="534.16" x2="1660.45" y2="541.82"/>
+    </g>
+    <g id="MTEXT-16" data-name="MTEXT">
+      <text class="cls-8" transform="translate(1776.24 434.61)"><tspan class="cls-82" x="0" y="0">M</tspan><tspan class="cls-23" x="17.52" y="0">ain</tspan></text>
+    </g>
+    <g id="MTEXT-17" data-name="MTEXT">
+      <text class="cls-10" transform="translate(1787.06 136.21)"><tspan class="cls-54" x="0" y="0">A</tspan><tspan class="cls-47" x="10.89" y="0">c</tspan><tspan class="cls-100" x="19.25" y="0">ti</tspan><tspan class="cls-70" x="29.5" y="0">va</tspan><tspan class="cls-58" x="46.83" y="0">t</tspan><tspan class="cls-42" x="52.73" y="0">es</tspan></text>
+      <text class="cls-10" transform="translate(1790.42 157.62)"><tspan x="0" y="0">869 psi</tspan></text>
+    </g>
+    <g id="LINE-59" data-name="LINE">
+      <line class="cls-31" x1="556.04" y1="836.11" x2="665.45" y2="836.11"/>
+    </g>
+    <g id="LINE-60" data-name="LINE">
+      <line class="cls-31" x1="665.45" y1="836.11" x2="665.45" y2="672.01"/>
+    </g>
+    <g id="LINE-61" data-name="LINE">
+      <line class="cls-31" x1="556.04" y1="672.01" x2="556.04" y2="836.11"/>
+    </g>
+    <g id="ELLIPSE-3" data-name="ELLIPSE">
+      <path class="cls-31" d="M665.45,672.01c0-24.17-24.49-43.76-54.7-43.76s-54.7,19.59-54.7,43.76"/>
+    </g>
+    <g id="MTEXT-18" data-name="MTEXT">
+      <text class="cls-11" transform="translate(581.1 744.76)"><tspan x="0" y="0">N</tspan></text>
+      <text class="cls-8" transform="translate(601.84 751.69)"><tspan x="0" y="0">2</tspan></text>
+      <text class="cls-11" transform="translate(616.42 744.76)"><tspan x="0" y="0">O</tspan></text>
+    </g>
+    <g id="LINE-62" data-name="LINE">
+      <line class="cls-31" x1="610.78" y1="544.03" x2="610.78" y2="489.33"/>
+    </g>
+    <g id="LINE-63" data-name="LINE">
+      <line class="cls-31" x1="983.8" y1="541.82" x2="983.8" y2="530.88"/>
+    </g>
+    <g id="CIRCLE-8" data-name="CIRCLE">
+      <circle class="cls-31" cx="983.8" cy="500.25" r="16.41"/>
+    </g>
+    <g id="MTEXT-19" data-name="MTEXT">
+      <text class="cls-4" transform="translate(969.5 505.17)"><tspan x="0" y="0">S</tspan><tspan class="cls-24" x="6.86" y="0">R</tspan><tspan class="cls-102" x="14.56" y="0">V</tspan></text>
+    </g>
+    <g id="LINE-64" data-name="LINE">
+      <line class="cls-31" x1="928.01" y1="544.01" x2="928.01" y2="516.66"/>
+    </g>
+    <g id="CIRCLE-9" data-name="CIRCLE">
+      <circle class="cls-31" cx="928.01" cy="500.25" r="16.41"/>
+    </g>
+    <g id="MTEXT-20" data-name="MTEXT">
+      <text class="cls-4" transform="translate(918.63 505.17)"><tspan x="0" y="0">PT</tspan></text>
+    </g>
+    <g id="LINE-65" data-name="LINE">
+      <line class="cls-31" x1="929.1" y1="829.55" x2="885.34" y2="807.67"/>
+    </g>
+    <g id="LINE-66" data-name="LINE">
+      <line class="cls-31" x1="929.1" y1="829.55" x2="885.34" y2="829.55"/>
+    </g>
+    <g id="LINE-67" data-name="LINE">
+      <line class="cls-31" x1="885.34" y1="851.43" x2="929.1" y2="829.55"/>
+    </g>
+    <g id="LINE-68" data-name="LINE">
+      <line class="cls-31" x1="1038.51" y1="545.1" x2="1038.51" y2="829.55"/>
+    </g>
+    <g id="CIRCLE-10" data-name="CIRCLE">
+      <circle class="cls-31" cx="983.8" cy="888.63" r="14.22"/>
+    </g>
+    <g id="MTEXT-21" data-name="MTEXT">
+      <text class="cls-6" transform="translate(971.09 893)"><tspan x="0" y="0">S</tspan><tspan class="cls-95" x="6.09" y="0">R</tspan><tspan x="12.94" y="0">V</tspan></text>
+    </g>
+    <g id="LINE-69" data-name="LINE">
+      <line class="cls-31" x1="983.8" y1="829.55" x2="983.8" y2="874.4"/>
+    </g>
+    <g id="LINE-70" data-name="LINE">
+      <line class="cls-31" x1="983.8" y1="544.01" x2="983.8" y2="516.66"/>
+    </g>
+    <g id="LINE-71" data-name="LINE">
+      <line class="cls-31" x1="610.78" y1="489.33" x2="654.54" y2="489.33"/>
+    </g>
+    <g id="LINE-72" data-name="LINE">
+      <line class="cls-31" x1="1279.19" y1="544.01" x2="1037.41" y2="544.01"/>
+    </g>
+    <g id="LINE-73" data-name="LINE">
+      <line class="cls-31" x1="934.57" y1="544.01" x2="691.7" y2="544.01"/>
+    </g>
+    <g id="LINE-74" data-name="LINE">
+      <line class="cls-29" x1="556.04" y1="363.5" x2="836.11" y2="363.5"/>
+    </g>
+    <g id="MTEXT-22" data-name="MTEXT">
+      <text class="cls-5" transform="translate(398.77 51.7)"><tspan x="0" y="0">G</tspan><tspan class="cls-104" x="31.94" y="0">r</tspan><tspan x="47.62" y="0">ound Suppo</tspan><tspan class="cls-39" x="302.86" y="0">r</tspan><tspan x="320.21" y="0">t</tspan></text>
+      <text class="cls-5" transform="translate(392.1 110.05)"><tspan class="cls-92" x="0" y="0">E</tspan><tspan class="cls-55" x="24.13" y="0">quipme</tspan><tspan class="cls-92" x="184.93" y="0">n</tspan><tspan x="212.17" y="0">t P&amp;ID</tspan></text>
+    </g>
+    <g id="MTEXT-23" data-name="MTEXT">
+      <text class="cls-5" transform="translate(80.36 49.15)"><tspan class="cls-75" x="0" y="0">L</tspan><tspan x="22.65" y="0">egend</tspan></text>
+    </g>
+    <g id="LINE-75" data-name="LINE">
+      <line class="cls-31" x1="927.19" y1="707.86" x2="883.43" y2="685.98"/>
+    </g>
+    <g id="LINE-76" data-name="LINE">
+      <line class="cls-31" x1="927.19" y1="707.86" x2="883.43" y2="707.86"/>
+    </g>
+    <g id="LINE-77" data-name="LINE">
+      <line class="cls-31" x1="883.43" y1="729.74" x2="927.19" y2="707.86"/>
+    </g>
+    <g id="LINE-78" data-name="LINE">
+      <line class="cls-31" x1="33.48" y1="799.03" x2="33.48" y2="842.88"/>
+    </g>
+    <g id="LINE-79" data-name="LINE">
+      <line class="cls-31" x1="33.48" y1="842.88" x2="99.26" y2="842.88"/>
+    </g>
+    <g id="LINE-80" data-name="LINE">
+      <line class="cls-31" x1="99.26" y1="799.03" x2="33.48" y2="799.03"/>
+    </g>
+    <g id="ELLIPSE-4" data-name="ELLIPSE">
+      <path class="cls-31" d="M99.26,842.88c9.69,0,17.54-9.82,17.54-21.93s-7.85-21.93-17.54-21.93"/>
+    </g>
+    <g id="MTEXT-24" data-name="MTEXT">
+      <text class="cls-2" transform="translate(51.64 829.7)"><tspan x="0" y="0">N</tspan></text>
+      <text class="cls-1" transform="translate(67.43 834.98)"><tspan x="0" y="0">2</tspan></text>
+      <text class="cls-2" transform="translate(78.54 829.7)"><tspan x="0" y="0">O</tspan></text>
+    </g>
+    <g id="CIRCLE-11" data-name="CIRCLE">
+      <circle class="cls-31" cx="77.96" cy="871.12" r="16.41"/>
+    </g>
+    <g id="MTEXT-25" data-name="MTEXT">
+      <text class="cls-4" transform="translate(68.58 876.04)"><tspan x="0" y="0">PT</tspan></text>
+    </g>
+    <g id="LINE-81" data-name="LINE">
+      <line class="cls-31" x1="89.45" y1="767.19" x2="54.44" y2="749.69"/>
+    </g>
+    <g id="LINE-82" data-name="LINE">
+      <line class="cls-31" x1="89.45" y1="767.19" x2="54.44" y2="767.19"/>
+    </g>
+    <g id="LINE-83" data-name="LINE">
+      <line class="cls-31" x1="54.44" y1="784.69" x2="89.45" y2="767.19"/>
+    </g>
+    <g id="CIRCLE-12" data-name="CIRCLE">
+      <circle class="cls-31" cx="68.66" cy="680.23" r="16.41"/>
+    </g>
+    <g id="MTEXT-26" data-name="MTEXT">
+      <text class="cls-4" transform="translate(54.34 685.14)"><tspan x="0" y="0">S</tspan><tspan class="cls-24" x="6.86" y="0">R</tspan><tspan class="cls-102" x="14.56" y="0">V</tspan></text>
+    </g>
+    <g id="LINE-84" data-name="LINE">
+      <line class="cls-31" x1="68.66" y1="720.71" x2="68.66" y2="696.64"/>
+    </g>
+    <g id="LINE-85" data-name="LINE">
+      <line class="cls-31" x1="59.91" y1="544.01" x2="59.91" y2="592.15"/>
+    </g>
+    <g id="LINE-86" data-name="LINE">
+      <line class="cls-31" x1="76.32" y1="544.01" x2="76.32" y2="592.15"/>
+    </g>
+    <g id="LINE-87" data-name="LINE">
+      <line class="cls-31" x1="76.32" y1="569.17" x2="91.63" y2="569.17"/>
+    </g>
+    <g id="LINE-88" data-name="LINE">
+      <line class="cls-31" x1="59.91" y1="569.17" x2="44.59" y2="569.17"/>
+    </g>
+    <g id="MTEXT-27" data-name="MTEXT">
+      <text class="cls-10" transform="translate(134.8 874.26)"><tspan class="cls-94" x="0" y="0">P</tspan><tspan class="cls-59" x="9.36" y="0">r</tspan><tspan x="15.12" y="0">essu</tspan><tspan class="cls-59" x="48.58" y="0">r</tspan><tspan x="54.33" y="0">e</tspan><tspan class="cls-91" x="63.42" y="0"> </tspan><tspan class="cls-46" x="66.52" y="0">T</tspan><tspan class="cls-79" x="74.72" y="0">r</tspan><tspan x="80.57" y="0">ansdu</tspan><tspan class="cls-58" x="126.8" y="0">c</tspan><tspan class="cls-42" x="134.82" y="0">er</tspan></text>
+    </g>
+    <g id="MTEXT-28" data-name="MTEXT">
+      <text class="cls-10" transform="translate(155.76 573.89)"><tspan class="cls-53" x="0" y="0">Q</tspan><tspan x="12.56" y="0">uick Dis</tspan><tspan class="cls-85" x="70.8" y="0">c</tspan><tspan x="78.82" y="0">onne</tspan><tspan class="cls-47" x="118.02" y="0">c</tspan><tspan x="126.38" y="0">t</tspan></text>
+    </g>
+    <g id="MTEXT-29" data-name="MTEXT">
+      <text class="cls-10" transform="translate(163.53 714.77)"><tspan class="cls-64" x="0" y="0">S</tspan><tspan x="9.05" y="0">e</tspan><tspan class="cls-35" x="18.15" y="0">r</tspan><tspan class="cls-93" x="24.53" y="0">v</tspan><tspan class="cls-34" x="33.08" y="0">o</tspan><tspan class="cls-70" x="43.31" y="0">-</tspan><tspan class="cls-54" x="48.81" y="0">A</tspan><tspan class="cls-47" x="59.7" y="0">c</tspan><tspan x="68.06" y="0">tu</tspan><tspan class="cls-96" x="84.07" y="0">a</tspan><tspan class="cls-58" x="92.74" y="0">t</tspan><tspan class="cls-42" x="98.64" y="0">ed</tspan></text>
+      <text class="cls-10" transform="translate(190.76 736.18)"><tspan x="0" y="0">Ball</tspan><tspan class="cls-45" x="27.15" y="0"> </tspan><tspan class="cls-51" x="30.34" y="0">V</tspan><tspan class="cls-42" x="39.87" y="0">al</tspan><tspan class="cls-93" x="52.89" y="0">v</tspan><tspan x="61.44" y="0">e</tspan></text>
+    </g>
+    <g id="MTEXT-30" data-name="MTEXT">
+      <text class="cls-10" transform="translate(137 772.57)"><tspan class="cls-56" x="0" y="0">V</tspan><tspan x="9.53" y="0">e</tspan><tspan class="cls-96" x="18.62" y="0">n</tspan><tspan x="28.62" y="0">t </tspan><tspan class="cls-58" x="38.47" y="0">t</tspan><tspan class="cls-42" x="44.37" y="0">o </tspan><tspan class="cls-70" x="58.17" y="0">a</tspan><tspan x="66.85" y="0">tmosphe</tspan><tspan class="cls-59" x="134.62" y="0">r</tspan><tspan x="140.37" y="0">e</tspan></text>
+    </g>
+    <g id="MTEXT-31" data-name="MTEXT">
+      <text class="cls-10" transform="translate(151.34 629.44)"><tspan class="cls-64" x="0" y="0">M</tspan><tspan x="14.7" y="0">anuall</tspan><tspan class="cls-70" x="60.82" y="0">y-</tspan><tspan class="cls-25" x="74.79" y="0">A</tspan><tspan class="cls-47" x="85.68" y="0">c</tspan><tspan x="94.05" y="0">tu</tspan><tspan class="cls-96" x="110.05" y="0">a</tspan><tspan class="cls-58" x="118.72" y="0">t</tspan><tspan class="cls-42" x="124.62" y="0">ed</tspan></text>
+      <text class="cls-10" transform="translate(192.94 650.85)"><tspan x="0" y="0">Ball</tspan><tspan class="cls-45" x="27.15" y="0"> </tspan><tspan class="cls-51" x="30.34" y="0">V</tspan><tspan class="cls-42" x="39.87" y="0">al</tspan><tspan class="cls-93" x="52.89" y="0">v</tspan><tspan x="61.44" y="0">e</tspan></text>
+    </g>
+    <g id="LINE-89" data-name="LINE">
+      <line class="cls-31" x1="68.66" y1="624.39" x2="68.66" y2="607.98"/>
+    </g>
+    <g id="LINE-90" data-name="LINE">
+      <line class="cls-31" x1="59.91" y1="607.98" x2="77.41" y2="607.98"/>
+    </g>
+    <g id="LWPOLYLINE-4" data-name="LWPOLYLINE">
+      <rect class="cls-31" x="49.51" y="484.93" width="37.2" height="14.22"/>
+    </g>
+    <g id="MTEXT-32" data-name="MTEXT">
+      <text class="cls-4" transform="translate(48.65 496.97)"><tspan class="cls-71" x="0" y="0">P</tspan><tspan class="cls-84" x="7.27" y="0">Y</tspan><tspan class="cls-40" x="14.7" y="0">R</tspan><tspan x="22.22" y="0">O</tspan></text>
+    </g>
+    <g id="LINE-91" data-name="LINE">
+      <line class="cls-31" x1="68.11" y1="503.53" x2="68.11" y2="499.16"/>
+    </g>
+    <g id="CIRCLE-13" data-name="CIRCLE">
+      <circle class="cls-31" cx="74.13" cy="397.96" r="18.6"/>
+    </g>
+    <g id="LWPOLYLINE-5" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="92.73 397.96 109.14 407.43 109.14 388.48 92.73 397.96"/>
+    </g>
+    <g id="LWPOLYLINE-6" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="39.12 397.96 22.71 407.43 22.71 388.48 39.12 397.96"/>
+    </g>
+    <g id="LINE-92" data-name="LINE">
+      <line class="cls-28" x1="39.12" y1="397.96" x2="55.53" y2="397.96"/>
+    </g>
+    <g id="MTEXT-33" data-name="MTEXT">
+      <text class="cls-10" transform="translate(155.93 405.48)"><tspan class="cls-64" x="0" y="0">M</tspan><tspan x="14.7" y="0">echanical </tspan><tspan class="cls-37" x="90.05" y="0">R</tspan><tspan x="99.89" y="0">elief</tspan></text>
+    </g>
+    <g id="MTEXT-34" data-name="MTEXT">
+      <text class="cls-10" transform="translate(133.7 517.11)"><tspan class="cls-41" x="0" y="0">P</tspan><tspan class="cls-42" x="9.73" y="0">y</tspan><tspan class="cls-93" x="18.27" y="0">r</tspan><tspan class="cls-34" x="24.02" y="0">o</tspan><tspan class="cls-70" x="34.26" y="0">-</tspan><tspan class="cls-54" x="39.76" y="0">A</tspan><tspan class="cls-47" x="50.64" y="0">c</tspan><tspan x="59.01" y="0">tu</tspan><tspan class="cls-96" x="75.01" y="0">a</tspan><tspan class="cls-58" x="83.69" y="0">t</tspan><tspan x="89.58" y="0">ed</tspan><tspan class="cls-45" x="108.91" y="0"> </tspan><tspan class="cls-56" x="112.1" y="0">V</tspan><tspan x="121.63" y="0">al</tspan><tspan class="cls-93" x="134.66" y="0">v</tspan><tspan x="143.2" y="0">e</tspan></text>
+    </g>
+    <g id="LINE-93" data-name="LINE">
+      <line class="cls-31" x1="44.04" y1="77.96" x2="76.86" y2="77.96"/>
+    </g>
+    <g id="MTEXT-35" data-name="MTEXT">
+      <text class="cls-4" transform="translate(84.33 85.62)"><tspan x="0" y="0">Black = </tspan><tspan class="cls-21" x="44.46" y="0">F</tspan><tspan class="cls-52" x="51" y="0">luid </tspan><tspan class="cls-43" x="75.99" y="0">C</tspan><tspan class="cls-52" x="83.9" y="0">ompone</tspan><tspan class="cls-68" x="133.37" y="0">n</tspan><tspan x="141.03" y="0">t</tspan></text>
+    </g>
+    <g id="MTEXT-36" data-name="MTEXT">
+      <text class="cls-10" transform="translate(133.13 827.77)"><tspan class="cls-50" x="0" y="0">N</tspan><tspan x="12.12" y="0">it</tspan><tspan class="cls-93" x="22.37" y="0">r</tspan><tspan class="cls-42" x="28.12" y="0">ous </tspan><tspan class="cls-41" x="59.12" y="0">B</tspan><tspan x="69.02" y="0">ottle</tspan></text>
+    </g>
+    <g id="LINE-94" data-name="LINE">
+      <line class="cls-31" x1="982.44" y1="698.52" x2="982.44" y2="682.11"/>
+    </g>
+    <g id="LINE-95" data-name="LINE">
+      <line class="cls-31" x1="973.69" y1="682.11" x2="991.19" y2="682.11"/>
+    </g>
+    <g id="LWPOLYLINE-7" data-name="LWPOLYLINE">
+      <rect class="cls-31" x="964.11" y="744.76" width="37.2" height="14.22"/>
+    </g>
+    <g id="MTEXT-37" data-name="MTEXT">
+      <text class="cls-4" transform="translate(963.25 756.8)"><tspan class="cls-71" x="0" y="0">P</tspan><tspan class="cls-84" x="7.27" y="0">Y</tspan><tspan class="cls-40" x="14.7" y="0">R</tspan><tspan x="22.22" y="0">O</tspan></text>
+    </g>
+    <g id="LINE-96" data-name="LINE">
+      <line class="cls-31" x1="982.71" y1="763.36" x2="982.71" y2="758.98"/>
+    </g>
+    <g id="LINE-97" data-name="LINE">
+      <line class="cls-31" x1="926.92" y1="772.66" x2="883.16" y2="750.78"/>
+    </g>
+    <g id="LINE-98" data-name="LINE">
+      <line class="cls-31" x1="926.92" y1="772.66" x2="883.16" y2="772.66"/>
+    </g>
+    <g id="LINE-99" data-name="LINE">
+      <line class="cls-31" x1="883.16" y1="794.54" x2="926.92" y2="772.66"/>
+    </g>
+    <g id="CIRCLE-14" data-name="CIRCLE">
+      <circle class="cls-31" cx="967.39" cy="645.75" r="18.6"/>
+    </g>
+    <g id="LWPOLYLINE-8" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="948.8 645.75 932.39 636.28 932.39 655.23 948.8 645.75"/>
+    </g>
+    <g id="LWPOLYLINE-9" data-name="LWPOLYLINE">
+      <polygon class="cls-31" points="1002.4 645.75 1018.81 636.28 1018.81 655.23 1002.4 645.75"/>
+    </g>
+    <g id="LINE-100" data-name="LINE">
+      <line class="cls-28" x1="1002.4" y1="645.75" x2="985.99" y2="645.75"/>
+    </g>
+    <g id="LINE-101" data-name="LINE">
+      <line class="cls-31" x1="1018.81" y1="645.75" x2="1038.51" y2="645.75"/>
+    </g>
+    <g id="LINE-102" data-name="LINE">
+      <line class="cls-31" x1="932.39" y1="645.75" x2="924.73" y2="645.75"/>
+    </g>
+    <g id="LINE-103" data-name="LINE">
+      <line class="cls-31" x1="924.73" y1="645.75" x2="880.97" y2="623.87"/>
+    </g>
+    <g id="LINE-104" data-name="LINE">
+      <line class="cls-31" x1="924.73" y1="645.75" x2="880.97" y2="645.75"/>
+    </g>
+    <g id="LINE-105" data-name="LINE">
+      <line class="cls-31" x1="880.97" y1="667.63" x2="924.73" y2="645.75"/>
+    </g>
+    <g id="MTEXT-38" data-name="MTEXT">
+      <text class="cls-7" transform="translate(851.9 616.22)"><tspan class="cls-87" x="0" y="0">A</tspan><tspan class="cls-81" x="11.13" y="0">c</tspan><tspan x="19.67" y="0">ti</tspan><tspan class="cls-72" x="30.15" y="0">va</tspan><tspan class="cls-61" x="47.86" y="0">t</tspan><tspan x="53.88" y="0">es 869 psi</tspan></text>
+    </g>
+    <g id="CIRCLE-15" data-name="CIRCLE">
+      <circle class="cls-31" cx="77.41" cy="913.53" r="16.41"/>
+    </g>
+    <g id="MTEXT-39" data-name="MTEXT">
+      <text class="cls-4" transform="translate(65.46 918.46)"><tspan x="0" y="0">IGN</tspan></text>
+    </g>
+    <g id="MTEXT-40" data-name="MTEXT">
+      <text class="cls-10" transform="translate(134.35 915.63)"><tspan x="0" y="0">I</tspan><tspan class="cls-85" x="4.34" y="0">g</tspan><tspan class="cls-42" x="14.37" y="0">ni</tspan><tspan class="cls-85" x="28.69" y="0">t</tspan><tspan x="34.58" y="0">er</tspan></text>
+    </g>
+    <g id="MTEXT-41" data-name="MTEXT">
+      <text class="cls-10" transform="translate(174.27 457.99)"><tspan x="0" y="0">Check</tspan><tspan class="cls-45" x="46.32" y="0"> </tspan><tspan class="cls-56" x="49.52" y="0">V</tspan><tspan x="59.04" y="0">al</tspan><tspan class="cls-93" x="72.07" y="0">v</tspan><tspan x="80.62" y="0">e</tspan></text>
+    </g>
+    <g id="LINE-106" data-name="LINE">
+      <line class="cls-31" x1="1462.98" y1="481.65" x2="1462.98" y2="544.01"/>
+    </g>
+  </g>
+  <g id="_0" data-name="0">
+    <g id="LWPOLYLINE-10" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1616.17 127.68 1648.91 78.56 1616.17 78.56 1648.91 127.68 1616.17 127.68"/>
+    </g>
+    <g id="CIRCLE-16" data-name="CIRCLE">
+      <circle class="cls-30" cx="1632.54" cy="103.12" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-11" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1681.5 511.08 1714.9 460.98 1681.5 460.98 1714.9 511.08 1681.5 511.08"/>
+    </g>
+    <g id="CIRCLE-17" data-name="CIRCLE">
+      <circle class="cls-30" cx="1698.2" cy="486.03" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-12" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1752.94 511.68 1785.68 462.56 1752.94 462.56 1785.68 511.68 1752.94 511.68"/>
+    </g>
+    <g id="CIRCLE-18" data-name="CIRCLE">
+      <circle class="cls-30" cx="1769.31" cy="487.12" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-13" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1486.56 425.35 1535.68 458.09 1535.68 425.35 1486.56 458.09 1486.56 425.35"/>
+    </g>
+    <g id="CIRCLE-19" data-name="CIRCLE">
+      <circle class="cls-30" cx="1511.12" cy="441.72" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-14" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1484.43 355.26 1534.53 388.66 1534.53 355.26 1484.43 388.66 1484.43 355.26"/>
+    </g>
+    <g id="CIRCLE-20" data-name="CIRCLE">
+      <circle class="cls-30" cx="1509.48" cy="371.96" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-15" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="1755.18 97.1 1744.05 97.1 1752.31 84.71"/>
+    </g>
+    <g id="HATCH">
+      <circle class="cls-3" cx="1744.05" cy="97.1" r="1.67"/>
+    </g>
+    <g id="CIRCLE-21" data-name="CIRCLE">
+      <circle class="cls-30" cx="1744.05" cy="97.1" r="1.67"/>
+    </g>
+    <g id="HATCH-2" data-name="HATCH">
+      <polygon class="cls-9" points="1749.03 84.68 1752.31 84.71 1753.61 87.73 1755.18 80.41 1749.03 84.68"/>
+    </g>
+    <g id="LWPOLYLINE-16" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1755.18 80.41 1749.03 84.68 1752.31 84.71 1753.61 87.73 1755.18 80.41"/>
+    </g>
+    <g id="LWPOLYLINE-17" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="1642.49 420.93 1621.53 420.93 1637.08 397.61"/>
+    </g>
+    <g id="HATCH-3" data-name="HATCH">
+      <circle class="cls-3" cx="1621.53" cy="420.93" r="3.14"/>
+    </g>
+    <g id="CIRCLE-22" data-name="CIRCLE">
+      <circle class="cls-30" cx="1621.53" cy="420.93" r="3.14"/>
+    </g>
+    <g id="HATCH-4" data-name="HATCH">
+      <polygon class="cls-9" points="1630.91 397.54 1637.08 397.61 1639.52 403.28 1642.49 389.5 1630.91 397.54"/>
+    </g>
+    <g id="LWPOLYLINE-18" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="1642.49 389.5 1630.91 397.54 1637.08 397.61 1639.52 403.28 1642.49 389.5"/>
+    </g>
+    <g id="LWPOLYLINE-19" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="635.98 581.83 610.78 544.03 585.58 581.83 635.98 581.83"/>
+    </g>
+    <g id="LWPOLYLINE-20" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="648.58 518.83 610.78 544.03 648.58 569.23 648.58 518.83"/>
+    </g>
+    <g id="LWPOLYLINE-21" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="959.25 527.64 1008.36 560.38 1008.36 527.64 959.25 560.38 959.25 527.64"/>
+    </g>
+    <g id="CIRCLE-23" data-name="CIRCLE">
+      <circle class="cls-30" cx="983.8" cy="544.01" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-22" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="959.25 813.22 1008.36 845.96 1008.36 813.22 959.25 845.96 959.25 813.22"/>
+    </g>
+    <g id="CIRCLE-24" data-name="CIRCLE">
+      <circle class="cls-30" cx="983.8" cy="829.59" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-23" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="93.22 737.08 44.1 704.34 44.1 737.08 93.22 704.34 93.22 737.08"/>
+    </g>
+    <g id="CIRCLE-25" data-name="CIRCLE">
+      <circle class="cls-30" cx="68.66" cy="720.71" r="9.41"/>
+    </g>
+    <g id="LWPOLYLINE-24" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="43.61 617.31 93.71 650.71 93.71 617.31 43.61 650.71 43.61 617.31"/>
+    </g>
+    <g id="CIRCLE-26" data-name="CIRCLE">
+      <circle class="cls-30" cx="68.66" cy="634.01" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-25" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="43.06 496.39 93.16 529.79 93.16 496.39 43.06 529.79 43.06 496.39"/>
+    </g>
+    <g id="CIRCLE-27" data-name="CIRCLE">
+      <circle class="cls-30" cx="68.11" cy="513.09" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-26" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="65.92 403.52 65.92 392.39 78.32 400.65"/>
+    </g>
+    <g id="HATCH-5" data-name="HATCH">
+      <circle class="cls-3" cx="65.92" cy="392.39" r="1.67"/>
+    </g>
+    <g id="CIRCLE-28" data-name="CIRCLE">
+      <circle class="cls-30" cx="65.92" cy="392.39" r="1.67"/>
+    </g>
+    <g id="HATCH-6" data-name="HATCH">
+      <polygon class="cls-9" points="78.35 397.37 78.32 400.65 75.3 401.95 82.62 403.52 78.35 397.37"/>
+    </g>
+    <g id="LWPOLYLINE-27" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="82.62 403.52 78.35 397.37 78.32 400.65 75.3 401.95 82.62 403.52"/>
+    </g>
+    <g id="LWPOLYLINE-28" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="957.39 691.45 1007.49 724.85 1007.49 691.45 957.39 724.85 957.39 691.45"/>
+    </g>
+    <g id="CIRCLE-29" data-name="CIRCLE">
+      <circle class="cls-30" cx="982.44" cy="708.15" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-29" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="957.66 756.22 1007.76 789.62 1007.76 756.22 957.66 789.62 957.66 756.22"/>
+    </g>
+    <g id="CIRCLE-30" data-name="CIRCLE">
+      <circle class="cls-30" cx="982.71" cy="772.92" r="9.6"/>
+    </g>
+    <g id="LWPOLYLINE-30" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="975.6 640.19 975.6 651.32 963.21 643.06"/>
+    </g>
+    <g id="HATCH-7" data-name="HATCH">
+      <circle class="cls-3" cx="975.6" cy="651.32" r="1.67"/>
+    </g>
+    <g id="CIRCLE-31" data-name="CIRCLE">
+      <circle class="cls-30" cx="975.6" cy="651.32" r="1.67"/>
+    </g>
+    <g id="HATCH-8" data-name="HATCH">
+      <polygon class="cls-9" points="963.17 646.34 963.21 643.06 966.22 641.76 958.9 640.19 963.17 646.34"/>
+    </g>
+    <g id="LWPOLYLINE-31" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="958.9 640.19 963.17 646.34 963.21 643.06 966.22 641.76 958.9 640.19"/>
+    </g>
+    <g id="LWPOLYLINE-32" data-name="LWPOLYLINE">
+      <polyline class="cls-30" points="50.61 462.04 50.61 441.09 73.94 456.64"/>
+    </g>
+    <g id="HATCH-9" data-name="HATCH">
+      <circle class="cls-3" cx="50.61" cy="441.09" r="3.14"/>
+    </g>
+    <g id="CIRCLE-32" data-name="CIRCLE">
+      <circle class="cls-30" cx="50.61" cy="441.09" r="3.14"/>
+    </g>
+    <g id="HATCH-10" data-name="HATCH">
+      <polygon class="cls-9" points="74 450.46 73.94 456.64 68.26 459.08 82.04 462.04 74 450.46"/>
+    </g>
+    <g id="LWPOLYLINE-33" data-name="LWPOLYLINE">
+      <polygon class="cls-30" points="82.04 462.04 74 450.46 73.94 456.64 68.26 459.08 82.04 462.04"/>
+    </g>
+  </g>
+  <g id="GSE_Electronics" data-name="GSE Electronics">
+    <g id="LINE-107" data-name="LINE">
+      <line class="cls-32" x1="1066.4" y1="846.51" x2="1357.41" y2="846.51"/>
+    </g>
+    <g id="LINE-108" data-name="LINE">
+      <line class="cls-32" x1="1526.98" y1="103.12" x2="1526.98" y2="246.44"/>
+    </g>
+    <g id="LINE-109" data-name="LINE">
+      <line class="cls-32" x1="1526.98" y1="246.44" x2="1368.35" y2="246.44"/>
+    </g>
+    <g id="LINE-110" data-name="LINE">
+      <line class="cls-32" x1="1526.98" y1="103.12" x2="1568.56" y2="103.12"/>
+    </g>
+    <g id="LINE-111" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="469.62" x2="1730.47" y2="447.74"/>
+    </g>
+    <g id="LINE-112" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="447.74" x2="1592.08" y2="447.74"/>
+    </g>
+    <g id="LINE-113" data-name="LINE">
+      <line class="cls-32" x1="1809.79" y1="470.71" x2="1809.79" y2="447.74"/>
+    </g>
+    <g id="LINE-114" data-name="LINE">
+      <line class="cls-32" x1="1842.61" y1="536.35" x2="1842.61" y2="447.74"/>
+    </g>
+    <g id="LINE-115" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="447.74" x2="1842.61" y2="447.74"/>
+    </g>
+    <g id="LINE-116" data-name="LINE">
+      <line class="cls-32" x1="1569.1" y1="140.86" x2="1526.98" y2="140.86"/>
+    </g>
+    <g id="LINE-117" data-name="LINE">
+      <line class="cls-32" x1="1368.35" y1="246.44" x2="1368.35" y2="628.25"/>
+    </g>
+    <g id="LINE-118" data-name="LINE">
+      <line class="cls-32" x1="1508.93" y1="343.8" x2="1508.93" y2="332.86"/>
+    </g>
+    <g id="LINE-119" data-name="LINE">
+      <line class="cls-32" x1="1508.93" y1="332.86" x2="1368.35" y2="332.86"/>
+    </g>
+    <g id="LINE-120" data-name="LINE">
+      <line class="cls-32" x1="1301.62" y1="594.33" x2="1301.62" y2="659.98"/>
+    </g>
+    <g id="LINE-121" data-name="LINE">
+      <line class="cls-32" x1="1323.5" y1="594.33" x2="1323.5" y2="659.98"/>
+    </g>
+    <g id="LINE-122" data-name="LINE">
+      <line class="cls-32" x1="1323.5" y1="628.25" x2="1334.44" y2="628.25"/>
+    </g>
+    <g id="LINE-123" data-name="LINE">
+      <line class="cls-32" x1="1301.62" y1="628.25" x2="1290.68" y2="628.25"/>
+    </g>
+    <g id="LINE-124" data-name="LINE">
+      <line class="cls-32" x1="1291.22" y1="628.25" x2="1278.1" y2="628.25"/>
+    </g>
+    <g id="LINE-125" data-name="LINE">
+      <line class="cls-32" x1="1660.45" y1="541.82" x2="1660.45" y2="563.7"/>
+    </g>
+    <g id="LINE-126" data-name="LINE">
+      <line class="cls-32" x1="1660.45" y1="563.7" x2="1708.04" y2="563.7"/>
+    </g>
+    <g id="LINE-127" data-name="LINE">
+      <line class="cls-32" x1="1708.04" y1="563.7" x2="1708.04" y2="809.86"/>
+    </g>
+    <g id="LINE-128" data-name="LINE">
+      <line class="cls-32" x1="1708.04" y1="809.86" x2="1357.41" y2="809.86"/>
+    </g>
+    <g id="LINE-129" data-name="LINE">
+      <line class="cls-32" x1="1592.08" y1="628.25" x2="1328.42" y2="628.25"/>
+    </g>
+    <g id="LINE-130" data-name="LINE">
+      <line class="cls-32" x1="1592.08" y1="628.25" x2="1592.08" y2="447.74"/>
+    </g>
+    <g id="LINE-131" data-name="LINE">
+      <line class="cls-32" x1="1695.46" y1="829.55" x2="1730.47" y2="829.55"/>
+    </g>
+    <g id="LINE-132" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="829.55" x2="1730.47" y2="838.3"/>
+    </g>
+    <g id="LINE-133" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="838.3" x2="1721.72" y2="838.3"/>
+    </g>
+    <g id="LINE-134" data-name="LINE">
+      <line class="cls-32" x1="1721.72" y1="838.3" x2="1721.72" y2="855.8"/>
+    </g>
+    <g id="LINE-135" data-name="LINE">
+      <line class="cls-32" x1="1721.72" y1="855.8" x2="1730.47" y2="855.8"/>
+    </g>
+    <g id="LINE-136" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="855.8" x2="1730.47" y2="864.56"/>
+    </g>
+    <g id="LINE-137" data-name="LINE">
+      <line class="cls-32" x1="1730.47" y1="864.56" x2="1686.71" y2="864.56"/>
+    </g>
+    <g id="LINE-138" data-name="LINE">
+      <line class="cls-32" x1="1686.71" y1="864.56" x2="1686.71" y2="855.8"/>
+    </g>
+    <g id="LINE-139" data-name="LINE">
+      <line class="cls-32" x1="1686.71" y1="855.8" x2="1695.46" y2="855.8"/>
+    </g>
+    <g id="LINE-140" data-name="LINE">
+      <line class="cls-32" x1="1695.46" y1="855.8" x2="1695.46" y2="838.3"/>
+    </g>
+    <g id="LINE-141" data-name="LINE">
+      <line class="cls-32" x1="1695.46" y1="838.3" x2="1686.71" y2="838.3"/>
+    </g>
+    <g id="LINE-142" data-name="LINE">
+      <line class="cls-32" x1="1686.71" y1="838.3" x2="1686.71" y2="829.55"/>
+    </g>
+    <g id="LINE-143" data-name="LINE">
+      <line class="cls-32" x1="1686.71" y1="829.55" x2="1695.46" y2="829.55"/>
+    </g>
+    <g id="MTEXT-42" data-name="MTEXT">
+      <text class="cls-18" transform="translate(1736.85 839.39)"><tspan class="cls-73" x="0" y="0">L</tspan><tspan x="9.91" y="0">oad</tspan></text>
+      <text class="cls-18" transform="translate(1737.58 864.92)"><tspan class="cls-60" x="0" y="0">C</tspan><tspan class="cls-78" x="12.31" y="0">ell</tspan></text>
+    </g>
+    <g id="LINE-144" data-name="LINE">
+      <line class="cls-32" x1="1686.71" y1="860.18" x2="1357.41" y2="860.18"/>
+    </g>
+    <g id="LINE-145" data-name="LINE">
+      <line class="cls-32" x1="1357.41" y1="849.24" x2="1357.41" y2="809.86"/>
+    </g>
+    <g id="LWPOLYLINE-34" data-name="LWPOLYLINE">
+      <rect class="cls-32" x="370.06" y="330.68" width="109.4" height="65.64"/>
+    </g>
+    <g id="MTEXT-43" data-name="MTEXT">
+      <text class="cls-17" transform="translate(382.17 358.03)"><tspan x="0" y="0">G</tspan><tspan class="cls-74" x="14.97" y="0">r</tspan><tspan x="22.32" y="0">ound</tspan></text>
+      <text class="cls-17" transform="translate(382.56 385.38)"><tspan class="cls-38" x="0" y="0">S</tspan><tspan x="11.36" y="0">t</tspan><tspan class="cls-66" x="19.03" y="0">a</tspan><tspan x="30.11" y="0">tion</tspan></text>
+    </g>
+    <g id="CIRCLE-33" data-name="CIRCLE">
+      <circle class="cls-32" cx="527.6" cy="363.5" r="28.44"/>
+    </g>
+    <g id="MTEXT-44" data-name="MTEXT">
+      <text class="cls-15" transform="translate(509.55 360.76)"><tspan x="0" y="0">X</tspan><tspan class="cls-44" x="7.94" y="0">B</tspan><tspan class="cls-102" x="15.53" y="0">ee</tspan></text>
+      <text class="cls-15" transform="translate(507.2 377.17)"><tspan class="cls-88" x="0" y="0">R</tspan><tspan x="7.65" y="0">adio</tspan></text>
+    </g>
+    <g id="LINE-146" data-name="LINE">
+      <line class="cls-32" x1="926.92" y1="483.84" x2="926.92" y2="443.36"/>
+    </g>
+    <g id="LINE-147" data-name="LINE">
+      <line class="cls-32" x1="998.03" y1="887.53" x2="1066.95" y2="887.53"/>
+    </g>
+    <g id="LINE-148" data-name="LINE">
+      <line class="cls-32" x1="1066.95" y1="887.53" x2="1066.95" y2="437.89"/>
+    </g>
+    <g id="LINE-149" data-name="LINE">
+      <line class="cls-32" x1="1066.95" y1="437.89" x2="1049.45" y2="437.89"/>
+    </g>
+    <g id="MTEXT-45" data-name="MTEXT">
+      <text class="cls-14" transform="translate(173.62 147.02)"><tspan x="0" y="0">XB9X </tspan><tspan class="cls-63" x="43.71" y="0">R</tspan><tspan x="53.69" y="0">adio</tspan></text>
+      <text class="cls-14" transform="translate(147 168.43)"><tspan class="cls-99" x="0" y="0">T</tspan><tspan class="cls-42" x="7.73" y="0">elemet</tspan><tspan class="cls-35" x="60.42" y="0">r</tspan><tspan x="66.81" y="0">y </tspan><tspan class="cls-64" x="79.2" y="0">M</tspan><tspan x="93.9" y="0">odule</tspan></text>
+    </g>
+    <g id="CIRCLE-34" data-name="CIRCLE">
+      <circle class="cls-32" cx="864.56" cy="363.5" r="28.44"/>
+    </g>
+    <g id="MTEXT-46" data-name="MTEXT">
+      <text class="cls-15" transform="translate(846.51 360.76)"><tspan x="0" y="0">X</tspan><tspan class="cls-44" x="7.94" y="0">B</tspan><tspan class="cls-102" x="15.53" y="0">ee</tspan></text>
+      <text class="cls-15" transform="translate(844.16 377.17)"><tspan class="cls-88" x="0" y="0">R</tspan><tspan x="7.65" y="0">adio</tspan></text>
+    </g>
+    <g id="CIRCLE-35" data-name="CIRCLE">
+      <circle class="cls-32" cx="60.45" cy="150.16" r="28.44"/>
+    </g>
+    <g id="MTEXT-47" data-name="MTEXT">
+      <text class="cls-15" transform="translate(42.4 147.43)"><tspan x="0" y="0">X</tspan><tspan class="cls-44" x="7.94" y="0">B</tspan><tspan class="cls-102" x="15.53" y="0">ee</tspan></text>
+      <text class="cls-15" transform="translate(40.06 163.84)"><tspan class="cls-88" x="0" y="0">R</tspan><tspan x="7.65" y="0">adio</tspan></text>
+    </g>
+    <g id="LINE-150" data-name="LINE">
+      <line class="cls-32" x1="499.16" y1="364.59" x2="479.46" y2="364.59"/>
+    </g>
+    <g id="LWPOLYLINE-35" data-name="LWPOLYLINE">
+      <rect class="cls-32" x="917.62" y="377.72" width="131.83" height="65.64"/>
+    </g>
+    <g id="MTEXT-48" data-name="MTEXT">
+      <text class="cls-17" transform="translate(946.37 406.16)"><tspan x="0" y="0">STM32</tspan></text>
+      <text class="cls-17" transform="translate(949.89 433.51)"><tspan class="cls-90" x="0" y="0">B</tspan><tspan x="12.66" y="0">oa</tspan><tspan class="cls-74" x="36.55" y="0">r</tspan><tspan x="43.9" y="0">d</tspan></text>
+    </g>
+    <g id="MTEXT-49" data-name="MTEXT">
+      <text class="cls-15" transform="translate(83.92 105.31)"><tspan class="cls-44" x="0" y="0">R</tspan><tspan x="7.54" y="0">ed = Ele</tspan><tspan class="cls-48" x="53.62" y="0">c</tspan><tspan x="60.04" y="0">t</tspan><tspan class="cls-44" x="64.64" y="0">r</tspan><tspan class="cls-52" x="69.24" y="0">ical </tspan><tspan class="cls-43" x="91.66" y="0">C</tspan><tspan x="99.57" y="0">ompone</tspan><tspan class="cls-68" x="149.04" y="0">n</tspan><tspan class="cls-52" x="156.7" y="0">t</tspan></text>
+    </g>
+    <g id="LINE-151" data-name="LINE">
+      <line class="cls-32" x1="43.5" y1="100.39" x2="76.32" y2="100.39"/>
+    </g>
+    <g id="LINE-152" data-name="LINE">
+      <line class="cls-32" x1="1278.1" y1="628.25" x2="1066.95" y2="628.25"/>
+    </g>
+    <g id="MTEXT-50" data-name="MTEXT">
+      <text class="cls-18" transform="translate(579.57 343.26)"><tspan x="0" y="0">915M</tspan><tspan class="cls-103" x="50.69" y="0">H</tspan><tspan x="65.03" y="0">z </tspan><tspan class="cls-83" x="78.87" y="0">U</tspan><tspan x="92.13" y="0">A</tspan><tspan class="cls-67" x="105.37" y="0">R</tspan><tspan x="117.21" y="0">T Link</tspan></text>
+    </g>
+    <g id="LINE-153" data-name="LINE">
+      <line class="cls-32" x1="893" y1="363.5" x2="983.8" y2="363.5"/>
+    </g>
+    <g id="LINE-154" data-name="LINE">
+      <line class="cls-32" x1="983.8" y1="363.5" x2="983.8" y2="377.72"/>
+    </g>
+    <g id="LINE-155" data-name="LINE">
+      <line class="cls-32" x1="1001.31" y1="751.87" x2="1066.95" y2="751.87"/>
+    </g>
+    <g id="LINE-156" data-name="LINE">
+      <line class="cls-32" x1="1000.22" y1="500.25" x2="1066.95" y2="500.25"/>
+    </g>
+    <g id="LWPOLYLINE-36" data-name="LWPOLYLINE">
+      <rect class="cls-32" x="24.33" y="187.58" width="72.21" height="43.32"/>
+    </g>
+    <g id="MTEXT-51" data-name="MTEXT">
+      <text class="cls-13" transform="translate(32.32 205.63)"><tspan x="0" y="0">G</tspan><tspan class="cls-97" x="9.88" y="0">r</tspan><tspan x="14.73" y="0">ound</tspan></text>
+      <text class="cls-13" transform="translate(32.58 223.68)"><tspan class="cls-69" x="0" y="0">S</tspan><tspan x="7.5" y="0">t</tspan><tspan class="cls-36" x="12.56" y="0">a</tspan><tspan x="19.87" y="0">tion</tspan></text>
+    </g>
+    <g id="LWPOLYLINE-37" data-name="LWPOLYLINE">
+      <rect class="cls-32" x="11.95" y="246.54" width="100.65" height="50.12"/>
+    </g>
+    <g id="MTEXT-52" data-name="MTEXT">
+      <text class="cls-16" transform="translate(33.91 268.26)"><tspan x="0" y="0">STM32</tspan></text>
+      <text class="cls-16" transform="translate(36.59 289.14)"><tspan class="cls-19" x="0" y="0">B</tspan><tspan class="cls-77" x="9.66" y="0">oa</tspan><tspan class="cls-89" x="27.91" y="0">r</tspan><tspan x="33.52" y="0">d</tspan></text>
+    </g>
+    <g id="MTEXT-53" data-name="MTEXT">
+      <text class="cls-14" transform="translate(155.83 199.83)"><tspan x="0" y="0">G</tspan><tspan class="cls-93" x="11.72" y="0">r</tspan><tspan class="cls-42" x="17.47" y="0">ound </tspan><tspan class="cls-86" x="61.58" y="0">S</tspan><tspan class="cls-100" x="70.48" y="0">t</tspan><tspan class="cls-96" x="76.48" y="0">a</tspan><tspan x="85.16" y="0">tion</tspan></text>
+      <text class="cls-14" transform="translate(141.15 223.69)"><tspan class="cls-101" x="0" y="0">C</tspan><tspan x="10.32" y="0">ompu</tspan><tspan class="cls-58" x="55.74" y="0">t</tspan><tspan class="cls-42" x="61.64" y="0">er w/ GUI</tspan></text>
+    </g>
+    <g id="MTEXT-54" data-name="MTEXT">
+      <text class="cls-14" transform="translate(133.42 266.65)"><tspan x="0" y="0">STM32 w/ ADC and</tspan></text>
+      <text class="cls-14" transform="translate(164.31 288.06)"><tspan x="0" y="0">other sensors</tspan></text>
+    </g>
+    <g id="LINE-157" data-name="LINE">
+      <line class="cls-32" x1="40.76" y1="319.74" x2="75.77" y2="319.74"/>
+    </g>
+    <g id="LINE-158" data-name="LINE">
+      <line class="cls-32" x1="75.77" y1="319.74" x2="75.77" y2="328.49"/>
+    </g>
+    <g id="LINE-159" data-name="LINE">
+      <line class="cls-32" x1="75.77" y1="328.49" x2="67.02" y2="328.49"/>
+    </g>
+    <g id="LINE-160" data-name="LINE">
+      <line class="cls-32" x1="67.02" y1="328.49" x2="67.02" y2="345.99"/>
+    </g>
+    <g id="LINE-161" data-name="LINE">
+      <line class="cls-32" x1="67.02" y1="345.99" x2="75.77" y2="345.99"/>
+    </g>
+    <g id="LINE-162" data-name="LINE">
+      <line class="cls-32" x1="75.77" y1="345.99" x2="75.77" y2="354.75"/>
+    </g>
+    <g id="LINE-163" data-name="LINE">
+      <line class="cls-32" x1="75.77" y1="354.75" x2="32.01" y2="354.75"/>
+    </g>
+    <g id="LINE-164" data-name="LINE">
+      <line class="cls-32" x1="32.01" y1="354.75" x2="32.01" y2="345.99"/>
+    </g>
+    <g id="LINE-165" data-name="LINE">
+      <line class="cls-32" x1="32.01" y1="345.99" x2="40.76" y2="345.99"/>
+    </g>
+    <g id="LINE-166" data-name="LINE">
+      <line class="cls-32" x1="40.76" y1="345.99" x2="40.76" y2="328.49"/>
+    </g>
+    <g id="LINE-167" data-name="LINE">
+      <line class="cls-32" x1="40.76" y1="328.49" x2="32.01" y2="328.49"/>
+    </g>
+    <g id="LINE-168" data-name="LINE">
+      <line class="cls-32" x1="32.01" y1="328.49" x2="32.01" y2="319.74"/>
+    </g>
+    <g id="LINE-169" data-name="LINE">
+      <line class="cls-32" x1="32.01" y1="319.74" x2="40.76" y2="319.74"/>
+    </g>
+    <g id="MTEXT-55" data-name="MTEXT">
+      <text class="cls-18" transform="translate(110.05 344.9)"><tspan class="cls-57" x="0" y="0">F</tspan><tspan x="9.97" y="0">ill </tspan><tspan class="cls-73" x="29.83" y="0">L</tspan><tspan class="cls-78" x="39.74" y="0">e</tspan><tspan class="cls-20" x="50.58" y="0">v</tspan><tspan x="60.77" y="0">el </tspan><tspan class="cls-73" x="81.3" y="0">L</tspan><tspan x="91.2" y="0">oad </tspan><tspan class="cls-60" x="130.29" y="0">C</tspan><tspan class="cls-78" x="142.6" y="0">ell</tspan></text>
+    </g>
+    <g id="LINE-170" data-name="LINE">
+      <line class="cls-32" x1="1357.41" y1="849.24" x2="1357.41" y2="860.18"/>
+    </g>
+  </g>
+  <g id="Boundaries">
+    <g id="LINE-171" data-name="LINE">
+      <line class="cls-26" x1="1181.27" y1="129.92" x2="1482.68" y2="129.92"/>
+    </g>
+    <g id="LINE-172" data-name="LINE">
+      <line class="cls-26" x1="1482.68" y1="129.92" x2="1482.68" y2=".28"/>
+    </g>
+    <g id="LWPOLYLINE-38" data-name="LWPOLYLINE">
+      <rect class="cls-27" x=".28" y=".28" width="344.62" height="986.8"/>
+    </g>
+    <g id="LINE-173" data-name="LINE">
+      <line class="cls-26" x1="344.9" y1="115.16" x2=".28" y2="115.16"/>
+    </g>
+    <g id="LINE-174" data-name="LINE">
+      <line class="cls-26" x1=".28" y1="65.38" x2="344.9" y2="65.38"/>
+    </g>
+    <g id="LINE-175" data-name="LINE">
+      <line class="cls-26" x1="344.9" y1="371.16" x2=".28" y2="371.16"/>
+    </g>
+    <g id="LINE-176" data-name="LINE">
+      <line class="cls-26" x1="882.06" y1="133.75" x2="344.9" y2="133.75"/>
+    </g>
+    <g id="LINE-177" data-name="LINE">
+      <line class="cls-26" x1="882.06" y1=".28" x2="882.06" y2="133.75"/>
+    </g>
+    <g id="LINE-178" data-name="LINE">
+      <line class="cls-27" x1="344.9" y1=".28" x2="1920.28" y2=".28"/>
+    </g>
+    <g id="LINE-179" data-name="LINE">
+      <line class="cls-27" x1="1920.28" y1=".28" x2="1920.28" y2="987.09"/>
+    </g>
+    <g id="LINE-180" data-name="LINE">
+      <line class="cls-27" x1="344.9" y1="987.09" x2="1920.28" y2="987.09"/>
+    </g>
+    <g id="LINE-181" data-name="LINE">
+      <line class="cls-26" x1="1181.27" y1="129.92" x2="1181.27" y2=".28"/>
+    </g>
+    <g id="LINE-182" data-name="LINE">
+      <line class="cls-26" x1="1181.27" y1="129.92" x2="1181.27" y2="513.92"/>
+    </g>
+    <g id="LINE-183" data-name="LINE">
+      <line class="cls-33" x1="1181.27" y1="513.38" x2="1181.27" y2="653.41"/>
+    </g>
+    <g id="LINE-184" data-name="LINE">
+      <line class="cls-26" x1="1181.27" y1="866.75" x2="1181.27" y2="987.09"/>
+    </g>
+    <g id="LINE-185" data-name="LINE">
+      <line class="cls-33" x1="1181.27" y1="823.53" x2="1181.27" y2="867.29"/>
+    </g>
+    <g id="LINE-186" data-name="LINE">
+      <line class="cls-26" x1="1181.27" y1="824.08" x2="1181.27" y2="652.86"/>
+    </g>
+  </g>
+</svg>
