@@ -1,0 +1,1 @@
+ePIc snapPI hinged pi case ( raspberry pi case 2 3 and 4 ) by Tripnutz on Thingiverse: https://www.thingiverse.com/thing:2747502
