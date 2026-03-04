@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rocket HMI Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body style="background-color:rgb(246, 236, 200);">
+
+    <div id="svg_container">
+        {% include 'reaLPID.svg' %}
+    </div>
+
+    <div id="stats" style="margin:8px;font-family:monospace;">
+        <div>rate: <span id="rate">‑</span> Hz</div>
+        <div>seq: <span id="seq">‑</span></div>
+        <div>last:&nbsp;<span id="last">‑</span></div>
+    </div>
+
+    <script>
+        var socket = io();
+
+        // for simple rate calculation
+        let lastTs = null;
+        let lastSeq = null;
+        let smoothing = 0.2; // simple low‑pass for Hz display
+        let avgHz = null;
+
+        socket.on('telemetry', function(data) {
+            console.log("Telemetry received:", data);
+            const now = Date.now() / 1000;
+
+            // rate computation
+            if (lastTs !== null) {
+                const dt = now - lastTs;
+                const hz = dt > 0 ? 1 / dt : 0;
+                avgHz = avgHz === null ? hz : (smoothing * hz + (1 - smoothing) * avgHz);
+                document.getElementById('rate').textContent = avgHz.toFixed(1);
+            }
+            lastTs = now;
+
+            if (data.seq !== undefined) {
+                document.getElementById('seq').textContent = data.seq;
+            }
+            if (data.ts !== undefined) {
+                document.getElementById('last').textContent = new Date(data.ts * 1000).toLocaleTimeString();
+            } else {
+                document.getElementById('last').textContent = new Date().toLocaleTimeString();
+            }
+
+            // Helper function to update valve state (circle color)
+            // 0 = closed (red), 1 = open (green)
+            function updateValveColor(elementId, state) {
+                const color = state === 1 ? "green" : "red";
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.setAttribute("fill", color);
+                }
+            }
+
+            // Helper function to update pressure indicator color
+            // Green < 650, Orange 650-830, Red > 830
+            function updatePressureColor(elementId, pressure) {
+                let color;
+                if (pressure < 650) {
+                    color = "green";
+                } else if (pressure <= 830) {
+                    color = "orange";
+                } else {
+                    color = "red";
+                }
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.setAttribute("fill", color);
+                }
+            }
+
+            // Helper function to update text elements
+            function updateText(elementId, value) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+
+            // Update pressure transducers (PSI)
+            if (data.pressure_transducers) {
+                if (data.enables?.bottle_pressure) {
+                    updateText("bottle_pressure", data.pressure_transducers.bottle_pressure + " PSI");
+                    updatePressureColor("BottlePTcirc", data.pressure_transducers.bottle_pressure);
+                    updatePressureColor("bottleCircle", data.pressure_transducers.bottle_pressure);
+                }
+                if (data.enables?.tank_pressure) {
+                    updateText("tank_pressure", data.pressure_transducers.tank_pressure + " PSI");
+                    updatePressureColor("tank_pressure_indicator", data.pressure_transducers.tank_pressure);
+                }
+                if (data.enables?.chamber_pressure) {
+                    updateText("chamber_pressure", data.pressure_transducers.chamber_pressure + " PSI");
+                    updatePressureColor("chamber_pressure_indicator", data.pressure_transducers.chamber_pressure);
+                }
+            }
+
+            // Update GSE data
+            if (data.gse) {
+                if (data.enables?.loadcell) {
+                    updateText("loadcell", data.gse.loadcell.toFixed(2) + " kg");
+                }
+                if (data.enables?.gse_fill) {
+                    updateValveColor("gse_fill_valve", data.gse.fill);
+                }
+                if (data.enables?.gse_pyro) {
+                    updateValveColor("gse_pyro_valve", data.gse.pyro);
+                }
+                if (data.enables?.gse_relief) {
+                    updateValveColor("gse_relief_valve", data.gse.relief);
+                }
+            }
+
+            // Update Rocket data
+            if (data.rocket) {
+                if (data.enables?.rocket_pyro) {
+                    updateValveColor("rocket_pyro_valve", data.rocket.pyro);
+                }
+                if (data.enables?.rocket_ox) {
+                    updateValveColor("rocket_ox_valve", data.rocket.ox);
+                }
+                if (data.enables?.rocket_fuel) {
+                    updateValveColor("rocket_fuel_valve", data.rocket.fuel);
+                }
+                if (data.enables?.rocket_relief) {
+                    updateValveColor("rocket_relief_valve", data.rocket.relief);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
