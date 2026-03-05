@@ -11,7 +11,7 @@ import json
 # ==============================
 
 USE_FAKE_DATA = False       # <---- TOGGLE THIS
-SERIAL_PORT = 'COM14'       # Change when using real STM32
+SERIAL_PORT = 'COM4'       # Change when using real STM32
 BAUD_RATE = 9600
 
 # Toggle individual graphical elements (disable until they exist in SVG)

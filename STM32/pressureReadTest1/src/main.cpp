@@ -93,17 +93,28 @@ float readChannel(int channel) {
   // static int debugCounter = 0;
   // debugCounter++;
   // if (debugCounter >= 10) {  // Print every 10 calls
-  //   Serial.print("Channel ");
-  //   Serial.print(channel);
-  //   Serial.print(" raw: ");
-  //   Serial.print(raw);
-  //   Serial.print(", voltage: ");
-  //   Serial.println(voltage, 4);
+  //   SERIAL_PORT.print("Channel ");
+  //   SERIAL_PORT.print(channel);
+  //   SERIAL_PORT.print(" raw: ");
+  //   SERIAL_PORT.print(raw);
+  //   SERIAL_PORT.print(", voltage: ");
+  //   SERIAL_PORT.println(voltage, 4);
   //   debugCounter = 0;
   // }
   
   return voltage;
 }
+
+// ============ SERIAL PORT CONFIGURATION ============
+// Uncomment the line below to use USB Serial (Serial)
+// Comment it out to use Serial1 (hardware TX=PA9, RX=PA10)
+//#define USE_SERIAL_USB
+
+#ifdef USE_SERIAL_USB
+  #define SERIAL_PORT Serial
+#else
+  #define SERIAL_PORT Serial1  // Hardware UART on PA9(TX)/PA10(RX)
+#endif
 
 // Change baud rate for performance
 const long SERIAL_BAUD = 9600; 
@@ -112,9 +123,9 @@ const long SERIAL_BAUD = 9600;
 unsigned long lastOutputTime = 0;
 
 void setup() {
-  Serial.begin(SERIAL_BAUD); // Match this in your Serial Monitor!
+  SERIAL_PORT.begin(SERIAL_BAUD); // Match this in your Serial Monitor!
   
-  while (!Serial && millis() < 5000);
+  while (!SERIAL_PORT && millis() < 5000);
 
   A.InitializeADC();
   A.setPGA(PGA_1);  // PGA_0 for ±2.5V range (correct for 0-2.5V inputs)
@@ -126,7 +137,7 @@ void setup() {
   A.sendDirectCommand(SELFCAL);
   delay(200); // Wait for calibration to complete
   
-  Serial.println("✓ ADC calibrated and ready");
+  SERIAL_PORT.println("✓ ADC calibrated and ready");
 }
 
 void loop() {
@@ -147,13 +158,13 @@ void loop() {
   // static int debugCounter = 0;
   // debugCounter++;
   // if (debugCounter >= 50) {  // Print every 50 loops
-  //   Serial.print("DEBUG - Voltages: Bottle=");
-  //   Serial.print(bottleVoltage, 4);
-  //   Serial.print("V, Tank=");
-  //   Serial.print(tankVoltage, 4);
-  //   Serial.print("V, Chamber=");
-  //   Serial.print(chamberVoltage, 4);
-  //   Serial.println("V");
+  //   SERIAL_PORT.print("DEBUG - Voltages: Bottle=");
+  //   SERIAL_PORT.print(bottleVoltage, 4);
+  //   SERIAL_PORT.print("V, Tank=");
+  //   SERIAL_PORT.print(tankVoltage, 4);
+  //   SERIAL_PORT.print("V, Chamber=");
+  //   SERIAL_PORT.print(chamberVoltage, 4);
+  //   SERIAL_PORT.println("V");
   //   debugCounter = 0;
   // }
 
@@ -164,15 +175,15 @@ void loop() {
     lastOutputTime = currentTime;
 
     // Use a single Print if possible to reduce overhead
-    Serial.print("{\"pressure_transducers\":{\"bottle_pressure\":");
-    Serial.print((int)bottlePressure);
-    Serial.print(",\"tank_pressure\":");
-    Serial.print((int)tankPressure);
-    Serial.print(",\"chamber_pressure\":");
-    Serial.print((int)chamberPressure);
-    Serial.println("},\"gse\":{\"loadcell\":0.00,\"fill\":0,\"pyro\":0,\"relief\":0},\"rocket\":{\"pyro\":0,\"ox\":0,\"fuel\":0,\"relief\":0}}");
+    SERIAL_PORT.print("{\"pressure_transducers\":{\"bottle_pressure\":");
+    SERIAL_PORT.print((int)bottlePressure);
+    SERIAL_PORT.print(",\"tank_pressure\":");
+    SERIAL_PORT.print((int)tankPressure);
+    SERIAL_PORT.print(",\"chamber_pressure\":");
+    SERIAL_PORT.print((int)chamberPressure);
+    SERIAL_PORT.println("},\"gse\":{\"loadcell\":0.00,\"fill\":0,\"pyro\":0,\"relief\":0},\"rocket\":{\"pyro\":0,\"ox\":0,\"fuel\":0,\"relief\":0}}");
     unsigned long elapsed = micros() - start;
-    Serial.print(" // loop: ");
-    Serial.print(elapsed);
-    Serial.println(" us");  }
+    SERIAL_PORT.print(" // loop: ");
+    SERIAL_PORT.print(elapsed);
+    SERIAL_PORT.println(" us");  }
 }
