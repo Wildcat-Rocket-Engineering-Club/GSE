@@ -5,26 +5,27 @@
 
 #define ARDUINO_ARCH_STM32
 
-//Platform-specific pin definitions
-#if defined(ARDUINO_ARCH_RP2040)
-#pragma message "Using RP2040"
-//#define USE_SPI1 //Alternative USE_SPI for RP2040 - Uncomment to use SPI1
-#if defined(USE_SPI1)
-#pragma message "Using SPI1 (SPI1)"
-#define SPI_MOSI 11
-#define SPI_MISO 12
-#define SPI_SCK 10
-#define USE_SPI SPI1
-#else
-#pragma message "Using SPI (SPI0)"
-#define SPI_MOSI 3  //19
-#define SPI_MISO 4  //16
-#define SPI_SCK 2   //18
-#define USE_SPI SPI
-#endif
-//-----------------------------------------
+// int drateValues[16] = {
+//   DRATE_30000SPS,
+//   DRATE_15000SPS,
+//   DRATE_7500SPS,
+//   DRATE_3750SPS,
+//   DRATE_2000SPS,
+//   DRATE_1000SPS,
+//   DRATE_500SPS,
+//   DRATE_100SPS,
+//   DRATE_60SPS,
+//   DRATE_50SPS,
+//   DRATE_30SPS,
+//   DRATE_25SPS,
+//   DRATE_15SPS,
+//   DRATE_10SPS,
+//   DRATE_5SPS,
+//   DRATE_2SPS
+// };  //Array to store the sampling rates
 
-#elif defined(ARDUINO_ARCH_STM32)
+
+#if defined(ARDUINO_ARCH_STM32)
 #pragma message "Using STM32"
 //#define USE_SPI2  //Uncomment to use SPI2
 #if defined(USE_SPI2)
@@ -35,36 +36,8 @@ SPIClass spi2(PB15, PB14, PB13);  //MOSI, MISO, SCK
 #pragma message "Using SPI (SPI1)"
 #define USE_SPI SPI  //Default SPI1, pre-instantiated as 'SPI' on PA7, PA6, PA5
 #endif
-                                  
-//-----------------------------------------
 
-#elif defined(TEENSYDUINO)
-#pragma message "Using Teensy"
-//#define USE_SPI1 //Uncomment to use SPI1 on Teensy 4.0 or 4.1
-//#define USE_SPI2 //Uncomment to use SPI2 on Teensy 4.0 or 4.1
-#if defined(USE_SPI2)
-#pragma message "Using SPI2 (SPI3)"
-#define USE_SPI SPI2
-#elif defined(USE_SPI1)
-#pragma message "Using SPI1 (SPI2)"
-#define USE_SPI SPI1
-#else
-#pragma message "Using SPI (SPI1)"
-#define USE_SPI SPI
-#endif
-//-----------------------------------------
 
-#elif defined(ARDUINO_ARCH_ESP32)
-#pragma message "Using ESP32"
-SPIClass hspi(HSPI);
-//#define USE_HSPI  // Uncomment to use HSPI instead of VSPI
-#if defined(USE_HSPI)
-#pragma message "Using HSPI"
-#define USE_SPI hspi
-#else
-#pragma message "Using VSPI"
-#define USE_SPI SPI
-#endif
 //-----------------------------------------
 #else  //Default fallback (Arduino AVR)
 #define SPI_MOSI MOSI
@@ -81,9 +54,13 @@ ADS1256 A(PA8, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &USE_SPI);
 // ============ CONFIGURATION ============
 // Voltage to Pressure conversion range: 0-2.5V maps to 0-5000 psi
 const float MIN_VOLTAGE = 0.0;      // Volts
-const float MAX_VOLTAGE = 2.5;      // Volts
+const float MAX_VOLTAGE = 5;      // Volts
 const float MIN_PRESSURE = 0.0;     // PSI
 const float MAX_PRESSURE = 5000.0;  // PSI
+
+// Output frequency - adjust this to change readings per second
+// 200ms = 5 readings/sec, 100ms = 10 readings/sec, 1000ms = 1 reading/sec
+const int OUTPUT_INTERVAL_MS = 200;
 
 // Channel mapping - single-ended channels
 const int BOTTLE_PRESSURE_CHANNEL = SING_0;   // AIN0
@@ -108,104 +85,94 @@ float voltageToPressure(float voltage) {
 // Function to read a single channel and return the voltage
 float readChannel(int channel) {
   A.setMUX(channel);
-  delay(10);  // Small delay for channel settling
-  return A.convertToVoltage(A.readSingle());
+  delayMicroseconds(20000);  // Increased settling time for channel switch (20ms at 100 SPS)
+  long raw = A.readSingle();
+  float voltage = A.convertToVoltage(raw);
+  
+  // // Debug: print raw ADC value occasionally
+  // static int debugCounter = 0;
+  // debugCounter++;
+  // if (debugCounter >= 10) {  // Print every 10 calls
+  //   Serial.print("Channel ");
+  //   Serial.print(channel);
+  //   Serial.print(" raw: ");
+  //   Serial.print(raw);
+  //   Serial.print(", voltage: ");
+  //   Serial.println(voltage, 4);
+  //   debugCounter = 0;
+  // }
+  
+  return voltage;
 }
+
+// Change baud rate for performance
+const long SERIAL_BAUD = 9600; 
+
+// ============ TIMING VARIABLES ============
+unsigned long lastOutputTime = 0;
 
 void setup() {
-  Serial.begin(115200);  // Higher baud rate for serial efficiency
+  Serial.begin(SERIAL_BAUD); // Match this in your Serial Monitor!
   
-  while (!Serial) {
-    ;  // Wait until the serial becomes available
-  }
-
-  // Startup status message
-  Serial.println("\n================================");
-  Serial.println("STM32F4 Pressure Logging System");
-  Serial.println("================================");
-  Serial.println("Initializing ADS1256...");
-
-#if defined(ARDUINO_ARCH_RP2040)
-  SPI.setSCK(SPI_SCK);
-  SPI.setTX(SPI_MOSI);
-  SPI.setRX(SPI_MISO);
-#endif
-
-#if defined(USE_HSPI)
-  hspi.begin(14, 25, 13);  //SCK, MISO (safe), MOSI
-#endif
+  while (!Serial && millis() < 5000);
 
   A.InitializeADC();
-  Serial.println("ADS1256 initialized");
+  A.setPGA(PGA_1);  // PGA_0 for ±2.5V range (correct for 0-2.5V inputs)
+  A.setBuffer(0);  // Disable input buffer to reduce noise from high impedance sources
+  A.setDRATE(DRATE_100SPS); // Lower data rate for better stability with high impedance sources
+  delay(100); // Allow settings to settle
   
-  // Configure the ADC
-  A.setPGA(PGA_1);
-  A.setDRATE(DRATE_500SPS);
+  // Perform self-calibration
+  A.sendDirectCommand(SELFCAL);
+  delay(200); // Wait for calibration to complete
   
-  Serial.println("ADC configured:");
-  Serial.println("  - PGA: 1x");
-  Serial.println("  - Sample Rate: 500 SPS");
-  Serial.println("  - Voltage Range: 0-2.5V");
-  Serial.println("  - Pressure Range: 0-5000 psi");
-  Serial.println("\nChannels:");
-  Serial.println("  - Ch0 (AIN0): Bottle Pressure");
-  Serial.println("  - Ch1 (AIN1): Tank Pressure");
-  Serial.println("  - Ch2 (AIN2): Chamber Pressure");
-  Serial.println("\nLogging started (1 second delay)...");
-  Serial.println("================================\n");
-  
-  delay(1000);
+  Serial.println("✓ ADC calibrated and ready");
 }
-int packetDelay = 1000; // Delay between readings and sending packets
-int readDelay = 5; // Delay between reading individual channels
-bool doReadDelay = true;
 
 void loop() {
-  // Read all three pressure channels
-  A.setMUX(BOTTLE_PRESSURE_CHANNEL);
+  unsigned long start = micros();
+  // 1. ALWAYS READ (High Speed Acquisition)
+  // We read every loop so the internal filter stays "warm"
+  
+  float bottleVoltage = readChannel(BOTTLE_PRESSURE_CHANNEL);
+  float tankVoltage   = readChannel(TANK_PRESSURE_CHANNEL);
+  float chamberVoltage= readChannel(CHAMBER_PRESSURE_CHANNEL);
 
-  if (doReadDelay)
-  {
-    delay(readDelay);
-  }
-
-  float bottleVoltage = A.convertToVoltage(A.readSingle());
+  // Convert to pressure
   bottlePressure = voltageToPressure(bottleVoltage);
-  
-  A.setMUX(TANK_PRESSURE_CHANNEL);
-
-  if (doReadDelay)
-  {
-    delay(readDelay);
-  }
-
-  float tankVoltage = A.convertToVoltage(A.readSingle());
-  tankPressure = voltageToPressure(tankVoltage);
-  
-  A.setMUX(CHAMBER_PRESSURE_CHANNEL);
-
-  if (doReadDelay)
-  {
-    delay(readDelay);
-  }
-
-  float chamberVoltage = A.convertToVoltage(A.readSingle());
+  tankPressure   = voltageToPressure(tankVoltage);
   chamberPressure = voltageToPressure(chamberVoltage);
-  
-  // Output JSON formatted data
-  Serial.print("{");
-  Serial.print("\"pressure_transducers\":{");
-  Serial.print("\"bottle_pressure\":");
-  Serial.print((int)bottlePressure);
-  Serial.print(",\"tank_pressure\":");
-  Serial.print((int)tankPressure);
-  Serial.print(",\"chamber_pressure\":");
-  Serial.print((int)chamberPressure);
-  Serial.print("},\"gse\":{");
-  Serial.print("\"loadcell\":0.00,\"fill\":0,\"pyro\":0,\"relief\":0");
-  Serial.print("},\"rocket\":{");
-  Serial.print("\"pyro\":0,\"ox\":0,\"fuel\":0,\"relief\":0");
-  Serial.println("}}");
-  
-  delay(packetDelay);  // Delay between full readings
+
+  // // Debug: Print raw voltages occasionally
+  // static int debugCounter = 0;
+  // debugCounter++;
+  // if (debugCounter >= 50) {  // Print every 50 loops
+  //   Serial.print("DEBUG - Voltages: Bottle=");
+  //   Serial.print(bottleVoltage, 4);
+  //   Serial.print("V, Tank=");
+  //   Serial.print(tankVoltage, 4);
+  //   Serial.print("V, Chamber=");
+  //   Serial.print(chamberVoltage, 4);
+  //   Serial.println("V");
+  //   debugCounter = 0;
+  // }
+
+  // 2. NON-BLOCKING OUTPUT
+  // Check if it's time to send data without using delay()
+  unsigned long currentTime = millis();
+  if (currentTime - lastOutputTime >= OUTPUT_INTERVAL_MS) {
+    lastOutputTime = currentTime;
+
+    // Use a single Print if possible to reduce overhead
+    Serial.print("{\"pressure_transducers\":{\"bottle_pressure\":");
+    Serial.print((int)bottlePressure);
+    Serial.print(",\"tank_pressure\":");
+    Serial.print((int)tankPressure);
+    Serial.print(",\"chamber_pressure\":");
+    Serial.print((int)chamberPressure);
+    Serial.println("},\"gse\":{\"loadcell\":0.00,\"fill\":0,\"pyro\":0,\"relief\":0},\"rocket\":{\"pyro\":0,\"ox\":0,\"fuel\":0,\"relief\":0}}");
+    unsigned long elapsed = micros() - start;
+    Serial.print(" // loop: ");
+    Serial.print(elapsed);
+    Serial.println(" us");  }
 }

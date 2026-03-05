@@ -10,8 +10,8 @@ import json
 # CONFIGURATION
 # ==============================
 
-USE_FAKE_DATA = True       # <---- TOGGLE THIS
-SERIAL_PORT = 'COM13'       # Change when using real STM32
+USE_FAKE_DATA = False       # <---- TOGGLE THIS
+SERIAL_PORT = 'COM14'       # Change when using real STM32
 BAUD_RATE = 9600
 
 # Toggle individual graphical elements (disable until they exist in SVG)
@@ -88,17 +88,46 @@ def fake_data_loop():
 # ==============================
 
 def serial_loop():
-    ser = serial.Serial(SERIAL_PORT, BAUD_RATE)
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    print(f"Serial connection opened on {SERIAL_PORT} at {BAUD_RATE} baud")
+    last_time = time.time()
+    msg_count = 0
 
     while True:
         try:
             line = ser.readline().decode().strip()
             if line:
+                current_time = time.time()
+                dt = current_time - last_time
+                msg_count += 1
+                
+                print(f"\n[{msg_count}] Time since last: {dt:.3f}s | Received: {line[:80]}...")
+                
                 data = json.loads(line)
+                
+                # Add enables flags to the data
+                data['enables'] = {
+                    'bottle_pressure': ENABLE_BOTTLE_PRESSURE,
+                    'tank_pressure': ENABLE_TANK_PRESSURE,
+                    'chamber_pressure': ENABLE_CHAMBER_PRESSURE,
+                    'loadcell': ENABLE_LOADCELL,
+                    'gse_fill': ENABLE_GSE_FILL,
+                    'gse_pyro': ENABLE_GSE_PYRO,
+                    'gse_relief': ENABLE_GSE_RELIEF,
+                    'rocket_pyro': ENABLE_ROCKET_PYRO,
+                    'rocket_ox': ENABLE_ROCKET_OX,
+                    'rocket_fuel': ENABLE_ROCKET_FUEL,
+                    'rocket_relief': ENABLE_ROCKET_RELIEF
+                }
+                
                 socketio.emit('telemetry', data)
+                last_time = current_time
 
         except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e} - Line: {line}")
+            print(f"JSON decode error: {e}")
+            print(f"Line was: {repr(line)}")
+        except UnicodeDecodeError as e:
+            print(f"Decode error: {e} - may be encoding issue")
         except Exception as e:
             print(f"Serial error: {e}")
 
