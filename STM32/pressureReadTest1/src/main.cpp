@@ -108,7 +108,7 @@ float readChannel(int channel) {
 // ============ SERIAL PORT CONFIGURATION ============
 // Uncomment the line below to use USB Serial (Serial)
 // Comment it out to use Serial1 (hardware TX=PA9, RX=PA10)
-//#define USE_SERIAL_USB
+#define USE_SERIAL_USB
 
 #ifdef USE_SERIAL_USB
   #define SERIAL_PORT Serial
