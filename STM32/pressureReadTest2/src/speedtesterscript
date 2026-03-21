@@ -1,0 +1,162 @@
+//STM32F4 Nucleo - ADS1256 Maximum Sampling Rate Test
+//Simple output to diagnose bottlenecks
+// Currently has no file extension so that platformio doesn't break.
+
+#include <ADS1256.h>
+
+#define ARDUINO_ARCH_STM32
+
+#if defined(ARDUINO_ARCH_STM32)
+#pragma message "Using STM32"
+#define USE_SPI SPI
+#else
+#define USE_SPI SPI
+#endif
+
+// STM32F4 Nucleo pin configuration
+ADS1256 A(PA8, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &USE_SPI); 
+
+// Channel mapping
+const int BOTTLE_PRESSURE_CHANNEL = SING_0;   // AIN0
+const int TANK_PRESSURE_CHANNEL = SING_1;     // AIN1
+const int CHAMBER_PRESSURE_CHANNEL = SING_2;  // AIN2
+
+// Serial config
+#define USE_SERIAL_USB
+#ifdef USE_SERIAL_USB
+  #define SERIAL_PORT Serial
+#else
+  #define SERIAL_PORT Serial1
+#endif
+const long SERIAL_BAUD = 115200;
+
+// ============ TEST 1: Sequential Single-Ended Reads ============
+void test_sequential_reads() {
+  unsigned long loopCount = 0;
+  unsigned long startTime = millis();
+  unsigned long lastPrintTime = 0;
+  
+  while (millis() - startTime < 5000) {  // Run for 5 seconds
+    long raw0 = A.readSingle();
+    A.setMUX(TANK_PRESSURE_CHANNEL);
+    long raw1 = A.readSingle();
+    A.setMUX(CHAMBER_PRESSURE_CHANNEL);
+    long raw2 = A.readSingle();
+    A.setMUX(BOTTLE_PRESSURE_CHANNEL);
+    
+    loopCount++;
+    
+    // Print every 100 loops to reduce serial overhead
+    if (millis() - lastPrintTime >= 100) {
+      lastPrintTime = millis();
+      SERIAL_PORT.print("TEST1_SEQ,");
+      SERIAL_PORT.print(raw0); SERIAL_PORT.print(",");
+      SERIAL_PORT.print(raw1); SERIAL_PORT.print(",");
+      SERIAL_PORT.println(raw2);
+    }
+  }
+  
+  float hz = (loopCount * 1000.0) / (millis() - startTime);
+  SERIAL_PORT.print("TEST1 Results - Reads/sec: ");
+  SERIAL_PORT.println(hz, 2);
+}
+
+// ============ TEST 2: Using cycleSingle() ============
+void test_cycle_single() {
+  unsigned long loopCount = 0;
+  unsigned long startTime = millis();
+  unsigned long lastPrintTime = 0;
+  
+  while (millis() - startTime < 5000) {
+    long raw = A.cycleSingle();
+    
+    loopCount++;
+    
+    // Print every 300 loops (since we get 3 values per cycle)
+    if (millis() - lastPrintTime >= 100) {
+      lastPrintTime = millis();
+      SERIAL_PORT.print("TEST2_CYCLE,");
+      SERIAL_PORT.println(raw);
+    }
+  }
+  
+  float hz = (loopCount * 1000.0) / (millis() - startTime);
+  SERIAL_PORT.print("TEST2 Results - Cycles/sec: ");
+  SERIAL_PORT.println(hz, 2);
+}
+
+// ============ TEST 3: Minimal Output (just raw numbers) ============
+void test_minimal_output() {
+  unsigned long loopCount = 0;
+  unsigned long startTime = millis();
+  long raw0, raw1, raw2;
+  
+  while (millis() - startTime < 5000) {
+    A.setMUX(BOTTLE_PRESSURE_CHANNEL);
+    raw0 = A.readSingle();
+    A.setMUX(TANK_PRESSURE_CHANNEL);
+    raw1 = A.readSingle();
+    A.setMUX(CHAMBER_PRESSURE_CHANNEL);
+    raw2 = A.readSingle();
+    
+    SERIAL_PORT.print(raw0);
+    SERIAL_PORT.print(",");
+    SERIAL_PORT.print(raw1);
+    SERIAL_PORT.print(",");
+    SERIAL_PORT.println(raw2);
+    
+    loopCount++;
+  }
+  
+  float hz = (loopCount * 1000.0) / (millis() - startTime);
+  SERIAL_PORT.print("TEST3 Results - Reads/sec (minimal output): ");
+  SERIAL_PORT.println(hz, 2);
+}
+
+// ============ MAIN ============
+void setup() {
+  SERIAL_PORT.begin(SERIAL_BAUD);
+  while (!SERIAL_PORT && millis() < 5000);
+  
+  A.InitializeADC();
+  A.setPGA(PGA_1);
+  A.setBuffer(0);
+  
+  // TRY DIFFERENT DRATES - uncomment one
+  A.setDRATE(DRATE_100SPS);      // Current setting: 100 SPS
+  //A.setDRATE(DRATE_500SPS);    // Try this
+  //A.setDRATE(DRATE_1000SPS);   // Or this
+  //A.setDRATE(DRATE_7500SPS);   // Or this for max speed
+  
+  A.sendDirectCommand(SELFCAL);
+  delay(200);
+  
+  SERIAL_PORT.println("\n=== ADS1256 Sampling Rate Diagnostic Tests ===\n");
+  SERIAL_PORT.println("Test 1: Sequential setMUX() + readSingle()...");
+  delay(1000);
+}
+
+void loop() {
+  static int testPhase = 0;
+  
+  if (testPhase == 0) {
+    test_sequential_reads();
+    testPhase++;
+    SERIAL_PORT.println("\nTest 2: Using cycleSingle()...");
+    delay(1000);
+  } 
+  else if (testPhase == 1) {
+    test_cycle_single();
+    testPhase++;
+    SERIAL_PORT.println("\nTest 3: Minimal output format...");
+    delay(1000);
+  }
+  else if (testPhase == 2) {
+    test_minimal_output();
+    testPhase++;
+    SERIAL_PORT.println("\n=== All tests complete ===");
+  }
+  else {
+    delay(100);
+  }
+}

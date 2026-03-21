@@ -1258,6 +1258,6 @@
     <g id="LINE221" data-name="LINE">
       <line class="st26" x1="1357.13" y1="895.56" x2="1357.13" y2="906.5"/>
     </g>
-    <text id="bottle_pressure" class="st19" transform="translate(768.95 557.85)"><tspan x="0" y="0">xxx psi</tspan></text>
+    <text id="bottle_pressure" class="st19" text-anchor="end" transform="translate(900 557.85)"><tspan x="0" y="0">xxx psi</tspan></text>
   </g>
 </svg>

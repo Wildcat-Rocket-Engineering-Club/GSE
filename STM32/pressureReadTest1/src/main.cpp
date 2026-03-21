@@ -48,8 +48,8 @@ SPIClass spi2(PB15, PB14, PB13);  //MOSI, MISO, SCK
 #endif
 
 // STM32F4 Nucleo pin configuration
-ADS1256 A(PA8, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &USE_SPI); 
-//DRDY, RESET, SYNC(PDWN), CS, VREF(float). //STM32 - SPI1
+ADS1256 A(PA8,    ADS1256::PIN_UNUSED,    ADS1256::PIN_UNUSED,    PA4,    2.500, &USE_SPI); 
+//        DRDY,   RESET,                  SYNC(PDWN),             CS,     VREF(float).         //STM32 - SPI1
 
 // ============ CONFIGURATION ============
 // Voltage to Pressure conversion range: 0-2.5V maps to 0-5000 psi
@@ -60,7 +60,7 @@ const float MAX_PRESSURE = 5000.0;  // PSI
 
 // Output frequency - adjust this to change readings per second
 // 200ms = 5 readings/sec, 100ms = 10 readings/sec, 1000ms = 1 reading/sec
-const int OUTPUT_INTERVAL_MS = 200;
+const int OUTPUT_INTERVAL_MS = 1;
 
 // Channel mapping - single-ended channels
 const int BOTTLE_PRESSURE_CHANNEL = SING_0;   // AIN0
@@ -85,7 +85,7 @@ float voltageToPressure(float voltage) {
 // Function to read a single channel and return the voltage
 float readChannel(int channel) {
   A.setMUX(channel);
-  delayMicroseconds(20000);  // Increased settling time for channel switch (20ms at 100 SPS)
+  //delayMicroseconds(20000);  // Increased settling time for channel switch (20ms at 100 SPS)
   long raw = A.readSingle();
   float voltage = A.convertToVoltage(raw);
   
@@ -117,7 +117,7 @@ float readChannel(int channel) {
 #endif
 
 // Change baud rate for performance
-const long SERIAL_BAUD = 9600; 
+const long SERIAL_BAUD = 115200; 
 
 // ============ TIMING VARIABLES ============
 unsigned long lastOutputTime = 0;

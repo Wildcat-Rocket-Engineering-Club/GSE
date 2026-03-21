@@ -5,8 +5,6 @@
 
 //#define ADS1256_SPI_ALREADY_STARTED  //prevent internal _spi->begin() to allow custom SPI initialization
 
-#define ARDUINO_ARCH_STM32
-
 //Platform-specific pin definitions
 #if defined(ARDUINO_ARCH_RP2040)
 #pragma message "Using RP2040"
@@ -37,9 +35,7 @@ SPIClass spi2(PB15, PB14, PB13);  //MOSI, MISO, SCK
 #pragma message "Using SPI (SPI1)"
 #define USE_SPI SPI  //Default SPI1, pre-instantiated as 'SPI' on PA7, PA6, PA5
 #endif
-                                  
-//-----------------------------------------
-
+                                  //-----------------------------------------
 #elif defined(TEENSYDUINO)
 #pragma message "Using Teensy"
 //#define USE_SPI1 //Uncomment to use SPI1 on Teensy 4.0 or 4.1
@@ -84,13 +80,9 @@ SPIClass hspi(HSPI);
 //ADS1256 A(7, ADS1256::PIN_UNUSED, 8, 10, 2.500, &USE_SPI); //DRDY, RESET, SYNC(PDWN), CS, VREF(float).    //Teensy 4.0 - OK
 //ADS1256 A(7, ADS1256::PIN_UNUSED, 6, 5, 2.500, &USE_SPI); //DRDY, RESET, SYNC(PDWN), CS, VREF(float).    //RP2040 Waveshare Mini - OK
 //ADS1256 A(18, 20, 21, 19, 2.500, &USE_SPI); //DRDY, RESET, SYNC(PDWN), CS, VREF(float), SPI bus.  //RP2040 Zero - OK
-//ADS1256 A(15, ADS1256::PIN_UNUSED, 14, 17, 2.500, &USE_SPI);  //DRDY, RESET, SYNC(PDWN), CS, VREF(float), SPI bus.  //RP2040 Pico W - OK
+ADS1256 A(15, ADS1256::PIN_UNUSED, 14, 17, 2.500, &USE_SPI);  //DRDY, RESET, SYNC(PDWN), CS, VREF(float), SPI bus.  //RP2040 Pico W - OK
 //ADS1256 A(PA2, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &USE_SPI); //DRDY, RESET, SYNC(PDWN), CS, VREF(float). //STM32 "blue pill" - SPI1 - OK
 //ADS1256 A(PB10, PB11, ADS1256::PIN_UNUSED, PB12, 2.500, &USE_SPI);  // DRDY, RESET, SYNC, CS, VREF, SPI //STM32 "blue pill" - SPI2 - OK
-
-// Etan-defined STM32F4 pins, based on the STM32 "blue pill" on SPI1 above.:
-ADS1256 A(PA8, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &USE_SPI); //DRDY, RESET, SYNC(PDWN), CS, VREF(float). //STM32 "blue pill" - SPI1 - OK
-
 
 long rawConversion = 0;  //24-bit raw value
 float voltageValue = 0;  //human-readable floating point value
@@ -122,7 +114,7 @@ int drateValues[16] = {
   DRATE_2SPS
 };  //Array to store the sampling rates
 
-int drateSelection = 9;  //Number used to pick the sampling rate from the above array
+int drateSelection = 0;  //Number used to pick the sampling rate from the above array
 
 String registers[11] = {
   "STATUS",
@@ -176,7 +168,7 @@ void setup() {
   //--------------------------------------------
 
   //Set DRATE
-  A.setDRATE(DRATE_500SPS);  //0b00010011 - DEC: 19
+  A.setDRATE(DRATE_5SPS);  //0b00010011 - DEC: 19
   //--------------------------------------------
 
   //Read back the above 3 values to check if the writing was succesful
@@ -192,8 +184,8 @@ void setup() {
   Serial.println(A.readRegister(DRATE_REG));
   delay(100);
 
-  //Freeze the display for 1 sec
-  delay(1000);
+  //Freeze the display for 3 sec
+  delay(3000);
 }
 
 void loop() {

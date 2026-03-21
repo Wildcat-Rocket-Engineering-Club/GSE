@@ -15,7 +15,7 @@ SERIAL_PORT = 'COM14'       # Change when using real STM32
 # On Etan's computer:
 # Left USB XBee was 'COM4'
 # Right (near) USB with STM was 'COM14'
-BAUD_RATE = 9600
+BAUD_RATE = 115200
 
 # Toggle individual graphical elements (disable until they exist in SVG)
 ENABLE_BOTTLE_PRESSURE = True
@@ -104,7 +104,7 @@ def serial_loop():
                 dt = current_time - last_time
                 msg_count += 1
                 
-                print(f"\n[{msg_count}] Time since last: {dt:.3f}s | Received: {line[:80]}...")
+                print(f"\n[{msg_count}] T since last: {dt:.3f}s | Received: {line[:100]}...")
                 
                 data = json.loads(line)
                 
