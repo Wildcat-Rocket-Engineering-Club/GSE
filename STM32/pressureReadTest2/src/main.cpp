@@ -57,7 +57,7 @@ int completeSetCounter = 0;     // Counts complete 3-channel sets
 unsigned long loopCounter = 0;  // Total loops for diagnostics
 
 // ============ SERIAL PORT CONFIGURATION ============
-#define USE_SERIAL_USB
+//#define USE_SERIAL_USB
 
 #ifdef USE_SERIAL_USB
   #define SERIAL_PORT Serial
@@ -65,7 +65,7 @@ unsigned long loopCounter = 0;  // Total loops for diagnostics
   #define SERIAL_PORT Serial1  // Hardware UART on PA9(TX)/PA10(RX)
 #endif
 
-const long SERIAL_BAUD = 115200;
+const long SERIAL_BAUD = 230400;
 
 // Utility function to convert voltage to pressure
 float voltageToPressure(float voltage) {
