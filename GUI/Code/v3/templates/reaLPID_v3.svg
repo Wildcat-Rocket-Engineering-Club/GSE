@@ -230,6 +230,7 @@
         <line class="st29" x1="982.98" y1="919.83" x2="982.98" y2="964.69"/>
       </g>
       <rect id="ClickZone" class="st37" x="883.15" y="897.95" width="188.43" height="101.61"/>
+      <circle id="gse_x5F_relief_x5F_valve" fill="#003fff" cx="982.98" cy="919.83" r="9.67"/>
     </g>
     <g id="GSE_x5F_FillValve">
       <g id="LINE69">
@@ -263,6 +264,7 @@
         </g>
       </g>
       <rect id="ClickZone1" class="st37" x="933.47" y="529.37" width="99.55" height="88.85"/>
+      <circle id="gse_x5F_fill_x5F_state" fill="#003fff" cx="983.52" cy="590.32" r="9.67"/>
     </g>
     <g id="RKT_x5F_ReliefValve">
       <g id="LINE50">
@@ -308,6 +310,7 @@
         <circle class="st23" cx="1632.25" cy="149.44" r="9.41"/>
       </g>
       <rect id="ClickZone2" class="st37" x="1523.94" y="54.3" width="169.53" height="137.38"/>
+      <circle id="rocket_x5F_relief_x5F_state" fill="#003fff" cx="1632.25" cy="149.44" r="9.67"/>
     </g>
     <g id="RKT_x5F_MainFuelValve">
       <g id="CIRCLE2">
@@ -338,6 +341,7 @@
         <circle class="st23" cx="1697.91" cy="532.34" r="9.6"/>
       </g>
       <rect id="ClickZone3" class="st37" x="1680.11" y="498.89" width="68.43" height="62.04"/>
+      <circle id="rocket_x5F_fuel_x5F_state" fill="#003fff" cx="1697.92" cy="532.34" r="9.67"/>
     </g>
     <g id="RKT_x5F_MainOxValve">
       <g id="CIRCLE3">
@@ -368,6 +372,7 @@
         <circle class="st23" cx="1769.03" cy="533.44" r="9.41"/>
       </g>
       <rect id="ClickZone4" class="st37" x="1751.53" y="505.54" width="76.91" height="58.53"/>
+      <circle id="rocket_x5F_ox_x5F_state" fill="#003fff" cx="1769.03" cy="533.44" r="9.67"/>
     </g>
     <g id="RKT_x5F_IGN">
       <g id="CIRCLE4">
@@ -386,6 +391,7 @@
         <line class="st29" x1="1660.17" y1="580.48" x2="1660.17" y2="588.14"/>
       </g>
       <rect id="ClickZone5" class="st37" x="1637.77" y="545.87" width="39.7" height="36.32"/>
+      <circle id="ign_x5F_state" fill="#003fff" cx="1631.73" cy="564.03" r="9.67"/>
     </g>
     <g id="GSE_x5F_DumpValve">
       <g id="LINE641">
@@ -425,6 +431,7 @@
         <line class="st29" x1="983.52" y1="818.53" x2="983.52" y2="863.39"/>
       </g>
       <rect id="ClickZone6" class="st37" x="868.71" y="793.44" width="188.43" height="101.61"/>
+      <circle id="gse_x5F_dump_x5F_state" fill="#003fff" cx="983.52" cy="818.53" r="9.67"/>
     </g>
     <g id="RKT_x5F_DumpValve">
       <g id="LINE642">
@@ -464,6 +471,7 @@
         <line class="st29" x1="1510.84" y1="363.98" x2="1510.84" y2="408.84"/>
       </g>
       <rect id="ClickZone7" class="st37" x="1407.22" y="332.51" width="188.43" height="110.19"/>
+      <circle id="rocket_x5F_dump_x5F_state" fill="#003fff" cx="1510.84" cy="418.25" r="9.67"/>
     </g>
   </g>
   <g id="Electronics">

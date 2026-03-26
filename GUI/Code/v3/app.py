@@ -22,18 +22,19 @@ ENABLE_BOTTLE_PRESSURE = True
 ENABLE_TANK_PRESSURE = True
 ENABLE_CHAMBER_PRESSURE = True
 ENABLE_LOADCELL = False
-ENABLE_GSE_FILL = False
-ENABLE_GSE_PYRO = False
-ENABLE_GSE_RELIEF = False
-ENABLE_ROCKET_PYRO = False
-ENABLE_ROCKET_OX = False
-ENABLE_ROCKET_FUEL = False
-ENABLE_ROCKET_RELIEF = False
+ENABLE_GSE_FILL = True
+ENABLE_GSE_DUMP = True
+ENABLE_GSE_RELIEF = True
+ENABLE_ROCKET_DUMP = True
+ENABLE_ROCKET_OX = True
+ENABLE_ROCKET_FUEL = True
+ENABLE_ROCKET_RELIEF = True
 
 # ==============================
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+ser = None
 
 @app.route('/')
 def index():
@@ -55,11 +56,11 @@ def fake_data_loop():
             'gse': {
                 'loadcell': round(random.uniform(0, 50), 2),
                 'fill': random.choice([0, 1]),
-                'pyro': random.choice([0, 1]),
+                'dump': random.choice([0, 1]),
                 'relief': random.choice([0, 1])
             },
             'rocket': {
-                'pyro': random.choice([0, 1]),
+                'dump': random.choice([0, 1]),
                 'ox': random.choice([0, 1]),
                 'fuel': random.choice([0, 1]),
                 'relief': random.choice([0, 1])
@@ -70,9 +71,9 @@ def fake_data_loop():
                 'chamber_pressure': ENABLE_CHAMBER_PRESSURE,
                 'loadcell': ENABLE_LOADCELL,
                 'gse_fill': ENABLE_GSE_FILL,
-                'gse_pyro': ENABLE_GSE_PYRO,
+                'gse_dump': ENABLE_GSE_DUMP,
                 'gse_relief': ENABLE_GSE_RELIEF,
-                'rocket_pyro': ENABLE_ROCKET_PYRO,
+                'rocket_dump': ENABLE_ROCKET_DUMP,
                 'rocket_ox': ENABLE_ROCKET_OX,
                 'rocket_fuel': ENABLE_ROCKET_FUEL,
                 'rocket_relief': ENABLE_ROCKET_RELIEF
@@ -86,12 +87,18 @@ def fake_data_loop():
 # SERIAL LOOP (REAL DATA)
 # Expected JSON format from STM32:
 # {"pressure_transducers":{"bottle_pressure":xxx,"tank_pressure":xxx,"chamber_pressure":xxx},
-#  "gse":{"loadcell":0.00,"fill":0,"pyro":0,"relief":0},
-#  "rocket":{"pyro":0,"ox":0,"fuel":0,"relief":0}}
+#  "gse":{"loadcell":0.00,"fill":0,"dump":0,"relief":0},
+#  "rocket":{"dump":0,"ox":0,"fuel":0,"relief":0}}
 # ==============================
 
+ser = None
+ser_lock = threading.Lock()
+
 def serial_loop():
-    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    global ser
+    s = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    with ser_lock:
+        ser = s
     print(f"Serial connection opened on {SERIAL_PORT} at {BAUD_RATE} baud")
     last_time = time.time()
     msg_count = 0
@@ -115,9 +122,9 @@ def serial_loop():
                     'chamber_pressure': ENABLE_CHAMBER_PRESSURE,
                     'loadcell': ENABLE_LOADCELL,
                     'gse_fill': ENABLE_GSE_FILL,
-                    'gse_pyro': ENABLE_GSE_PYRO,
+                    'gse_dump': ENABLE_GSE_DUMP,
                     'gse_relief': ENABLE_GSE_RELIEF,
-                    'rocket_pyro': ENABLE_ROCKET_PYRO,
+                    'rocket_dump': ENABLE_ROCKET_DUMP,
                     'rocket_ox': ENABLE_ROCKET_OX,
                     'rocket_fuel': ENABLE_ROCKET_FUEL,
                     'rocket_relief': ENABLE_ROCKET_RELIEF
@@ -134,6 +141,19 @@ def serial_loop():
         except Exception as e:
             print(f"Serial error: {e}")
 
+@socketio.on('command')
+def handle_command(data):
+    with ser_lock:
+        local_ser = ser
+    if local_ser is None:
+        print("Command received but serial not open yet")
+        return
+    try:
+        cmd_str = json.dumps(data) + '\n'
+        local_ser.write(cmd_str.encode())
+        print(f"Sent to STM32: {cmd_str.strip()}")
+    except Exception as e:
+        print(f"Command error: {e}")
 
 # ==============================
 # MAIN

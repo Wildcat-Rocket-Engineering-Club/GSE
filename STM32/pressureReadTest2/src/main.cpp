@@ -3,6 +3,7 @@
 //Expected: ~96 complete 3-channel reads per second
 
 #include <ADS1256.h>
+#include <Servo.h>
 
 #define ARDUINO_ARCH_STM32
 
@@ -56,6 +57,56 @@ int cycleCounter = 0;           // Tracks position in cycleSingle3 rotation (0, 
 int completeSetCounter = 0;     // Counts complete 3-channel sets
 unsigned long loopCounter = 0;  // Total loops for diagnostics
 
+// ==============================
+// SERVO DEFINITIONS
+// ==============================
+
+Servo servo_gse_fill;
+Servo servo_gse_relief;
+Servo servo_gse_dump;
+
+Servo servo_rkt_ox;
+Servo servo_rkt_fuel;
+Servo servo_rkt_relief;
+Servo servo_rkt_dump;
+Servo servo_rkt_ign;
+
+// ==============================
+// SERVO PINS (CHANGE THESE)
+// ==============================
+
+#define PIN_GSE_FILL    PA0
+#define PIN_GSE_RELIEF  PA1
+#define PIN_GSE_DUMP    PA2
+
+#define PIN_RKT_OX      PA3
+#define PIN_RKT_FUEL    PA5
+#define PIN_RKT_RELIEF  PA6
+#define PIN_RKT_DUMP    PA7
+#define PIN_RKT_IGN     PB0
+
+// ==============================
+// VALVE STATES
+// ==============================
+
+int gse_fill_state = 0;
+int gse_relief_state = 0;
+int gse_dump_state = 0;
+
+int rkt_ox_state = 0;
+int rkt_fuel_state = 0;
+int rkt_relief_state = 0;
+int rkt_dump_state = 0;
+int rkt_ign_state = 0;
+
+
+// ==============================
+// PWM VALUES (TUNE THESE)
+// ==============================
+
+#define SERVO_CLOSED 1100
+#define SERVO_OPEN   1900
+
 // ============ SERIAL PORT CONFIGURATION ============
 //#define USE_SERIAL_USB
 
@@ -67,6 +118,63 @@ unsigned long loopCounter = 0;  // Total loops for diagnostics
 
 const long SERIAL_BAUD = 230400;
 
+// Utility function to set any valve (or the ignition)
+void setValve(Servo &servo, int &stateVar, int newState) {
+  stateVar = newState;
+
+  if (newState == 1) {
+    servo.writeMicroseconds(SERVO_OPEN);
+  } else {
+    servo.writeMicroseconds(SERVO_CLOSED);
+  }
+}
+
+// Utility to handle receipt of serial commands
+void handleSerialCommand(String line) {
+
+  if (line.indexOf("set_valve") == -1) return;
+
+  // More robust state detection
+  int state = 0;
+  int stateIdx = line.indexOf("\"state\":");
+  if (stateIdx != -1) {
+      // Skip past "state": and any spaces
+      int valIdx = stateIdx + 8;
+      while (valIdx < line.length() && line[valIdx] == ' ') valIdx++;
+      state = (line[valIdx] == '1') ? 1 : 0;
+  }
+
+  // GSE
+  if (line.indexOf("gse_fill") != -1) {
+    setValve(servo_gse_fill, gse_fill_state, state);
+  }
+  else if (line.indexOf("gse_relief") != -1) {
+    setValve(servo_gse_relief, gse_relief_state, state);
+  }
+  else if (line.indexOf("gse_dump") != -1) {
+    setValve(servo_gse_dump, gse_dump_state, state);
+  }
+
+  // ROCKET
+  else if (line.indexOf("rocket_ox") != -1) {
+    setValve(servo_rkt_ox, rkt_ox_state, state);
+  }
+  else if (line.indexOf("rocket_fuel") != -1) {
+    setValve(servo_rkt_fuel, rkt_fuel_state, state);
+  }
+  else if (line.indexOf("rocket_relief") != -1) {
+    setValve(servo_rkt_relief, rkt_relief_state, state);
+  }
+  else if (line.indexOf("rocket_dump") != -1) {
+    setValve(servo_rkt_dump, rkt_dump_state, state);
+  }
+  else if (line.indexOf("ignite") != -1) {
+    setValve(servo_rkt_ign, rkt_ign_state, state);
+  }
+}
+
+
+
 // Utility function to convert voltage to pressure
 float voltageToPressure(float voltage) {
   if (voltage < MIN_VOLTAGE) voltage = MIN_VOLTAGE;
@@ -77,6 +185,32 @@ float voltageToPressure(float voltage) {
 }
 
 void setup() {
+
+  // ==============================
+  // SERVO INIT
+  // ==============================
+
+  servo_gse_fill.attach(PIN_GSE_FILL);
+  servo_gse_relief.attach(PIN_GSE_RELIEF);
+  servo_gse_dump.attach(PIN_GSE_DUMP);
+
+  servo_rkt_ox.attach(PIN_RKT_OX);
+  servo_rkt_fuel.attach(PIN_RKT_FUEL);
+  servo_rkt_relief.attach(PIN_RKT_RELIEF);
+  servo_rkt_dump.attach(PIN_RKT_DUMP);
+  servo_rkt_ign.attach(PIN_RKT_IGN);
+
+  // Initialize all to CLOSED
+  servo_gse_fill.writeMicroseconds(SERVO_CLOSED);
+  servo_gse_relief.writeMicroseconds(SERVO_CLOSED);
+  servo_gse_dump.writeMicroseconds(SERVO_CLOSED);
+
+  servo_rkt_ox.writeMicroseconds(SERVO_CLOSED);
+  servo_rkt_fuel.writeMicroseconds(SERVO_CLOSED);
+  servo_rkt_relief.writeMicroseconds(SERVO_CLOSED);
+  servo_rkt_dump.writeMicroseconds(SERVO_CLOSED);
+  servo_rkt_ign.writeMicroseconds(SERVO_CLOSED);
+
   SERIAL_PORT.begin(SERIAL_BAUD);
   
   while (!SERIAL_PORT && millis() < 5000);
@@ -96,6 +230,19 @@ void setup() {
 }
 
 void loop() {
+
+static String serialBuffer = "";
+
+while (SERIAL_PORT.available()) {
+    char c = SERIAL_PORT.read();
+    if (c == '\n') {
+        handleSerialCommand(serialBuffer);
+        serialBuffer = "";
+    } else {
+        serialBuffer += c;
+    }
+}
+  
 const uint8_t channels[3] = {SING_0, SING_1, SING_2};
     ADS1256::ADS1256_Result res = A.cycleSingle3Tracked(channels, 3);
 
@@ -132,7 +279,25 @@ const uint8_t channels[3] = {SING_0, SING_1, SING_2};
       SERIAL_PORT.print((int)tankPressure);
       SERIAL_PORT.print(",\"chamber_pressure\":");
       SERIAL_PORT.print((int)chamberPressure);
-      SERIAL_PORT.println("},\"gse\":{\"loadcell\":0.00,\"fill\":0,\"pyro\":0,\"relief\":0},\"rocket\":{\"pyro\":0,\"ox\":0,\"fuel\":0,\"relief\":0}}");
+      SERIAL_PORT.print("},\"gse\":{\"loadcell\":0.00,\"fill\":");
+      SERIAL_PORT.print(gse_fill_state);
+      SERIAL_PORT.print(",\"relief\":");
+      SERIAL_PORT.print(gse_relief_state);
+      SERIAL_PORT.print(",\"dump\":");
+      SERIAL_PORT.print(gse_dump_state);
+
+      SERIAL_PORT.print("},\"rocket\":{\"ox\":");
+      SERIAL_PORT.print(rkt_ox_state);
+      SERIAL_PORT.print(",\"fuel\":");
+      SERIAL_PORT.print(rkt_fuel_state);
+      SERIAL_PORT.print(",\"relief\":");
+      SERIAL_PORT.print(rkt_relief_state);
+      SERIAL_PORT.print(",\"dump\":");
+      SERIAL_PORT.print(rkt_dump_state);
+      SERIAL_PORT.print(",\"ign\":");
+      SERIAL_PORT.print(rkt_ign_state);
+
+      SERIAL_PORT.println("}}");
     }
   }
 }
