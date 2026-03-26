@@ -25,20 +25,20 @@
         font-weight: 700;
       }
 
-      .st20, .st21, .st22, .st23, .st24, .st25, .st26, .st27, .st28 {
+      .st20, .st21, .st22, .st23, .st24, .st25, .st26, .st27, .st28, .st29, .st30 {
         fill: none;
       }
 
-      .st20, .st21, .st22, .st23, .st24, .st26, .st27, .st28 {
+      .st20, .st21, .st22, .st23, .st24, .st26, .st27, .st28, .st29, .st30 {
         stroke-linecap: round;
         stroke-linejoin: round;
       }
 
-      .st20, .st21, .st24, .st25 {
+      .st20, .st21, .st24, .st25, .st26, .st29 {
         stroke: #003fff;
       }
 
-      .st29, .st2, .st3, .st4, .st5, .st7, .st8, .st9, .st30, .st18 {
+      .st31, .st2, .st3, .st4, .st5, .st7, .st8, .st9, .st32, .st18 {
         fill: #003fff;
       }
 
@@ -58,7 +58,7 @@
         stroke-dasharray: 0 2.78;
       }
 
-      .st21, .st23, .st24, .st26 {
+      .st21, .st23, .st24, .st27 {
         stroke-width: .71px;
       }
 
@@ -74,7 +74,7 @@
         font-size: 16.48px;
       }
 
-      .st22, .st27, .st28 {
+      .st22, .st28, .st30 {
         stroke: #333;
         stroke-width: .57px;
       }
@@ -100,6 +100,10 @@
         font-size: 49.45px;
       }
 
+      .st26 {
+        stroke-width: .71px;
+      }
+
       .st15 {
         font-size: 17.7px;
       }
@@ -108,19 +112,23 @@
         font-size: 18.15px;
       }
 
-      .st26 {
+      .st27 {
         stroke: red;
       }
 
-      .st30 {
+      .st32 {
         fill-rule: evenodd;
       }
 
-      .st27 {
+      .st28 {
         stroke-dasharray: 13.89 6.95;
       }
 
-      .st28 {
+      .st29 {
+        stroke-width: 1px;
+      }
+
+      .st30 {
         stroke-dasharray: 0 11.12;
       }
 
@@ -149,29 +157,43 @@
     </g>
     <g id="MTEXT">
       <g class="st6">
-        <text class="st2" transform="translate(1735.01 313.54)"><tspan x="0" y="0">N</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(1735.01 313.54)"><tspan x="0" y="0">N</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st5" transform="translate(1755.74 320.47)"><tspan x="0" y="0">2</tspan></text>
+        <g class="st6">
+          <text class="st5" transform="translate(1755.74 320.47)"><tspan x="0" y="0">2</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st2" transform="translate(1770.33 313.54)"><tspan x="0" y="0">O</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(1770.33 313.54)"><tspan x="0" y="0">O</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT1">
       <g class="st6">
-        <text class="st2" transform="translate(1602.63 312.44)"><tspan x="0" y="0">N</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(1602.63 312.44)"><tspan x="0" y="0">N</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st5" transform="translate(1623.37 319.37)"><tspan x="0" y="0">2</tspan></text>
+        <g class="st6">
+          <text class="st5" transform="translate(1623.37 319.37)"><tspan x="0" y="0">2</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st2" transform="translate(1637.95 312.44)"><tspan x="0" y="0">O</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(1637.95 312.44)"><tspan x="0" y="0">O</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT2">
       <g class="st6">
-        <text class="st9" transform="translate(1668.14 338.98)"><tspan x="0" y="0">FUEL</tspan></text>
+        <g class="st6">
+          <text class="st9" transform="translate(1668.14 338.98)"><tspan x="0" y="0">FUEL</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE2">
@@ -209,7 +231,9 @@
     </g>
     <g id="MTEXT3">
       <g class="st6">
-        <text class="st4" transform="translate(1570.38 154.36)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1570.38 154.36)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE12">
@@ -220,7 +244,9 @@
     </g>
     <g id="MTEXT4">
       <g class="st6">
-        <text class="st4" transform="translate(1575.85 192.1)"><tspan x="0" y="0">PT</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1575.85 192.1)"><tspan x="0" y="0">PT</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE2">
@@ -228,7 +254,9 @@
     </g>
     <g id="MTEXT5">
       <g class="st6">
-        <text class="st4" transform="translate(1716.43 537.26)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1716.43 537.26)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE3">
@@ -236,7 +264,9 @@
     </g>
     <g id="MTEXT6">
       <g class="st6">
-        <text class="st4" transform="translate(1795.2 538.36)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1795.2 538.36)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE13">
@@ -268,7 +298,9 @@
     </g>
     <g id="MTEXT7">
       <g class="st6">
-        <text class="st4" transform="translate(1647.67 568.99)"><tspan x="0" y="0">IGN</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1647.67 568.99)"><tspan x="0" y="0">IGN</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE5">
@@ -276,7 +308,9 @@
     </g>
     <g id="MTEXT8">
       <g class="st6">
-        <text class="st4" transform="translate(1832.95 604)"><tspan x="0" y="0">PT</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1832.95 604)"><tspan x="0" y="0">PT</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE21">
@@ -305,7 +339,9 @@
     </g>
     <g id="MTEXT9">
       <g class="st6">
-        <text class="st2" transform="translate(1639.05 671.28)"><tspan x="0" y="0">ENGINE</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(1639.05 671.28)"><tspan x="0" y="0">ENGINE</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE29">
@@ -337,7 +373,9 @@
     </g>
     <g id="MTEXT10">
       <g class="st6">
-        <text class="st4" transform="translate(1489.74 402.15)"><tspan x="0" y="0">PYRO</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(1489.74 402.15)"><tspan x="0" y="0">PYRO</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE37">
@@ -426,13 +464,19 @@
     </g>
     <g id="MTEXT11">
       <g class="st6">
-        <text class="st2" transform="translate(580.17 866.39)"><tspan x="0" y="0">N</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(580.17 866.39)"><tspan x="0" y="0">N</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st5" transform="translate(600.9 873.32)"><tspan x="0" y="0">2</tspan></text>
+        <g class="st6">
+          <text class="st5" transform="translate(600.9 873.32)"><tspan x="0" y="0">2</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st2" transform="translate(615.49 866.39)"><tspan x="0" y="0">O</tspan></text>
+        <g class="st6">
+          <text class="st2" transform="translate(615.49 866.39)"><tspan x="0" y="0">O</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE61">
@@ -446,7 +490,9 @@
     </g>
     <g id="MTEXT12">
       <g class="st6">
-        <text class="st4" transform="translate(969.22 551.49)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(969.22 551.49)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE63">
@@ -457,7 +503,9 @@
     </g>
     <g id="BottlePT">
       <g class="st6">
-        <text class="st18" transform="translate(918.35 551.49)"><tspan x="0" y="0">PT</tspan></text>
+        <g class="st6">
+          <text class="st18" transform="translate(918.35 551.49)"><tspan x="0" y="0">PT</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE64">
@@ -477,7 +525,9 @@
     </g>
     <g id="MTEXT13">
       <g class="st6">
-        <text class="st7" transform="translate(970.81 939.32)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st7" transform="translate(970.81 939.32)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE68">
@@ -521,21 +571,29 @@
     </g>
     <g id="MTEXT14">
       <g class="st6">
-        <text class="st3" transform="translate(51.36 876.02)"><tspan x="0" y="0">N</tspan></text>
+        <g class="st6">
+          <text class="st3" transform="translate(51.36 876.02)"><tspan x="0" y="0">N</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st8" transform="translate(67.15 881.29)"><tspan x="0" y="0">2</tspan></text>
+        <g class="st6">
+          <text class="st8" transform="translate(67.15 881.29)"><tspan x="0" y="0">2</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st3" transform="translate(78.26 876.02)"><tspan x="0" y="0">O</tspan></text>
+        <g class="st6">
+          <text class="st3" transform="translate(78.26 876.02)"><tspan x="0" y="0">O</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE9">
-      <circle class="st24" cx="77.68" cy="917.44" r="16.41" transform="translate(-18.32 1.74) rotate(-1.15)"/>
+      <circle class="st26" cx="77.76" cy="917.44" r="16.41" transform="translate(-36.68 3.85) rotate(-2.3)"/>
     </g>
     <g id="MTEXT15">
       <g class="st6">
-        <text class="st4" transform="translate(68.3 922.36)"><tspan x="0" y="0">PT</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(68.3 922.36)"><tspan x="0" y="0">PT</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE80">
@@ -548,11 +606,13 @@
       <line class="st24" x1="54.15" y1="831.01" x2="89.16" y2="813.5"/>
     </g>
     <g id="CIRCLE10">
-      <circle class="st24" cx="68.38" cy="726.55" r="16.41" transform="translate(-14.51 1.51) rotate(-1.15)"/>
+      <circle class="st26" cx="68.44" cy="726.54" r="16.41" transform="translate(-29.04 3.32) rotate(-2.3)"/>
     </g>
     <g id="MTEXT16">
       <g class="st6">
-        <text class="st4" transform="translate(54.06 731.45)"><tspan x="0" y="0">SRV</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(54.06 731.45)"><tspan x="0" y="0">SRV</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE83">
@@ -581,7 +641,9 @@
     </g>
     <g id="MTEXT17">
       <g class="st6">
-        <text class="st4" transform="translate(48.37 543.28)"><tspan x="0" y="0">PYRO</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(48.37 543.28)"><tspan x="0" y="0">PYRO</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE90">
@@ -604,7 +666,9 @@
     </g>
     <g id="MTEXT18">
       <g class="st6">
-        <text class="st4" transform="translate(81.82 131.93)"><tspan x="0" y="0">Blue = Fluid Component</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(81.82 131.93)"><tspan x="0" y="0">Blue = Fluid Component</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE93">
@@ -618,7 +682,9 @@
     </g>
     <g id="MTEXT19">
       <g class="st6">
-        <text class="st4" transform="translate(962.97 803.11)"><tspan x="0" y="0">PYRO</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(962.97 803.11)"><tspan x="0" y="0">PYRO</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE95">
@@ -661,11 +727,13 @@
       <line class="st24" x1="880.68" y1="713.95" x2="924.44" y2="692.07"/>
     </g>
     <g id="CIRCLE13">
-      <circle class="st24" cx="77.13" cy="959.85" r="16.41" transform="translate(-19.17 1.73) rotate(-1.15)"/>
+      <circle class="st26" cx="77.21" cy="959.84" r="16.41" transform="translate(-38.38 3.86) rotate(-2.3)"/>
     </g>
     <g id="MTEXT20">
       <g class="st6">
-        <text class="st4" transform="translate(65.17 964.77)"><tspan x="0" y="0">IGN</tspan></text>
+        <g class="st6">
+          <text class="st4" transform="translate(65.17 964.77)"><tspan x="0" y="0">IGN</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE105">
@@ -746,13 +814,13 @@
       <line class="st20" x1="1749.33" y1="143.42" x2="1749.33" y2="153.67"/>
     </g>
     <g id="HATCH">
-      <circle class="st29" cx="1743.77" cy="143.42" r="1.67"/>
+      <circle class="st31" cx="1743.77" cy="143.42" r="1.67"/>
     </g>
     <g id="CIRCLE19">
       <circle class="st20" cx="1743.77" cy="143.42" r="1.67"/>
     </g>
     <g id="HATCH1">
-      <polygon class="st30" points="1748.75 130.99 1752.03 131.03 1753.32 134.04 1754.9 126.72 1748.75 130.99"/>
+      <polygon class="st32" points="1748.75 130.99 1752.03 131.03 1753.32 134.04 1754.9 126.72 1748.75 130.99"/>
     </g>
     <g id="LWPOLYLINE16">
       <polygon class="st20" points="1754.9 126.72 1748.75 130.99 1752.03 131.03 1753.32 134.04 1754.9 126.72"/>
@@ -770,13 +838,13 @@
       <line class="st20" x1="1631.73" y1="467.25" x2="1631.73" y2="486.54"/>
     </g>
     <g id="HATCH2">
-      <circle class="st29" cx="1621.25" cy="467.25" r="3.14"/>
+      <circle class="st31" cx="1621.25" cy="467.25" r="3.14"/>
     </g>
     <g id="CIRCLE20">
       <circle class="st20" cx="1621.25" cy="467.25" r="3.14"/>
     </g>
     <g id="HATCH3">
-      <polygon class="st30" points="1630.62 443.85 1636.8 443.92 1639.24 449.6 1642.2 435.81 1630.62 443.85"/>
+      <polygon class="st32" points="1630.62 443.85 1636.8 443.92 1639.24 449.6 1642.2 435.81 1630.62 443.85"/>
     </g>
     <g id="LWPOLYLINE19">
       <polygon class="st20" points="1642.2 435.81 1630.62 443.85 1636.8 443.92 1639.24 449.6 1642.2 435.81"/>
@@ -827,7 +895,7 @@
       <line class="st20" x1="92.93" y1="767.03" x2="123.08" y2="767.03"/>
     </g>
     <g id="CIRCLE23">
-      <circle class="st20" cx="68.38" cy="767.03" r="9.41" transform="translate(-15.32 1.52) rotate(-1.15)"/>
+      <circle class="st29" cx="68.44" cy="767.02" r="9.41" transform="translate(-30.66 3.36) rotate(-2.3)"/>
     </g>
     <g id="LWPOLYLINE25">
       <polygon class="st20" points="43.33 663.63 93.42 697.03 93.42 663.63 43.33 697.03 43.33 663.63"/>
@@ -866,13 +934,13 @@
       <line class="st20" x1="65.64" y1="444.27" x2="55.39" y2="444.27"/>
     </g>
     <g id="HATCH4">
-      <circle class="st29" cx="65.64" cy="438.71" r="1.67"/>
+      <circle class="st31" cx="65.64" cy="438.71" r="1.67"/>
     </g>
     <g id="CIRCLE26">
       <circle class="st20" cx="65.64" cy="438.71" r="1.67"/>
     </g>
     <g id="HATCH5">
-      <polygon class="st30" points="78.07 443.69 78.03 446.97 75.02 448.26 82.34 449.84 78.07 443.69"/>
+      <polygon class="st32" points="78.07 443.69 78.03 446.97 75.02 448.26 82.34 449.84 78.07 443.69"/>
     </g>
     <g id="LWPOLYLINE29">
       <polygon class="st20" points="82.34 449.84 78.07 443.69 78.03 446.97 75.02 448.26 82.34 449.84"/>
@@ -914,13 +982,13 @@
       <line class="st20" x1="975.32" y1="692.07" x2="985.57" y2="692.07"/>
     </g>
     <g id="HATCH6">
-      <circle class="st29" cx="975.32" cy="697.63" r="1.67"/>
+      <circle class="st31" cx="975.32" cy="697.63" r="1.67"/>
     </g>
     <g id="CIRCLE29">
       <circle class="st20" cx="975.32" cy="697.63" r="1.67"/>
     </g>
     <g id="HATCH7">
-      <polygon class="st30" points="962.89 692.66 962.92 689.37 965.94 688.08 958.62 686.5 962.89 692.66"/>
+      <polygon class="st32" points="962.89 692.66 962.92 689.37 965.94 688.08 958.62 686.5 962.89 692.66"/>
     </g>
     <g id="LWPOLYLINE34">
       <polygon class="st20" points="958.62 686.5 962.89 692.66 962.92 689.37 965.94 688.08 958.62 686.5"/>
@@ -938,13 +1006,13 @@
       <line class="st20" x1="50.32" y1="497.88" x2="31.03" y2="497.88"/>
     </g>
     <g id="HATCH8">
-      <circle class="st29" cx="50.32" cy="487.4" r="3.14"/>
+      <circle class="st31" cx="50.32" cy="487.4" r="3.14"/>
     </g>
     <g id="CIRCLE30">
       <circle class="st20" cx="50.32" cy="487.4" r="3.14"/>
     </g>
     <g id="HATCH9">
-      <polygon class="st30" points="73.72 496.78 73.65 502.95 67.98 505.39 81.76 508.36 73.72 496.78"/>
+      <polygon class="st32" points="73.72 496.78 73.65 502.95 67.98 505.39 81.76 508.36 73.72 496.78"/>
     </g>
     <g id="LWPOLYLINE37">
       <polygon class="st20" points="81.76 508.36 73.72 496.78 73.65 502.95 67.98 505.39 81.76 508.36"/>
@@ -953,55 +1021,77 @@
   <g id="Boundaries">
     <g id="MTEXT21">
       <g class="st6">
-        <text class="st14" transform="translate(1250.49 96.19)"><tspan x="0" y="0">Engine</tspan></text>
+        <g class="st6">
+          <text class="st14" transform="translate(1250.49 96.19)"><tspan x="0" y="0">Engine</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st14" transform="translate(1272.16 154.54)"><tspan x="0" y="0">P&amp;ID</tspan></text>
+        <g class="st6">
+          <text class="st14" transform="translate(1272.16 154.54)"><tspan x="0" y="0">P&amp;ID</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT22">
       <g class="st6">
-        <text class="st11" transform="translate(1647.41 162.56)"><tspan x="0" y="0">Vent</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1647.41 162.56)"><tspan x="0" y="0">Vent</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT23">
       <g class="st6">
-        <text class="st11" transform="translate(1775.95 131.93)"><tspan x="0" y="0">Pressure</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1775.95 131.93)"><tspan x="0" y="0">Pressure</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st11" transform="translate(1775.95 157.46)"><tspan x="0" y="0">Relief</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1775.95 157.46)"><tspan x="0" y="0">Relief</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT24">
       <g class="st6">
-        <text class="st11" transform="translate(1385.94 458.5)"><tspan x="0" y="0">Dump</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1385.94 458.5)"><tspan x="0" y="0">Dump</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE142">
-      <line class="st27" x1="1180.99" y1="176.24" x2="1482.39" y2="176.24"/>
+      <line class="st28" x1="1180.99" y1="176.24" x2="1482.39" y2="176.24"/>
     </g>
     <g id="LINE143">
-      <line class="st27" x1="1482.39" y1="176.24" x2="1482.39" y2="46.6"/>
+      <line class="st28" x1="1482.39" y1="176.24" x2="1482.39" y2="46.6"/>
     </g>
     <g id="MTEXT25">
       <g class="st6">
-        <text class="st11" transform="translate(1775.95 480.92)"><tspan x="0" y="0">Main</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1775.95 480.92)"><tspan x="0" y="0">Main</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT26">
       <g class="st6">
-        <text class="st11" transform="translate(1736.57 885.71)"><tspan x="0" y="0">Load</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1736.57 885.71)"><tspan x="0" y="0">Load</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st11" transform="translate(1737.3 911.24)"><tspan x="0" y="0">Cell</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(1737.3 911.24)"><tspan x="0" y="0">Cell</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT27">
       <g class="st6">
-        <text class="st17" transform="translate(1786.78 182.52)"><tspan x="0" y="0">Activates</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(1786.78 182.52)"><tspan x="0" y="0">Activates</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st17" transform="translate(1790.14 203.93)"><tspan x="0" y="0">869 psi</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(1790.14 203.93)"><tspan x="0" y="0">869 psi</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LWPOLYLINE38">
@@ -1009,96 +1099,130 @@
     </g>
     <g id="MTEXT28">
       <g class="st6">
-        <text class="st14" transform="translate(398.48 98.02)"><tspan x="0" y="0">Ground Support</tspan></text>
+        <g class="st6">
+          <text class="st14" transform="translate(398.48 98.02)"><tspan x="0" y="0">Ground Support</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st14" transform="translate(391.81 156.36)"><tspan x="0" y="0">Equipment P&amp;ID</tspan></text>
+        <g class="st6">
+          <text class="st14" transform="translate(391.81 156.36)"><tspan x="0" y="0">Equipment P&amp;ID</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT29">
       <g class="st6">
-        <text class="st14" transform="translate(80.07 95.46)"><tspan x="0" y="0">Legend</tspan></text>
+        <g class="st6">
+          <text class="st14" transform="translate(80.07 95.46)"><tspan x="0" y="0">Legend</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT30">
       <g class="st6">
-        <text class="st17" transform="translate(134.51 920.58)"><tspan x="0" y="0">Pressure Transducer</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(134.51 920.58)"><tspan x="0" y="0">Pressure Transducer</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT31">
       <g class="st6">
-        <text class="st17" transform="translate(155.47 620.2)"><tspan x="0" y="0">Quick Disconnect</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(155.47 620.2)"><tspan x="0" y="0">Quick Disconnect</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT32">
       <g class="st6">
-        <text class="st17" transform="translate(163.25 761.09)"><tspan x="0" y="0">Servo-Actuated</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(163.25 761.09)"><tspan x="0" y="0">Servo-Actuated</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st17" transform="translate(190.47 782.5)"><tspan x="0" y="0">Ball Valve</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(190.47 782.5)"><tspan x="0" y="0">Ball Valve</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT33">
       <g class="st6">
-        <text class="st17" transform="translate(136.72 818.88)"><tspan x="0" y="0">Vent to atmosphere</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(136.72 818.88)"><tspan x="0" y="0">Vent to atmosphere</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT34">
       <g class="st6">
-        <text class="st17" transform="translate(151.06 675.75)"><tspan x="0" y="0">Manually-Actuated</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(151.06 675.75)"><tspan x="0" y="0">Manually-Actuated</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st17" transform="translate(192.66 697.16)"><tspan x="0" y="0">Ball Valve</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(192.66 697.16)"><tspan x="0" y="0">Ball Valve</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT35">
       <g class="st6">
-        <text class="st17" transform="translate(155.65 451.79)"><tspan x="0" y="0">Mechanical Relief</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(155.65 451.79)"><tspan x="0" y="0">Mechanical Relief</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT36">
       <g class="st6">
-        <text class="st17" transform="translate(133.42 563.43)"><tspan x="0" y="0">Pyro-Actuated Valve</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(133.42 563.43)"><tspan x="0" y="0">Pyro-Actuated Valve</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE144">
-      <line class="st27" x1="344.62" y1="161.47" y2="161.47"/>
+      <line class="st28" x1="344.62" y1="161.47" y2="161.47"/>
     </g>
     <g id="LINE145">
-      <line class="st27" y1="111.69" x2="344.62" y2="111.69"/>
+      <line class="st28" y1="111.69" x2="344.62" y2="111.69"/>
     </g>
     <g id="LINE146">
-      <line class="st27" x1="344.62" y1="417.47" y2="417.47"/>
+      <line class="st28" x1="344.62" y1="417.47" y2="417.47"/>
     </g>
     <g id="MTEXT37">
       <g class="st6">
-        <text class="st17" transform="translate(132.85 874.08)"><tspan x="0" y="0">Nitrous Bottle</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(132.85 874.08)"><tspan x="0" y="0">Nitrous Bottle</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT38">
       <g class="st6">
-        <text class="st11" transform="translate(579.28 389.57)"><tspan x="0" y="0">915MHz UART Link</tspan></text>
+        <g class="st6">
+          <text class="st11" transform="translate(579.28 389.57)"><tspan x="0" y="0">915MHz UART Link</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE147">
-      <line class="st27" x1="881.78" y1="180.07" x2="344.62" y2="180.07"/>
+      <line class="st28" x1="881.78" y1="180.07" x2="344.62" y2="180.07"/>
     </g>
     <g id="LINE148">
-      <line class="st27" x1="881.78" y1="46.6" x2="881.78" y2="180.07"/>
+      <line class="st28" x1="881.78" y1="46.6" x2="881.78" y2="180.07"/>
     </g>
     <g id="MTEXT39">
       <g class="st6">
-        <text class="st12" transform="translate(851.61 662.53)"><tspan x="0" y="0">Activates 869 psi</tspan></text>
+        <g class="st6">
+          <text class="st12" transform="translate(851.61 662.53)"><tspan x="0" y="0">Activates 869 psi</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT40">
       <g class="st6">
-        <text class="st17" transform="translate(134.06 961.94)"><tspan x="0" y="0">Igniter</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(134.06 961.94)"><tspan x="0" y="0">Igniter</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT41">
       <g class="st6">
-        <text class="st17" transform="translate(173.99 504.3)"><tspan x="0" y="0">Check Valve</tspan></text>
+        <g class="st6">
+          <text class="st17" transform="translate(173.99 504.3)"><tspan x="0" y="0">Check Valve</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE149">
@@ -1111,342 +1235,394 @@
       <line class="st22" x1="344.62" y1="1033.4" x2="1920" y2="1033.4"/>
     </g>
     <g id="LINE152">
-      <line class="st27" x1="1180.99" y1="176.24" x2="1180.99" y2="46.6"/>
+      <line class="st28" x1="1180.99" y1="176.24" x2="1180.99" y2="46.6"/>
     </g>
     <g id="LINE153">
-      <line class="st27" x1="1180.99" y1="176.24" x2="1180.99" y2="560.24"/>
+      <line class="st28" x1="1180.99" y1="176.24" x2="1180.99" y2="560.24"/>
     </g>
     <g id="LINE154">
-      <line class="st28" x1="1180.99" y1="559.69" x2="1180.99" y2="699.73"/>
+      <line class="st30" x1="1180.99" y1="559.69" x2="1180.99" y2="699.73"/>
     </g>
     <g id="LINE155">
-      <line class="st27" x1="1180.99" y1="913.06" x2="1180.99" y2="1033.4"/>
+      <line class="st28" x1="1180.99" y1="913.06" x2="1180.99" y2="1033.4"/>
     </g>
     <g id="LINE156">
-      <line class="st28" x1="1180.99" y1="869.85" x2="1180.99" y2="913.61"/>
+      <line class="st30" x1="1180.99" y1="869.85" x2="1180.99" y2="913.61"/>
     </g>
     <g id="LINE157">
-      <line class="st27" x1="1180.99" y1="870.39" x2="1180.99" y2="699.18"/>
+      <line class="st28" x1="1180.99" y1="870.39" x2="1180.99" y2="699.18"/>
     </g>
   </g>
   <g id="GSE_Electronics">
     <g id="LINE158">
-      <line class="st26" x1="1066.12" y1="892.82" x2="1357.13" y2="892.82"/>
+      <line class="st27" x1="1066.12" y1="892.82" x2="1357.13" y2="892.82"/>
     </g>
     <g id="LINE159">
-      <line class="st26" x1="1526.7" y1="149.44" x2="1526.7" y2="292.75"/>
+      <line class="st27" x1="1526.7" y1="149.44" x2="1526.7" y2="292.75"/>
     </g>
     <g id="LINE160">
-      <line class="st26" x1="1526.7" y1="292.75" x2="1368.07" y2="292.75"/>
+      <line class="st27" x1="1526.7" y1="292.75" x2="1368.07" y2="292.75"/>
     </g>
     <g id="LINE161">
-      <line class="st26" x1="1526.7" y1="149.44" x2="1568.27" y2="149.44"/>
+      <line class="st27" x1="1526.7" y1="149.44" x2="1568.27" y2="149.44"/>
     </g>
     <g id="LINE162">
-      <line class="st26" x1="1730.19" y1="515.93" x2="1730.19" y2="494.05"/>
+      <line class="st27" x1="1730.19" y1="515.93" x2="1730.19" y2="494.05"/>
     </g>
     <g id="LINE163">
-      <line class="st26" x1="1730.19" y1="494.05" x2="1591.79" y2="494.05"/>
+      <line class="st27" x1="1730.19" y1="494.05" x2="1591.79" y2="494.05"/>
     </g>
     <g id="LINE164">
-      <line class="st26" x1="1809.5" y1="517.03" x2="1809.5" y2="494.05"/>
+      <line class="st27" x1="1809.5" y1="517.03" x2="1809.5" y2="494.05"/>
     </g>
     <g id="LINE165">
-      <line class="st26" x1="1842.32" y1="582.67" x2="1842.32" y2="494.05"/>
+      <line class="st27" x1="1842.32" y1="582.67" x2="1842.32" y2="494.05"/>
     </g>
     <g id="LINE166">
-      <line class="st26" x1="1730.19" y1="494.05" x2="1842.32" y2="494.05"/>
+      <line class="st27" x1="1730.19" y1="494.05" x2="1842.32" y2="494.05"/>
     </g>
     <g id="LINE167">
-      <line class="st26" x1="1568.82" y1="187.18" x2="1526.7" y2="187.18"/>
+      <line class="st27" x1="1568.82" y1="187.18" x2="1526.7" y2="187.18"/>
     </g>
     <g id="LINE168">
-      <line class="st26" x1="1368.07" y1="292.75" x2="1368.07" y2="674.56"/>
+      <line class="st27" x1="1368.07" y1="292.75" x2="1368.07" y2="674.56"/>
     </g>
     <g id="LINE169">
-      <line class="st26" x1="1508.65" y1="390.12" x2="1508.65" y2="379.18"/>
+      <line class="st27" x1="1508.65" y1="390.12" x2="1508.65" y2="379.18"/>
     </g>
     <g id="LINE170">
-      <line class="st26" x1="1508.65" y1="379.18" x2="1368.07" y2="379.18"/>
+      <line class="st27" x1="1508.65" y1="379.18" x2="1368.07" y2="379.18"/>
     </g>
     <g id="LINE171">
-      <line class="st26" x1="1301.33" y1="640.65" x2="1301.33" y2="706.29"/>
+      <line class="st27" x1="1301.33" y1="640.65" x2="1301.33" y2="706.29"/>
     </g>
     <g id="LINE172">
-      <line class="st26" x1="1323.21" y1="640.65" x2="1323.21" y2="706.29"/>
+      <line class="st27" x1="1323.21" y1="640.65" x2="1323.21" y2="706.29"/>
     </g>
     <g id="LINE173">
-      <line class="st26" x1="1323.21" y1="674.56" x2="1334.15" y2="674.56"/>
+      <line class="st27" x1="1323.21" y1="674.56" x2="1334.15" y2="674.56"/>
     </g>
     <g id="LINE174">
-      <line class="st26" x1="1301.33" y1="674.56" x2="1290.39" y2="674.56"/>
+      <line class="st27" x1="1301.33" y1="674.56" x2="1290.39" y2="674.56"/>
     </g>
     <g id="LINE175">
-      <line class="st26" x1="1290.94" y1="674.56" x2="1277.81" y2="674.56"/>
+      <line class="st27" x1="1290.94" y1="674.56" x2="1277.81" y2="674.56"/>
     </g>
     <g id="LINE176">
-      <line class="st26" x1="1660.17" y1="588.14" x2="1660.17" y2="610.02"/>
+      <line class="st27" x1="1660.17" y1="588.14" x2="1660.17" y2="610.02"/>
     </g>
     <g id="LINE177">
-      <line class="st26" x1="1660.17" y1="610.02" x2="1707.76" y2="610.02"/>
+      <line class="st27" x1="1660.17" y1="610.02" x2="1707.76" y2="610.02"/>
     </g>
     <g id="LINE178">
-      <line class="st26" x1="1707.76" y1="610.02" x2="1707.76" y2="856.17"/>
+      <line class="st27" x1="1707.76" y1="610.02" x2="1707.76" y2="856.17"/>
     </g>
     <g id="LINE179">
-      <line class="st26" x1="1707.76" y1="856.17" x2="1357.13" y2="856.17"/>
+      <line class="st27" x1="1707.76" y1="856.17" x2="1357.13" y2="856.17"/>
     </g>
     <g id="LINE180">
-      <line class="st26" x1="1591.79" y1="674.56" x2="1328.14" y2="674.56"/>
+      <line class="st27" x1="1591.79" y1="674.56" x2="1328.14" y2="674.56"/>
     </g>
     <g id="LINE181">
-      <line class="st26" x1="1591.79" y1="674.56" x2="1591.79" y2="494.05"/>
+      <line class="st27" x1="1591.79" y1="674.56" x2="1591.79" y2="494.05"/>
     </g>
     <g id="LINE182">
-      <line class="st26" x1="1695.18" y1="875.86" x2="1730.19" y2="875.86"/>
+      <line class="st27" x1="1695.18" y1="875.86" x2="1730.19" y2="875.86"/>
     </g>
     <g id="LINE183">
-      <line class="st26" x1="1730.19" y1="875.86" x2="1730.19" y2="884.62"/>
+      <line class="st27" x1="1730.19" y1="875.86" x2="1730.19" y2="884.62"/>
     </g>
     <g id="LINE184">
-      <line class="st26" x1="1730.19" y1="884.62" x2="1721.44" y2="884.62"/>
+      <line class="st27" x1="1730.19" y1="884.62" x2="1721.44" y2="884.62"/>
     </g>
     <g id="LINE185">
-      <line class="st26" x1="1721.44" y1="884.62" x2="1721.44" y2="902.12"/>
+      <line class="st27" x1="1721.44" y1="884.62" x2="1721.44" y2="902.12"/>
     </g>
     <g id="LINE186">
-      <line class="st26" x1="1721.44" y1="902.12" x2="1730.19" y2="902.12"/>
+      <line class="st27" x1="1721.44" y1="902.12" x2="1730.19" y2="902.12"/>
     </g>
     <g id="LINE187">
-      <line class="st26" x1="1730.19" y1="902.12" x2="1730.19" y2="910.87"/>
+      <line class="st27" x1="1730.19" y1="902.12" x2="1730.19" y2="910.87"/>
     </g>
     <g id="LINE188">
-      <line class="st26" x1="1730.19" y1="910.87" x2="1686.43" y2="910.87"/>
+      <line class="st27" x1="1730.19" y1="910.87" x2="1686.43" y2="910.87"/>
     </g>
     <g id="LINE189">
-      <line class="st26" x1="1686.43" y1="910.87" x2="1686.43" y2="902.12"/>
+      <line class="st27" x1="1686.43" y1="910.87" x2="1686.43" y2="902.12"/>
     </g>
     <g id="LINE190">
-      <line class="st26" x1="1686.43" y1="902.12" x2="1695.18" y2="902.12"/>
+      <line class="st27" x1="1686.43" y1="902.12" x2="1695.18" y2="902.12"/>
     </g>
     <g id="LINE191">
-      <line class="st26" x1="1695.18" y1="902.12" x2="1695.18" y2="884.62"/>
+      <line class="st27" x1="1695.18" y1="902.12" x2="1695.18" y2="884.62"/>
     </g>
     <g id="LINE192">
-      <line class="st26" x1="1695.18" y1="884.62" x2="1686.43" y2="884.62"/>
+      <line class="st27" x1="1695.18" y1="884.62" x2="1686.43" y2="884.62"/>
     </g>
     <g id="LINE193">
-      <line class="st26" x1="1686.43" y1="884.62" x2="1686.43" y2="875.86"/>
+      <line class="st27" x1="1686.43" y1="884.62" x2="1686.43" y2="875.86"/>
     </g>
     <g id="LINE194">
-      <line class="st26" x1="1686.43" y1="875.86" x2="1695.18" y2="875.86"/>
+      <line class="st27" x1="1686.43" y1="875.86" x2="1695.18" y2="875.86"/>
     </g>
     <g id="LINE195">
-      <line class="st26" x1="1686.43" y1="906.5" x2="1357.13" y2="906.5"/>
+      <line class="st27" x1="1686.43" y1="906.5" x2="1357.13" y2="906.5"/>
     </g>
     <g id="LINE196">
-      <line class="st26" x1="1357.13" y1="895.56" x2="1357.13" y2="856.17"/>
+      <line class="st27" x1="1357.13" y1="895.56" x2="1357.13" y2="856.17"/>
     </g>
     <g id="LWPOLYLINE39">
-      <rect class="st26" x="369.78" y="376.99" width="109.4" height="65.64"/>
+      <rect class="st27" x="369.78" y="376.99" width="109.4" height="65.64"/>
     </g>
     <g id="MTEXT42">
       <g class="st6">
-        <text class="st0" transform="translate(381.89 404.34)"><tspan x="0" y="0">Ground</tspan></text>
+        <g class="st6">
+          <text class="st0" transform="translate(381.89 404.34)"><tspan x="0" y="0">Ground</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st0" transform="translate(382.28 431.69)"><tspan x="0" y="0">Station</tspan></text>
+        <g class="st6">
+          <text class="st0" transform="translate(382.28 431.69)"><tspan x="0" y="0">Station</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE31">
-      <circle class="st26" cx="527.32" cy="409.81" r="28.44"/>
+      <circle class="st27" cx="527.32" cy="409.81" r="28.44"/>
     </g>
     <g id="MTEXT43">
       <g class="st6">
-        <text class="st13" transform="translate(509.26 407.08)"><tspan x="0" y="0">XBee</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(509.26 407.08)"><tspan x="0" y="0">XBee</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st13" transform="translate(506.92 423.49)"><tspan x="0" y="0">Radio</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(506.92 423.49)"><tspan x="0" y="0">Radio</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE197">
-      <line class="st26" x1="926.63" y1="530.15" x2="926.63" y2="489.68"/>
+      <line class="st27" x1="926.63" y1="530.15" x2="926.63" y2="489.68"/>
     </g>
     <g id="LINE198">
-      <line class="st26" x1="997.74" y1="933.85" x2="1066.67" y2="933.85"/>
+      <line class="st27" x1="997.74" y1="933.85" x2="1066.67" y2="933.85"/>
     </g>
     <g id="LINE199">
-      <line class="st26" x1="1066.67" y1="933.85" x2="1066.67" y2="484.21"/>
+      <line class="st27" x1="1066.67" y1="933.85" x2="1066.67" y2="484.21"/>
     </g>
     <g id="LINE200">
-      <line class="st26" x1="1066.67" y1="484.21" x2="1049.16" y2="484.21"/>
+      <line class="st27" x1="1066.67" y1="484.21" x2="1049.16" y2="484.21"/>
     </g>
     <g id="MTEXT44">
       <g class="st6">
-        <text class="st16" transform="translate(173.33 193.34)"><tspan x="0" y="0">XB9X Radio</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(173.33 193.34)"><tspan x="0" y="0">XB9X Radio</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st16" transform="translate(146.72 214.75)"><tspan x="0" y="0">Telemetry Module</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(146.72 214.75)"><tspan x="0" y="0">Telemetry Module</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE32">
-      <circle class="st26" cx="864.27" cy="409.81" r="28.44"/>
+      <circle class="st27" cx="864.27" cy="409.81" r="28.44"/>
     </g>
     <g id="MTEXT45">
       <g class="st6">
-        <text class="st13" transform="translate(846.22 407.08)"><tspan x="0" y="0">XBee</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(846.22 407.08)"><tspan x="0" y="0">XBee</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st13" transform="translate(843.88 423.49)"><tspan x="0" y="0">Radio</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(843.88 423.49)"><tspan x="0" y="0">Radio</tspan></text>
+        </g>
       </g>
     </g>
     <g id="CIRCLE33">
-      <circle class="st26" cx="60.17" cy="196.48" r="28.44"/>
+      <circle class="st27" cx="60.17" cy="196.48" r="28.44"/>
     </g>
     <g id="MTEXT46">
       <g class="st6">
-        <text class="st13" transform="translate(42.12 193.74)"><tspan x="0" y="0">XBee</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(42.12 193.74)"><tspan x="0" y="0">XBee</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st13" transform="translate(39.78 210.15)"><tspan x="0" y="0">Radio</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(39.78 210.15)"><tspan x="0" y="0">Radio</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE201">
-      <line class="st26" x1="498.87" y1="410.91" x2="479.18" y2="410.91"/>
+      <line class="st27" x1="498.87" y1="410.91" x2="479.18" y2="410.91"/>
     </g>
     <g id="LWPOLYLINE40">
-      <rect class="st26" x="917.33" y="424.03" width="131.83" height="65.64"/>
+      <rect class="st27" x="917.33" y="424.03" width="131.83" height="65.64"/>
     </g>
     <g id="MTEXT47">
       <g class="st6">
-        <text class="st0" transform="translate(946.09 452.48)"><tspan x="0" y="0">STM32</tspan></text>
+        <g class="st6">
+          <text class="st0" transform="translate(946.09 452.48)"><tspan x="0" y="0">STM32</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st0" transform="translate(949.61 479.83)"><tspan x="0" y="0">Board</tspan></text>
+        <g class="st6">
+          <text class="st0" transform="translate(949.61 479.83)"><tspan x="0" y="0">Board</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT48">
       <g class="st6">
-        <text class="st13" transform="translate(83.64 151.62)"><tspan x="0" y="0">Red = Electrical Component</tspan></text>
+        <g class="st6">
+          <text class="st13" transform="translate(83.64 151.62)"><tspan x="0" y="0">Red = Electrical Component</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE202">
-      <line class="st26" x1="43.21" y1="146.7" x2="76.03" y2="146.7"/>
+      <line class="st27" x1="43.21" y1="146.7" x2="76.03" y2="146.7"/>
     </g>
     <g id="LINE203">
-      <line class="st26" x1="1277.81" y1="674.56" x2="1066.67" y2="674.56"/>
+      <line class="st27" x1="1277.81" y1="674.56" x2="1066.67" y2="674.56"/>
     </g>
     <g id="LINE204">
-      <line class="st26" x1="892.72" y1="409.81" x2="983.52" y2="409.81"/>
+      <line class="st27" x1="892.72" y1="409.81" x2="983.52" y2="409.81"/>
     </g>
     <g id="LINE205">
-      <line class="st26" x1="983.52" y1="409.81" x2="983.52" y2="424.03"/>
+      <line class="st27" x1="983.52" y1="409.81" x2="983.52" y2="424.03"/>
     </g>
     <g id="LINE206">
-      <line class="st26" x1="1001.03" y1="798.19" x2="1066.67" y2="798.19"/>
+      <line class="st27" x1="1001.03" y1="798.19" x2="1066.67" y2="798.19"/>
     </g>
     <g id="LINE207">
-      <line class="st26" x1="999.93" y1="546.56" x2="1066.67" y2="546.56"/>
+      <line class="st27" x1="999.93" y1="546.56" x2="1066.67" y2="546.56"/>
     </g>
     <g id="LWPOLYLINE41">
-      <rect class="st26" x="24.05" y="233.89" width="72.21" height="43.32"/>
+      <rect class="st27" x="24.05" y="233.89" width="72.21" height="43.32"/>
     </g>
     <g id="MTEXT49">
       <g class="st6">
-        <text class="st19" transform="translate(32.04 251.95)"><tspan x="0" y="0">Ground</tspan></text>
+        <g class="st6">
+          <text class="st19" transform="translate(32.04 251.95)"><tspan x="0" y="0">Ground</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st19" transform="translate(32.3 270)"><tspan x="0" y="0">Station</tspan></text>
+        <g class="st6">
+          <text class="st19" transform="translate(32.3 270)"><tspan x="0" y="0">Station</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LWPOLYLINE42">
-      <rect class="st26" x="11.67" y="292.86" width="100.65" height="50.12"/>
+      <rect class="st27" x="11.67" y="292.86" width="100.65" height="50.12"/>
     </g>
     <g id="MTEXT50">
       <g class="st6">
-        <text class="st15" transform="translate(33.62 314.57)"><tspan x="0" y="0">STM32</tspan></text>
+        <g class="st6">
+          <text class="st15" transform="translate(33.62 314.57)"><tspan x="0" y="0">STM32</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st15" transform="translate(36.31 335.46)"><tspan x="0" y="0">Board</tspan></text>
+        <g class="st6">
+          <text class="st15" transform="translate(36.31 335.46)"><tspan x="0" y="0">Board</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT51">
       <g class="st6">
-        <text class="st16" transform="translate(155.54 246.14)"><tspan x="0" y="0">Ground Station</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(155.54 246.14)"><tspan x="0" y="0">Ground Station</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st16" transform="translate(140.86 270)"><tspan x="0" y="0">Computer w/ GUI</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(140.86 270)"><tspan x="0" y="0">Computer w/ GUI</tspan></text>
+        </g>
       </g>
     </g>
     <g id="MTEXT52">
       <g class="st6">
-        <text class="st16" transform="translate(133.13 312.96)"><tspan x="0" y="0">STM32 w/ ADC and</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(133.13 312.96)"><tspan x="0" y="0">STM32 w/ ADC and</tspan></text>
+        </g>
       </g>
       <g class="st6">
-        <text class="st16" transform="translate(164.03 334.37)"><tspan x="0" y="0">other sensors</tspan></text>
+        <g class="st6">
+          <text class="st16" transform="translate(164.03 334.37)"><tspan x="0" y="0">other sensors</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE208">
-      <line class="st26" x1="40.48" y1="366.05" x2="75.49" y2="366.05"/>
+      <line class="st27" x1="40.48" y1="366.05" x2="75.49" y2="366.05"/>
     </g>
     <g id="LINE209">
-      <line class="st26" x1="75.49" y1="366.05" x2="75.49" y2="374.8"/>
+      <line class="st27" x1="75.49" y1="366.05" x2="75.49" y2="374.8"/>
     </g>
     <g id="LINE210">
-      <line class="st26" x1="75.49" y1="374.8" x2="66.74" y2="374.8"/>
+      <line class="st27" x1="75.49" y1="374.8" x2="66.74" y2="374.8"/>
     </g>
     <g id="LINE211">
-      <line class="st26" x1="66.74" y1="374.8" x2="66.74" y2="392.31"/>
+      <line class="st27" x1="66.74" y1="374.8" x2="66.74" y2="392.31"/>
     </g>
     <g id="LINE212">
-      <line class="st26" x1="66.74" y1="392.31" x2="75.49" y2="392.31"/>
+      <line class="st27" x1="66.74" y1="392.31" x2="75.49" y2="392.31"/>
     </g>
     <g id="LINE213">
-      <line class="st26" x1="75.49" y1="392.31" x2="75.49" y2="401.06"/>
+      <line class="st27" x1="75.49" y1="392.31" x2="75.49" y2="401.06"/>
     </g>
     <g id="LINE214">
-      <line class="st26" x1="75.49" y1="401.06" x2="31.73" y2="401.06"/>
+      <line class="st27" x1="75.49" y1="401.06" x2="31.73" y2="401.06"/>
     </g>
     <g id="LINE215">
-      <line class="st26" x1="31.73" y1="401.06" x2="31.73" y2="392.31"/>
+      <line class="st27" x1="31.73" y1="401.06" x2="31.73" y2="392.31"/>
     </g>
     <g id="LINE216">
-      <line class="st26" x1="31.73" y1="392.31" x2="40.48" y2="392.31"/>
+      <line class="st27" x1="31.73" y1="392.31" x2="40.48" y2="392.31"/>
     </g>
     <g id="LINE217">
-      <line class="st26" x1="40.48" y1="392.31" x2="40.48" y2="374.8"/>
+      <line class="st27" x1="40.48" y1="392.31" x2="40.48" y2="374.8"/>
     </g>
     <g id="LINE218">
-      <line class="st26" x1="40.48" y1="374.8" x2="31.73" y2="374.8"/>
+      <line class="st27" x1="40.48" y1="374.8" x2="31.73" y2="374.8"/>
     </g>
     <g id="LINE219">
-      <line class="st26" x1="31.73" y1="374.8" x2="31.73" y2="366.05"/>
+      <line class="st27" x1="31.73" y1="374.8" x2="31.73" y2="366.05"/>
     </g>
     <g id="LINE220">
-      <line class="st26" x1="31.73" y1="366.05" x2="40.48" y2="366.05"/>
+      <line class="st27" x1="31.73" y1="366.05" x2="40.48" y2="366.05"/>
     </g>
     <g id="MTEXT53">
       <g class="st6">
-        <text class="st10" transform="translate(109.77 391.21)"><tspan x="0" y="0">Fill Level Load Cell</tspan></text>
+        <g class="st6">
+          <text class="st10" transform="translate(109.77 391.21)"><tspan x="0" y="0">Fill Level Load Cell</tspan></text>
+        </g>
       </g>
     </g>
     <g id="LINE221">
-      <line class="st26" x1="1357.13" y1="895.56" x2="1357.13" y2="906.5"/>
-    </g>
-    <g id="pressure1" class="st6">
-      <text class="st1" transform="translate(555.76 784.79)"><tspan x="0" y="0">xxx psi</tspan></text>
-    </g>
-    <g id="pressure2" class="st6">
-      <text class="st1" transform="translate(1648.63 232.58)"><tspan x="0" y="0">xxx psi</tspan></text>
-    </g>
-    <g id="pressure3" class="st6">
-      <text class="st1" transform="translate(1643.21 636.95)"><tspan x="0" y="0">xxx psi</tspan></text>
-    </g>
-    <g id="loadcell" class="st6">
-      <text id="xxx_kg" class="st1" transform="translate(1651.96 949.16)"><tspan x="0" y="0">xxx kg</tspan></text>
+      <line class="st27" x1="1357.13" y1="895.56" x2="1357.13" y2="906.5"/>
     </g>
   </g>
   <circle id="tankCircle" cx="1629.58" cy="262.05" r="22.34"/>
   <circle id="EngineCircle" cx="1612.58" cy="744.86" r="22.34"/>
   <circle id="BottleCircle" cx="610.46" cy="728.43" r="22.34"/>
+  <g id="pressure1" class="st6">
+    <g class="st6">
+      <text class="st1" transform="translate(555.76 784.79)"><tspan x="0" y="0">xxx psi</tspan></text>
+    </g>
+  </g>
+  <g id="pressure2" class="st6">
+    <g class="st6">
+      <text class="st1" transform="translate(1648.63 232.58)"><tspan x="0" y="0">xxx psi</tspan></text>
+    </g>
+  </g>
+  <g id="pressure3" class="st6">
+    <g class="st6">
+      <text class="st1" transform="translate(1643.21 636.95)"><tspan x="0" y="0">xxx psi</tspan></text>
+    </g>
+  </g>
+  <g id="loadcell" class="st6">
+    <g id="xxx_kg" class="st6">
+      <text class="st1" transform="translate(1651.96 949.16)"><tspan x="0" y="0">xxx kg</tspan></text>
+    </g>
+  </g>
 </svg>

@@ -1,0 +1,16 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+
+  <circle id="tank_circle" cx="200" cy="150" r="80"
+          stroke="black" stroke-width="3"
+          fill="red"/>
+
+  <text id="pressure1_text"
+        x="200"
+        y="155"
+        font-size="24"
+        text-anchor="middle"
+        fill="white">
+        0 PSI
+  </text>
+
+</svg>

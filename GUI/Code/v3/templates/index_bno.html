@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BNO055 Live Viewer</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+
+<body style="background-color:black; color:lime; font-family:monospace; font-size:24px;">
+
+    <h2>BNO055 Quaternion Live Data</h2>
+
+    <div>W: <span id="w">0</span></div>
+    <div>X: <span id="x">0</span></div>
+    <div>Y: <span id="y">0</span></div>
+    <div>Z: <span id="z">0</span></div>
+
+    <script>
+        var socket = io();
+
+        socket.on('bno_data', function(data) {
+            document.getElementById("w").textContent = data.w.toFixed(4);
+            document.getElementById("x").textContent = data.x.toFixed(4);
+            document.getElementById("y").textContent = data.y.toFixed(4);
+            document.getElementById("z").textContent = data.z.toFixed(4);
+        });
+    </script>
+
+</body>
+</html>
