@@ -57,6 +57,38 @@
                 }
             }
 
+            // Helper function to control valves by clicking on their icons in the P&ID
+            function setupClick(id, command) {
+                const el = document.getElementById(id);
+
+                if (!el) {
+                    console.warn("Missing element:", id);
+                    return;
+                }
+
+                el.style.cursor = "pointer";
+
+                el.addEventListener("click", function() {
+                    console.log("Clicked:", id);
+
+                    socket.emit("command", {
+                        cmd: command
+                    });
+                });
+            }
+
+            // Setup all clickable elements
+            setupClick("GSE_x5F_DumpValve", "gse_dump_toggle");
+            setupClick("GSE_x5F_ReliefValve", "gse_relief_toggle");
+            setupClick("GSE_x5F_FillValve", "gse_fill_toggle");
+
+            setupClick("RKT_x5F_MainFuelValve", "rocket_fuel_toggle");
+            setupClick("RKT_x5F_MainOxValve", "rocket_ox_toggle");
+            setupClick("RKT_x5F_ReliefValve", "rocket_relief_toggle");
+            setupClick("RKT_x5F_DumpValve", "rocket_dump_toggle");
+
+            setupClick("RKT_x5F_IGN", "ignite");
+            
             // Helper function to update pressure indicator color
             // Green < 650, Orange 650-830, Red > 830
             function updatePressureColor(elementId, pressure) {
@@ -75,13 +107,6 @@
             }
 
             // Helper function to update text elements
-            //function updateText(elementId, value) {
-            //    const element = document.getElementById(elementId);
-            //    if (element) {
-            //        element.textContent = value;
-            //    }
-            //}
-
             function updateText(elementId, value) {
                 const element = document.getElementById(elementId);
                 if (element) {
