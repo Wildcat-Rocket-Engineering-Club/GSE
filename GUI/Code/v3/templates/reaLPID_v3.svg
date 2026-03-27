@@ -164,6 +164,7 @@
     <circle id="tankCircle" cx="1630.54" cy="279.62" r="22.34"/>
     <circle id="EngineCircle" cx="1612.58" cy="744.86" r="22.34"/>
     <circle id="BottleCircle" cx="610.46" cy="728.43" r="22.34"/>
+    <circle id="recordingStatusCircle" cx="950" cy="100" r="30"/>
     <g id="pressure1" class="st14">
       <g class="st14">
         <g class="st14">

@@ -8,45 +8,43 @@
 
 #define ARDUINO_ARCH_STM32
 /*
- *  STM32F405 PIN ALLOCATION MAP (FOR REFERENCE)
+ *  STM32F405 PIN ALLOCATION MAP
  *  =============================================
- *  [USED] SPI1 (ADS1256/NORDIC): PA4, PA5, PA6, PA7, PA8
- *  [USED] UART1 (SERIAL):        PA9, PA10
- *  [USED] OSCILLATORS:           PH0, PH1, PC14, PC15 (Non-PWM capable)
- *  [USED] SPECIAL/RTC:           PC13 (Non-PWM capable)
+ *  [USED] SPI1 (ADS1256):    PA4(CS), PA5(SCK), PA6(MISO), PA7(MOSI), PA8(DRDY)
+ *  [USED] UART1 (SERIAL):    PA9(TX), PA10(RX)
+ *  [USED] OSC/RTC:           PH0, PH1, PC13, PC14, PC15
+ *  [USED] HX711:             PB6, PB9 (Any GPIO is fine)
  *
- *  REMAINING PWM CAPABLE GROUPS: 
- *  - TIM2: PA0, PA1, PA2, PA3 (4 Channels)
- *  - TIM5: PC2, PC3 (2 Channels)
- *  - TIM4: PB7, PB8, PB9 (3 Channels)
- *  - TIM3: PB0, PB1, PB4, PB5 (4 Channels)
+ *  REMAINING PWM GROUPS: 
+ *  - TIM2: PA0, PA1, PA2, PA3 | TIM5: PC2, PC3 | TIM4: PB7 | TIM3: PB0
  */
 
 // --- SERVO / PWM PIN DEFINITIONS ---
-// All pins below support Hardware PWM via internal Timers
-#define PIN_RKT_OX      PB7  // TIM4_CH2  'NC' ''
-#define PIN_RKT_IGN     PB0  // TIM3_CH3 'AUX' (Ideal for ignition trigger)
-#define PIN_GSE_RELIEF  PA1  // TIM2_CH2 'GEAR' 'RELIEF'
-#define PIN_RKT_RELIEF  PA2  // TIM2_CH3 'RUDD' ''
-#define PIN_RKT_DUMP    PA3  // TIM2_CH4 'ELEV' ''
-#define PIN_GSE_FILL    PA0  // TIM2_CH1 'AILE' 'FILL'
-#define PIN_RKT_FUEL    PC2  // TIM5_CH3 'THRO' 'MAIN'
-#define PIN_GSE_DUMP    PC3  // TIM5_CH4 'DATA' 'PWR'
+// All pins below verified for Hardware PWM (Servo)
+#define PIN_GSE_FILL    PA0  // TIM2_CH1
+#define PIN_GSE_RELIEF  PA1  // TIM2_CH2
+#define PIN_RKT_RELIEF  PA2  // TIM2_CH3
+#define PIN_RKT_DUMP    PA3  // TIM2_CH4
+#define PIN_RKT_IGN     PB0  // TIM3_CH3
+#define PIN_RKT_FUEL    PC2  // TIM5_CH3
+#define PIN_GSE_DUMP    PC3  // TIM5_CH4
+#define PIN_RKT_OX      PB7  // TIM4_CH2
 
-// --- HX711 LOAD CELL (Custom 2-wire Serial) ---
-// Any GPIO works, so we'll keep your cleared PB pins.
-#define PIN_HX711_DOUT  PB6  // Data Output (was I2C_SCL)
-#define PIN_HX711_PD_SCK PB9  // Power Down / Serial Clock (was I2C_SDA)
+// --- MICRO SD ADAPTER (SPI2) ---
+// Connect your Arduino-style adapter pins here:
+#define PIN_SD_CS       PB12 // Adapter CS
+#define PIN_SD_SCK      PB13 // Adapter SCK
+#define PIN_SD_MISO     PB14 // Adapter MISO
+#define PIN_SD_MOSI     PB15 // Adapter MOSI
 
+// --- HX711 LOAD CELL ---
+#define PIN_HX711_DOUT   PB6  
+#define PIN_HX711_PD_SCK PB9
 
-// --- MICRO SD CARD (SDIO 4-BIT MODE) ---
-// These are the dedicated high-speed SDIO pins for the F405
-#define PIN_SD_D0       PC8
-#define PIN_SD_D1       PC9
-#define PIN_SD_D2       PC10
-#define PIN_SD_D3       PC11
-#define PIN_SD_CK       PC12
-#define PIN_SD_CMD      PD2
+// --- I2C DEVICE (If still needed) ---
+// If you add I2C later, use PB10 (SCL) and PB11 (SDA) 
+// to avoid the pins taken above.
+
 
 
 
