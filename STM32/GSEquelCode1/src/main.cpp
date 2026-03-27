@@ -1,9 +1,10 @@
 //STM32F4 Nucleo - Data aquisition, valve & launch control
-//ADS1256 ses cycleSingle() for faster multi-channel acquisition
+//ADS1256 Uses cycleSingle() for faster multi-channel acquisition
 
 
-#include <ADS1256.h>
-#include <Servo.h>
+#include <ADS1256.h> // Analog-digital-converter (ADS1256) *MODIFIED* library code
+#include <Servo.h> // Servo PWM control library
+#include <STM32SD.h> // ST Microelectronics' SD card library
 
 #define ARDUINO_ARCH_STM32
 /*
