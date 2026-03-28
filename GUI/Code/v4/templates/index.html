@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rocket HMI Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body style="background-color:rgb(255, 255, 255);">
+
+    <div id="svg_container">
+        {% include 'reaLPID_v3.svg' %}
+    </div>
+
+    <div id="stats" style="margin:8px;font-family:monospace;">
+        <div>rate: <span id="rate">‑</span> Hz</div>
+        <div>seq: <span id="seq">‑</span></div>
+        <div>last:&nbsp;<span id="last">‑</span></div>
+    </div>
+
+    <script>
+        var socket = io();
+        // ==============================
+        // CLICK COMMAND SETUP (RUN ONCE)
+        // ==============================
+
+        function setupClick(id, target) {
+            const el = document.getElementById(id);
+
+            if (!el) return;
+
+            el.style.cursor = "pointer";
+
+            el.dataset.state = "0"; // track locally
+
+            el.addEventListener("click", function() {
+
+                let newState = el.dataset.state === "1" ? 0 : 1;
+                el.dataset.state = newState.toString();
+
+                console.log(`Clicked ${id} → ${target} → ${newState}`);
+
+                socket.emit("command", {
+                    cmd: "set_valve",
+                    target: target,
+                    state: newState
+                });
+            });
+        }
+
+        // Wait until SVG is loaded
+        window.addEventListener("load", function() {
+
+            setupClick("GSE_x5F_DumpValve", "gse_dump");
+            setupClick("GSE_x5F_ReliefValve", "gse_relief");
+            setupClick("GSE_x5F_FillValve", "gse_fill");
+
+            setupClick("RKT_x5F_MainFuelValve", "rocket_fuel");
+            setupClick("RKT_x5F_MainOxValve", "rocket_ox");
+            setupClick("RKT_x5F_ReliefValve", "rocket_relief");
+            setupClick("RKT_x5F_DumpValve", "rocket_dump");
+
+            setupClick("RKT_x5F_IGN", "ignite");
+        });
+
+        // for simple rate calculation
+        let lastTs = null;
+        let lastSeq = null;
+        let smoothing = 0.1; // simple low‑pass for Hz display
+        let avgHz = null;
+
+        socket.on('telemetry', function(data) {
+            console.log("Telemetry received:", data);
+            const now = Date.now() / 1000;
+
+            // rate computation
+            if (lastTs !== null) {
+                const dt = now - lastTs;
+                const hz = dt > 0 ? 1 / dt : 0;
+                avgHz = avgHz === null ? hz : (smoothing * hz + (1 - smoothing) * avgHz);
+                document.getElementById('rate').textContent = avgHz.toFixed(1);
+            }
+            lastTs = now;
+
+            if (data.seq !== undefined) {
+                document.getElementById('seq').textContent = data.seq;
+            }
+            if (data.ts !== undefined) {
+                document.getElementById('last').textContent = new Date(data.ts * 1000).toLocaleTimeString();
+            } else {
+                document.getElementById('last').textContent = new Date().toLocaleTimeString();
+            }
+
+            // Helper function to update valve state (circle color)
+            // 1 = closed (red), 0 = open (green)
+            function updateValveColor(elementId, state) {
+                const color = state === 0 ? "green" : "red";
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.setAttribute("fill", color);
+                }
+            }
+            
+            // Helper function to update pressure indicator color
+            // Green < 650, Orange 650-830, Red > 830
+            function updatePressureColor(elementId, pressure) {
+                let color;
+                if (pressure < 650) {
+                    color = "green";
+                } else if (pressure <= 830) {
+                    color = "orange";
+                } else {
+                    color = "red";
+                }
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.setAttribute("fill", color);
+                }
+            }
+
+            // Helper function to update text elements
+            function updateText(elementId, value) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    // Find the actual text or tspan inside the group
+                    const textNode = element.querySelector('text') || element.querySelector('tspan');
+                    if (textNode) {
+                        textNode.textContent = value;
+                    } else {
+                        element.textContent = value; // Fallback
+                    }
+                }
+            }
+
+            // Helper to sync UI state with real telemetry
+            function syncState(elementId, state) {
+                const el = document.getElementById(elementId);
+                if (el) {
+                    el.dataset.state = state.toString();
+                }
+            }
+
+            // Update pressure transducers (PSI)
+            if (data.pressure_transducers) {
+                if (data.enables?.bottle_pressure) {
+                    updateText("pressure1", data.pressure_transducers.bottle_pressure + " PSI");
+                    
+                    updatePressureColor("BottleCircle", data.pressure_transducers.bottle_pressure);
+                }
+                if (data.enables?.tank_pressure) {
+                    updateText("pressure2", data.pressure_transducers.tank_pressure + " PSI");
+                    
+                    updatePressureColor("tankCircle", data.pressure_transducers.tank_pressure);
+                }
+                if (data.enables?.chamber_pressure) {
+                    updateText("pressure3", data.pressure_transducers.chamber_pressure + " PSI");
+                    
+                    updatePressureColor("EngineCircle", data.pressure_transducers.chamber_pressure);
+                }
+            }
+
+            // Update GSE data
+            if (data.gse) {
+                if (data.enables?.loadcell) {
+                    updateText("loadcell", data.gse.loadcell.toFixed(2) + " kg");
+                }
+                if (data.enables?.gse_fill) {
+                    updateValveColor("gse_x5F_fill_x5F_state", data.gse.fill);
+                }
+                if (data.enables?.gse_dump) {
+                    updateValveColor("gse_x5F_dump_x5F_state", data.gse.dump);
+                }
+                if (data.enables?.gse_relief) {
+                    updateValveColor("gse_x5F_relief_x5F_valve", data.gse.relief);
+                }
+            }
+
+            // Update Rocket data
+            if (data.rocket) {
+                if (data.enables?.rocket_dump) {
+                    updateValveColor("rocket_x5F_dump_x5F_state", data.rocket.dump);
+                }
+                if (data.enables?.rocket_ox) {
+                    updateValveColor("rocket_x5F_ox_x5F_state", data.rocket.ox);
+                }
+                if (data.enables?.rocket_fuel) {
+                    updateValveColor("rocket_x5F_fuel_x5F_state", data.rocket.fuel);
+                }
+                if (data.enables?.rocket_relief) {
+                    updateValveColor("rocket_x5F_relief_x5F_state", data.rocket.relief);
+                }
+                
+                updateValveColor("ign_x5F_state", data.rocket.ign);
+            }
+
+            // Sync UI states with actual telemetry
+            if (data.gse) {
+                syncState("GSE_x5F_FillValve",   data.gse.fill);
+                syncState("GSE_x5F_DumpValve",   data.gse.dump);
+                syncState("GSE_x5F_ReliefValve", data.gse.relief);
+            }
+            if (data.rocket) {
+                syncState("RKT_x5F_MainOxValve",   data.rocket.ox);
+                syncState("RKT_x5F_MainFuelValve", data.rocket.fuel);
+                syncState("RKT_x5F_ReliefValve",   data.rocket.relief);
+                syncState("RKT_x5F_DumpValve",     data.rocket.dump);
+            }
+        });
+    </script>
+
+</body>
+</html>
