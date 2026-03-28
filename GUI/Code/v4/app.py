@@ -24,7 +24,7 @@ LOG_DIR = os.path.dirname(os.path.abspath(__file__))
 ENABLE_BOTTLE_PRESSURE  = True
 ENABLE_TANK_PRESSURE    = True
 ENABLE_CHAMBER_PRESSURE = True
-ENABLE_LOADCELL         = False
+ENABLE_LOADCELL         = True
 ENABLE_GSE_FILL         = True
 ENABLE_GSE_DUMP         = True
 ENABLE_GSE_RELIEF       = True
@@ -47,7 +47,7 @@ ser_lock  = threading.Lock()
 CSV_COLUMNS = [
     'timestamp', 'elapsed_s',
     'bottle_psi', 'tank_psi', 'chamber_psi',
-    'loadcell_kg',
+    'loadcell_lbs',
     'gse_fill', 'gse_relief', 'gse_dump',
     'rkt_ox', 'rkt_fuel', 'rkt_relief', 'rkt_dump', 'rkt_ign',
 ]
@@ -85,7 +85,7 @@ class CSVLogger:
                 'bottle_psi':  pt.get('bottle_pressure',  ''),
                 'tank_psi':    pt.get('tank_pressure',    ''),
                 'chamber_psi': pt.get('chamber_pressure', ''),
-                'loadcell_kg': gse.get('loadcell', ''),
+                'loadcell_lbs': gse.get('loadcell', ''),
                 'gse_fill':    gse.get('fill',    ''),
                 'gse_relief':  gse.get('relief',  ''),
                 'gse_dump':    gse.get('dump',     ''),

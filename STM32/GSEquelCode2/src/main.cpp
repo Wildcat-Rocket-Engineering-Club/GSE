@@ -1,10 +1,14 @@
 //STM32F4 - Data acquisition, valve & launch control
 // ADS1256 cycleSingle() multi-channel acquisition
+// PCA9685 16-ch PWM driver (Adafruit) over I2C1
+// HX711 load cell (Rob Tillaart library)
 // SD card logging (SdFat by Greiman) + compact JSON telemetry output
 
-#include <ADS1256.h>   // Modified ADS1256 library
-#include <Servo.h>     // Servo PWM control
-#include <SdFat.h>     // SdFat by Bill Greiman (greiman/SdFat @ ^2.2.0)
+#include <ADS1256.h>                    // Modified ADS1256 library
+#include <Wire.h>                       // I2C (for PCA9685)
+#include <Adafruit_PWMServoDriver.h>    // Adafruit PWM Servo Driver library
+#include <HX711.h>                      // Rob Tillaart HX711 library
+#include <SdFat.h>                      // SdFat by Bill Greiman (greiman/SdFat @ ^2.2.0)
 #include <SPI.h>
 
 #define ARDUINO_ARCH_STM32
@@ -15,13 +19,32 @@
  *  [USED] SPI1 (ADS1256):    PA4(CS), PA5(SCK), PA6(MISO), PA7(MOSI), PA8(DRDY)
  *  [USED] SPI2 (SD CARD):    PB12(CS), PB13(SCK), PB14(MISO), PB15(MOSI)
  *  [USED] UART1 (SERIAL):    PA9(TX), PA10(RX)
- *  [USED] HX711:             PB6(DOUT), PB9(SCK)
+ *  [USED] I2C1 (PCA9685):    PB8(SCL), PB9(SDA)
+ *  [USED] HX711:             PC6(DOUT), PC7(SCK)  
  *
- *  PWM PINS:
- *  - TIM2: PA0, PA1, PA2, PA3
- *  - TIM5: PC2, PC3
- *  - TIM4: PB7
- *  - TIM3: PB0
+ *  PCA9685 WIRING:
+ *  =============================================
+ *  PCA9685 VCC  → 3.3V
+ *  PCA9685 GND  → GND
+ *  PCA9685 SCL  → PB8
+ *  PCA9685 SDA  → PB9
+ *  PCA9685 OE   → GND (always enabled)
+ *  PCA9685 V+   → Servo power supply (5–6V, NOT STM32 3.3V)
+ *
+ *  PCA9685 CHANNEL MAP:
+ *  =============================================
+ *  CH 0  → GSE Fill      (90°)
+ *  CH 1  → GSE Relief    (90°)
+ *  CH 2  → RKT Ignition  (90°)
+ *  CH 3  → RKT Ox        (180°) ← only 180° servo
+ *  CH 4  → RKT Fuel      (90°)
+ *  CH 5  → RKT Relief    (90°)
+ *  CH 6  → RKT Dump      (90°)
+ *  CH 7  → GSE Dump      (does not exist / spare)
+ *  CH 8–15 → spare
+ *
+ *  I2C ADDRESS:
+ *  Default 0x40 (all address pins A0–A5 low on PCA9685 board).
  *
  *  XBee FLOW CONTROL (wire if packet loss persists):
  *  - XBee CTS → STM32 PA11 (UART1_CTS)
@@ -30,44 +53,88 @@
  */
 
 // ============================================================
-// PIN DEFINITIONS
+// PCA9685 CONFIGURATION
 // ============================================================
 
-// --- Servo / PWM ---
-#define PIN_GSE_FILL    PA0   // TIM2_CH1
-#define PIN_GSE_RELIEF  PA1   // TIM2_CH2
-#define PIN_RKT_RELIEF  PA2   // TIM2_CH3
-#define PIN_RKT_DUMP    PA3   // TIM2_CH4
-#define PIN_RKT_IGN     PB0   // TIM3_CH3
-#define PIN_RKT_FUEL    PC2   // TIM5_CH3
-#define PIN_GSE_DUMP    PC3   // TIM5_CH4
-#define PIN_RKT_OX      PB7   // TIM4_CH2
+#define PCA9685_ADDR  0x40
+#define PCA9685_FREQ  50     // 50 Hz PWM — standard for servos
 
-// --- SD Card (SPI2) ---
+#define CH_GSE_FILL     0
+#define CH_GSE_RELIEF   1
+#define CH_RKT_IGN      2
+#define CH_RKT_OX       3    // 180° servo
+#define CH_RKT_FUEL     4
+#define CH_RKT_RELIEF   5
+#define CH_RKT_DUMP     6
+#define CH_GSE_DUMP     7    // spare / does not exist
+
+// ============================================================
+// PER-SERVO PWM ENDPOINTS (microseconds)
+// ============================================================
+
+struct ServoConfig {
+  uint8_t  channel;
+  uint16_t closedUs;
+  uint16_t openUs;
+};
+
+const ServoConfig SERVOS[] = {
+  { CH_GSE_FILL,   2200,  875 },  // GSE Fill     (90°)
+  { CH_GSE_RELIEF, 2100,  875 },  // GSE Relief   (90°)
+  { CH_GSE_DUMP,   2000,  875 },  // GSE Dump     (90°, spare)
+  { CH_RKT_OX,     2800,  475 },  // RKT Ox       (180°)
+  { CH_RKT_FUEL,   2200,  875 },  // RKT Fuel     (90°)
+  { CH_RKT_RELIEF, 2100,  875 },  // RKT Relief   (90°)
+  { CH_RKT_DUMP,   2000,  875 },  // RKT Dump     (90°)
+  { CH_RKT_IGN,    2000,  875 },  // RKT Ignition (90°)
+};
+const int NUM_SERVOS = sizeof(SERVOS) / sizeof(SERVOS[0]);
+
+// ============================================================
+// HX711 LOAD CELL
+// ============================================================
+
+// Move HX711 to PC6/PC7 to avoid any trace overlap with I2C/SPI
+#define PIN_HX711_DOUT  PC6 
+#define PIN_HX711_SCK   PC7
+
+// Calibration values — measured on your specific load cell + wiring
+// To re-calibrate: use scale.tare() then scale.calibrate_scale(known_mass)
+#define HX711_OFFSET  10304
+#define HX711_SCALE   1891.308715f
+
+// How often to read the load cell (every N complete ADC cycles).
+// HX711 at default 10 SPS — reading more often than ~1/10th of your
+// ADC cycle rate just returns stale data. At ~19 Hz XBee output and
+// 10 SPS HX711, reading every 10 cycles (~10 Hz) is appropriate.
+#define HX711_READ_INTERVAL  10
+
+HX711 scale;
+float loadCelllbs = 0.0f;
+bool  hx711Ready = false;
+
+// ============================================================
+// SD CARD PINS (SPI2)
+// ============================================================
+
 #define PIN_SD_CS       PB12
 #define PIN_SD_SCK      PB13
 #define PIN_SD_MISO     PB14
 #define PIN_SD_MOSI     PB15
 
-// --- HX711 Load Cell ---
-#define PIN_HX711_DOUT   PB6
-#define PIN_HX711_PD_SCK PB9
-
 // ============================================================
-// SPI BUS SETUP
-// SPI1 = ADS1256 (default Arduino SPI on PA5/PA6/PA7)
-// SPI2 = SD card (PB13/PB14/PB15)
-// Both are independent hardware peripherals — no contention.
+// SPI / I2C INSTANCES
 // ============================================================
 
-SPIClass spi2(PIN_SD_MOSI, PIN_SD_MISO, PIN_SD_SCK);  // SPI2 for SD card
+TwoWire wire1(PB9, PB8);   // SDA, SCL — I2C1
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_ADDR, wire1);
 
-// ADS1256 on SPI1 (the default 'SPI' instance on PA5/PA6/PA7)
+SPIClass spi2(PIN_SD_MOSI, PIN_SD_MISO, PIN_SD_SCK);
+
 ADS1256 A(PA8, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &SPI);
-//        DRDY, RESET,              SYNC(PDWN),           CS,  VREF
 
 // ============================================================
-// SD CARD (SdFat)
+// SD CARD
 // ============================================================
 
 SdFat  sd;
@@ -79,18 +146,15 @@ SdFile logFile;
 
 const float MAX_VOLTAGE  = 5.0f;
 const float MAX_PRESSURE = 5000.0f;
-const float PRESSURE_OFFSETS[3] = {-40.0f, -40.0f, -40.0f};  // PSI per channel
+const float PRESSURE_OFFSETS[3] = {-40.0f, -39.0f, -55.0f};
 
-// XBee transmit throttle: send every N complete ADC cycles.
-// At ~96 cycles/sec, 5 → ~19 Hz over radio.
-// SD card always logs at full rate regardless.
 const int XBEE_OUTPUT_INTERVAL = 5;
 
 // ============================================================
 // SERIAL PORT
 // ============================================================
 
-// #define USE_SERIAL_USB   // Uncomment to use USB CDC instead of UART
+// #define USE_SERIAL_USB
 #ifdef USE_SERIAL_USB
   #define SERIAL_PORT Serial
 #else
@@ -100,14 +164,8 @@ const int XBEE_OUTPUT_INTERVAL = 5;
 const long SERIAL_BAUD = 230400;
 
 // ============================================================
-// SERVO OBJECTS & STATES
+// VALVE STATES
 // ============================================================
-
-Servo servo_gse_fill, servo_gse_relief, servo_gse_dump;
-Servo servo_rkt_ox, servo_rkt_fuel, servo_rkt_relief, servo_rkt_dump, servo_rkt_ign;
-
-#define SERVO_CLOSED 975
-#define SERVO_OPEN   1900
 
 int gse_fill_state    = 0;
 int gse_relief_state  = 0;
@@ -148,37 +206,107 @@ unsigned long sdRowCount = 0;
 static String serialBuffer = "";
 
 // ============================================================
+// PCA9685 HELPER
+// ============================================================
+
+void servoWriteUs(uint8_t channel, uint16_t us) {
+  uint16_t tick = (uint16_t)((us / 20000.0f) * 4096.0f);
+  pwm.setPWM(channel, 0, tick);
+}
+
+// ============================================================
+// VALVE CONTROL
+// ============================================================
+
+void setValve(uint8_t channel, int &stateVar, int newState) {
+  stateVar = newState;
+  for (int i = 0; i < NUM_SERVOS; i++) {
+    if (SERVOS[i].channel == channel) {
+      servoWriteUs(channel, newState == 1 ? SERVOS[i].openUs : SERVOS[i].closedUs);
+      return;
+    }
+  }
+  servoWriteUs(channel, newState == 1 ? 1900 : 975);
+}
+
+// ============================================================
+// HX711 — INIT
+// ============================================================
+
+void initHX711() {
+
+  scale.begin(PIN_HX711_DOUT, PIN_HX711_SCK, true);
+
+  // Wait up to 1 second for the HX711 to become ready
+  unsigned long t = millis();
+  while (!scale.is_ready() && millis() - t < 1000);
+
+  if (!scale.is_ready()) {
+    SERIAL_PORT.println(F("HX711: not ready — check wiring"));
+    hx711Ready = false;
+    return;
+  }
+
+  scale.set_offset(HX711_OFFSET);
+  scale.set_scale(HX711_SCALE);
+
+  hx711Ready = true;
+  SERIAL_PORT.print(F("HX711: ready, offset="));
+  SERIAL_PORT.print(HX711_OFFSET);
+  SERIAL_PORT.print(F(", scale="));
+  SERIAL_PORT.println(HX711_SCALE);
+}
+
+// ============================================================
+// HX711 — NON-BLOCKING READ
+// Rob Tillaart's library has is_ready() which checks DOUT low
+// without blocking. Call this every loop; only reads when data
+// is actually available so the ADC cycle is never stalled.
+// ============================================================
+
+void updateLoadCell() {
+  if (!hx711Ready) return;
+  if (!scale.is_ready()) return;   // No new data yet — return immediately
+
+  // get_units() returns the tared, scaled value in your calibrated units (lbs)
+  loadCelllbs = loadCelllbs = scale.get_units(1);  // or even 10;  // 1 = single reading, no averaging
+}
+
+// ============================================================
 // SD CARD — INIT
-// Creates a new auto-numbered file (LOG_001.CSV … LOG_999.CSV)
-// so previous runs are never overwritten.
 // ============================================================
 
 void initSD() {
-  spi2.begin();  // Bring up SPI2 before handing to SdFat
+  spi2.begin();
 
-  SdSpiConfig cfg(PIN_SD_CS, DEDICATED_SPI, SD_SCK_MHZ(18), &spi2);
+  SdSpiConfig cfg(PIN_SD_CS, DEDICATED_SPI, SD_SCK_MHZ(4), &spi2);
 
   if (!sd.begin(cfg)) {
-    SERIAL_PORT.println(F("SD: begin() failed — check wiring / FAT32 format"));
+    SERIAL_PORT.print(F("SD: begin() FAILED, errorCode="));
+    SERIAL_PORT.print(int(sd.sdErrorCode()));
+    SERIAL_PORT.print(F(" errorData="));
+    SERIAL_PORT.println(int(sd.sdErrorData()));
     sdReady = false;
     return;
   }
 
-  // Find the next available filename
+
   for (int i = 1; i <= 999; i++) {
     snprintf(logFileName, sizeof(logFileName), "LOG_%03d.CSV", i);
     if (!sd.exists(logFileName)) break;
   }
 
   if (!logFile.open(logFileName, O_RDWR | O_CREAT | O_TRUNC)) {
-    SERIAL_PORT.print(F("SD: could not open "));
-    SERIAL_PORT.println(logFileName);
     sdReady = false;
     return;
   }
 
-  // Write CSV header
-  logFile.println(F("row,bottle_psi,tank_psi,chamber_psi,"
+  // DEBUG MARKER
+  logFile.println("FILE OPENED");
+  logFile.flush();
+
+  // Header includes load cell column
+  logFile.println(F("row,bottle_psi,tank_psi,chamber_psi,loadcell_lbs,"
                     "gse_fill,gse_relief,gse_dump,"
                     "rkt_ox,rkt_fuel,rkt_relief,rkt_dump,rkt_ign"));
   logFile.sync();
@@ -190,19 +318,18 @@ void initSD() {
 
 // ============================================================
 // SD CARD — LOG ONE ROW
-// Called every complete 3-channel ADC cycle (full ~96 Hz rate).
-// sync() every 50 rows (~0.5 s) to protect against power loss
-// without stalling the ADC loop.
 // ============================================================
 
 void logToSD() {
   if (!sdReady) return;
-
+  logFile.println("LOGGING");
+  logFile.flush();
   sdRowCount++;
   logFile.print(sdRowCount);            logFile.print(',');
   logFile.print((int)bottlePressure);   logFile.print(',');
   logFile.print((int)tankPressure);     logFile.print(',');
   logFile.print((int)chamberPressure);  logFile.print(',');
+  logFile.print(loadCelllbs, 3);         logFile.print(',');  // 3 decimal places
   logFile.print(gse_fill_state);        logFile.print(',');
   logFile.print(gse_relief_state);      logFile.print(',');
   logFile.print(gse_dump_state);        logFile.print(',');
@@ -212,34 +339,18 @@ void logToSD() {
   logFile.print(rkt_dump_state);        logFile.print(',');
   logFile.println(rkt_ign_state);
 
-  if (sdRowCount % 50 == 0) {
-    logFile.sync();
+  if (sdRowCount % 10 == 0) {
+      logFile.flush();
   }
 }
 
 // ============================================================
-// VALVE CONTROL
-// ============================================================
-
-void setValve(Servo &servo, int &stateVar, int newState) {
-  stateVar = newState;
-  servo.writeMicroseconds(newState == 1 ? SERVO_OPEN : SERVO_CLOSED);
-}
-
-// ============================================================
 // SERIAL COMMAND PARSER
-// Accepts both compact short keys and original long-form keys.
-//
-// Compact key map (matches app.py COMPACT_TARGET_MAP):
-//   "gf" = gse_fill    "gr" = gse_relief  "gd" = gse_dump
-//   "ro" = rocket_ox   "rf" = rocket_fuel  "rr" = rocket_relief
-//   "rd" = rocket_dump "ig" = ignite
 // ============================================================
 
 void handleSerialCommand(String &line) {
   if (line.indexOf("set_valve") == -1) return;
 
-  // Robust state extraction — handles spaces after colon
   int state    = 0;
   int stateIdx = line.indexOf("\"state\":");
   if (stateIdx != -1) {
@@ -248,15 +359,14 @@ void handleSerialCommand(String &line) {
     state = (line[valIdx] == '1') ? 1 : 0;
   }
 
-  // Match target — short key first, long-key fallback
-  if      (line.indexOf("\"gf\"")  != -1 || line.indexOf("gse_fill")      != -1) setValve(servo_gse_fill,   gse_fill_state,   state);
-  else if (line.indexOf("\"gr\"")  != -1 || line.indexOf("gse_relief")    != -1) setValve(servo_gse_relief, gse_relief_state, state);
-  else if (line.indexOf("\"gd\"")  != -1 || line.indexOf("gse_dump")      != -1) setValve(servo_gse_dump,   gse_dump_state,   state);
-  else if (line.indexOf("\"ro\"")  != -1 || line.indexOf("rocket_ox")     != -1) setValve(servo_rkt_ox,     rkt_ox_state,     state);
-  else if (line.indexOf("\"rf\"")  != -1 || line.indexOf("rocket_fuel")   != -1) setValve(servo_rkt_fuel,   rkt_fuel_state,   state);
-  else if (line.indexOf("\"rr\"")  != -1 || line.indexOf("rocket_relief") != -1) setValve(servo_rkt_relief, rkt_relief_state, state);
-  else if (line.indexOf("\"rd\"")  != -1 || line.indexOf("rocket_dump")   != -1) setValve(servo_rkt_dump,   rkt_dump_state,   state);
-  else if (line.indexOf("\"ig\"")  != -1 || line.indexOf("ignite")        != -1) setValve(servo_rkt_ign,    rkt_ign_state,    state);
+  if      (line.indexOf("\"gf\"") != -1 || line.indexOf("gse_fill")      != -1) setValve(CH_GSE_FILL,   gse_fill_state,   state);
+  else if (line.indexOf("\"gr\"") != -1 || line.indexOf("gse_relief")    != -1) setValve(CH_GSE_RELIEF, gse_relief_state, state);
+  else if (line.indexOf("\"gd\"") != -1 || line.indexOf("gse_dump")      != -1) setValve(CH_GSE_DUMP,   gse_dump_state,   state);
+  else if (line.indexOf("\"ro\"") != -1 || line.indexOf("rocket_ox")     != -1) setValve(CH_RKT_OX,     rkt_ox_state,     state);
+  else if (line.indexOf("\"rf\"") != -1 || line.indexOf("rocket_fuel")   != -1) setValve(CH_RKT_FUEL,   rkt_fuel_state,   state);
+  else if (line.indexOf("\"rr\"") != -1 || line.indexOf("rocket_relief") != -1) setValve(CH_RKT_RELIEF, rkt_relief_state, state);
+  else if (line.indexOf("\"rd\"") != -1 || line.indexOf("rocket_dump")   != -1) setValve(CH_RKT_DUMP,   rkt_dump_state,   state);
+  else if (line.indexOf("\"ig\"") != -1 || line.indexOf("ignite")        != -1) setValve(CH_RKT_IGN,    rkt_ign_state,    state);
 }
 
 // ============================================================
@@ -275,28 +385,24 @@ float voltageToPressure(float v) {
 
 void setup() {
 
-  // --- Attach & zero all servos ---
-  servo_gse_fill.attach(PIN_GSE_FILL);
-  servo_gse_relief.attach(PIN_GSE_RELIEF);
-  servo_gse_dump.attach(PIN_GSE_DUMP);
-  servo_rkt_ox.attach(PIN_RKT_OX);
-  servo_rkt_fuel.attach(PIN_RKT_FUEL);
-  servo_rkt_relief.attach(PIN_RKT_RELIEF);
-  servo_rkt_dump.attach(PIN_RKT_DUMP);
-  servo_rkt_ign.attach(PIN_RKT_IGN);
-
-  servo_gse_fill.writeMicroseconds(SERVO_CLOSED);
-  servo_gse_relief.writeMicroseconds(SERVO_CLOSED);
-  servo_gse_dump.writeMicroseconds(SERVO_CLOSED);
-  servo_rkt_ox.writeMicroseconds(SERVO_CLOSED);
-  servo_rkt_fuel.writeMicroseconds(SERVO_CLOSED);
-  servo_rkt_relief.writeMicroseconds(SERVO_CLOSED);
-  servo_rkt_dump.writeMicroseconds(SERVO_CLOSED);
-  servo_rkt_ign.writeMicroseconds(SERVO_CLOSED);
-
   // --- Serial ---
   SERIAL_PORT.begin(SERIAL_BAUD);
   while (!SERIAL_PORT && millis() < 5000);
+  SERIAL_PORT.println(F("Booting..."));
+
+  // --- PCA9685 ---
+  wire1.begin();
+  pwm.begin();
+  pwm.setOscillatorFrequency(27000000);
+  pwm.setPWMFreq(PCA9685_FREQ);
+  delay(10);
+  for (int i = 0; i < NUM_SERVOS; i++) {
+    servoWriteUs(SERVOS[i].channel, SERVOS[i].closedUs);
+  }
+  SERIAL_PORT.println(F("PCA9685: all valves closed"));
+
+  // --- HX711 ---
+  initHX711();
 
   // --- ADS1256 (SPI1) ---
   A.InitializeADC();
@@ -306,6 +412,7 @@ void setup() {
   delay(100);
   A.sendDirectCommand(SELFCAL);
   delay(200);
+  SERIAL_PORT.println(F("ADS1256: initialized"));
 
   // --- SD card (SPI2) ---
   initSD();
@@ -321,7 +428,6 @@ void setup() {
 void loop() {
 
   // --- Non-blocking serial receive ---
-  // One character at a time — ADC loop is never blocked waiting for serial.
   while (SERIAL_PORT.available()) {
     char c = SERIAL_PORT.read();
     if (c == '\n') {
@@ -332,11 +438,16 @@ void loop() {
     }
   }
 
+  // --- HX711 non-blocking read ---
+  // is_ready() returns true only when new data is available (DOUT goes low).
+  // This never blocks — if no data is ready it returns immediately.
+  updateLoadCell();
+
   // --- ADC cycling ---
   const uint8_t channels[3] = {SING_0, SING_1, SING_2};
   ADS1256::ADS1256_Result res = A.cycleSingle3Tracked(channels, 3);
 
-  if (res.channel == 0xFF) return;  // Invalid / warmup sample — skip
+  if (res.channel == 0xFF) return;
 
   loopCounter++;
 
@@ -351,12 +462,12 @@ void loop() {
     tankPressure    = voltageToPressure(A.convertToVoltage(rawTank))    + PRESSURE_OFFSETS[1];
     chamberPressure = voltageToPressure(A.convertToVoltage(rawChamber)) + PRESSURE_OFFSETS[2];
 
-    // --- SD log every cycle (full ~96 Hz rate) ---
+    // --- SD log every cycle (full ~96 Hz) ---
     logToSD();
 
     // --- XBee transmit at reduced rate ---
-    // Compact JSON ~80 bytes vs ~150 bytes for long-key format.
-    // app.py expand_compact() restores full keys before sending to browser.
+    // Load cell value is included in telemetry — it updates at ~10 Hz
+    // independently and the last read value is always transmitted.
     if (completeSetCounter % XBEE_OUTPUT_INTERVAL == 0) {
       SERIAL_PORT.print(F("{\"p\":{\"b\":"));
       SERIAL_PORT.print((int)bottlePressure);
@@ -364,7 +475,9 @@ void loop() {
       SERIAL_PORT.print((int)tankPressure);
       SERIAL_PORT.print(F(",\"c\":"));
       SERIAL_PORT.print((int)chamberPressure);
-      SERIAL_PORT.print(F("},\"g\":{\"l\":0,\"f\":"));
+      SERIAL_PORT.print(F("},\"g\":{\"l\":"));
+      SERIAL_PORT.print(loadCelllbs, 2);   // 2 decimal places in telemetry
+      SERIAL_PORT.print(F(",\"f\":"));
       SERIAL_PORT.print(gse_fill_state);
       SERIAL_PORT.print(F(",\"r\":"));
       SERIAL_PORT.print(gse_relief_state);
