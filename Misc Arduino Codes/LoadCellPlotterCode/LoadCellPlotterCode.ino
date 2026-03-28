@@ -35,8 +35,8 @@ void setup()
   scale.begin(dataPin, clockPin);
 
   // Sets offsets and scales
-  scale.set_offset(0);
-  scale.set_scale(0);
+  scale.set_offset(10304);
+  scale.set_scale(1891.308715);
   scale.tare();  
   // reset the scale to zero = 0
 }
@@ -57,7 +57,8 @@ void loop()
     }
     avg /=count;
     i = -1;
-      Serial.println((String)sampleSize+"-unit avg: "+(String)avg);
+      //Serial.println((String)sampleSize+"-unit avg: "+(String)avg);
+      Serial.println((String)avg);
        for (int i=0; i<sampleSize; i++)
   {
     urmom[i] = 0;
