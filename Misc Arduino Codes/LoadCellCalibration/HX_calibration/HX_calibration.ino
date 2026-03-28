@@ -1,25 +1,16 @@
-//
-//    FILE: HX_calibration.ino
-//  AUTHOR: Rob Tillaart
-// PURPOSE: HX711 demo
-//     URL: https://github.com/RobTillaart/HX711
-
+// FILE: HX_calibration_decimal.ino
+// AUTHOR: Rob Tillaart / Adapted for Float Input
+// PURPOSE: HX711 calibration with decimal support
 
 #include "HX711.h"
 
 HX711 myScale;
 
-bool debug = false;
 uint8_t dataPin = 2;
 uint8_t clockPin = 3;
 
-uint32_t start, stop;
-volatile float f;
-
-
-void setup()
-{
-  Serial.begin(115200);
+void setup() {
+  Serial.begin(9600);
   Serial.println(__FILE__);
   Serial.print("LIBRARY VERSION: ");
   Serial.println(HX711_LIB_VERSION);
@@ -28,81 +19,61 @@ void setup()
   myScale.begin(dataPin, clockPin);
 }
 
-void loop()
-{
+void loop() {
   calibrate();
 }
 
-
-
-void calibrate()
-{
+void calibrate() {
   Serial.println("\n\nCALIBRATION\n===========");
-  Serial.println("remove all weight from the loadcell");
-  //  flush Serial input
-  while (Serial.available()) Serial.read();
+  Serial.println("1. Remove all weight from the loadcell.");
+  
+  // Flush any leftover characters in the buffer
+  while (Serial.available() > 0) Serial.read();
+  
+  Serial.println("Press Enter (or send any character) to set zero offset...");
+  while (Serial.available() == 0); // Wait for user input
+  while (Serial.available() > 0) Serial.read(); // Clear that input
 
-  Serial.println("and press enter\n");
-  while (Serial.available() == 0);
-
-  Serial.println("Determine zero weight offset");
-  myScale.tare(20);  // average 20 measurements.
+  Serial.println("Determining zero weight offset...");
+  myScale.tare(20); 
   uint32_t offset = myScale.get_offset();
-
   Serial.print("OFFSET: ");
   Serial.println(offset);
   Serial.println();
 
+  Serial.println("2. Place a known weight on the loadcell.");
+  Serial.println("Enter the weight value (e.g. 500.50) and press Enter:");
 
-  Serial.println("place a weight on the loadcell");
-  //  flush Serial input
-  while (Serial.available()) Serial.read();
+  // Wait for the user to start typing the weight
+  while (Serial.available() == 0);
 
-  Serial.println("enter the weight in (whole) grams and press enter");
-  uint32_t weight = 0;
-  while (Serial.peek() != '\n')
-  {
-    if (Serial.available())
-    {
-      if(debug)
-      {
-        Serial.println("Serial is available.");
-      }
-      char ch = Serial.read();
-      if(debug)
-      {
-        Serial.println("Amount input: "+(String)ch+" grams");
-      }
-      if (isdigit(ch))
-      {
-        if(debug)
-        {
-          Serial.println("IS a character type.");
-        }
-        weight *= 10;
-        weight = weight + (ch - '0');
-        break;
-      }
-    }
+  // Read the decimal value from Serial
+  float weight = Serial.parseFloat();
+
+  if (weight == 0) {
+    Serial.println("Error: Received 0.00 or invalid input. Restarting...");
+    return;
   }
 
-  Serial.print("WEIGHT: ");
-  Serial.println(weight);
+  Serial.print("WEIGHT ENTERED: ");
+  Serial.println(weight, 3);
+
+  Serial.println("Calculating scale factor...");
   myScale.calibrate_scale(weight, 20);
   float scale = myScale.get_scale();
 
-  Serial.print("SCALE:  ");
+  Serial.print("SCALE: ");
   Serial.println(scale, 6);
-
-  Serial.print("\nuse scale.set_offset(");
+  
+  Serial.println("\n--- COPY THESE TO YOUR PROJECT SETUP ---");
+  Serial.print("scale.set_offset(");
   Serial.print(offset);
-  Serial.print("); and scale.set_scale(");
+  Serial.println(");");
+  Serial.print("scale.set_scale(");
   Serial.print(scale, 6);
-  Serial.print(");\n");
-  Serial.println("in the setup of your project");
+  Serial.println(");");
+  Serial.println("-----------------------------------------\n");
 
-  Serial.println("\n\n");
+  Serial.println("Calibration cycle finished. Restarting in 5 seconds...");
+  delay(5000);
 }
-
-
-//  -- END OF FILE --
