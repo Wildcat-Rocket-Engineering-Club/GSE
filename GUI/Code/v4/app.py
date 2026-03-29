@@ -16,6 +16,7 @@ from datetime import datetime
 USE_FAKE_DATA = False
 SERIAL_PORT   = 'COM4'
 BAUD_RATE     = 230400
+# COM14 for right front USB STM32
 
 # CSV log location — saved next to app.py with a timestamp in the name
 LOG_DIR = os.path.dirname(os.path.abspath(__file__))

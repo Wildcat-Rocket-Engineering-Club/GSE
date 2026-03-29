@@ -78,13 +78,25 @@ struct ServoConfig {
   uint16_t openUs;
 };
 
+// ============================================================
+// SERIAL PORT
+// ============================================================
+//#define USE_SERIAL_USB
+#ifdef USE_SERIAL_USB
+  #define SERIAL_PORT Serial
+#else
+  #define SERIAL_PORT Serial1   // PA9(TX) / PA10(RX)
+#endif
+
+const long SERIAL_BAUD = 230400;
+
 const ServoConfig SERVOS[] = {
-  { CH_GSE_FILL,   2200,  875 },  // GSE Fill     (90°)
-  { CH_GSE_RELIEF, 2100,  875 },  // GSE Relief   (90°)
-  { CH_GSE_DUMP,   2000,  875 },  // GSE Dump     (90°, spare)
-  { CH_RKT_OX,     2800,  475 },  // RKT Ox       (180°)
-  { CH_RKT_FUEL,   2200,  875 },  // RKT Fuel     (90°)
-  { CH_RKT_RELIEF, 2100,  875 },  // RKT Relief   (90°)
+  { CH_GSE_FILL,   2450,  1700 },  // GSE Fill     (90°)
+  { CH_GSE_RELIEF, 2450,  1925},  // GSE Relief   (180° but turns 90)
+  { CH_GSE_DUMP,   1683,  825 },  // GSE Dump     (90°, spare)
+  { CH_RKT_OX,     2900,  750 },  // RKT Ox       (180°) (*opens more than needed. Can increase from 475)
+  { CH_RKT_FUEL,   2070,  960 },  // RKT Fuel     (90°)
+  { CH_RKT_RELIEF, 1900,  980 },  // RKT Relief Vent   (90°)
   { CH_RKT_DUMP,   2000,  875 },  // RKT Dump     (90°)
   { CH_RKT_IGN,    2000,  875 },  // RKT Ignition (90°)
 };
@@ -146,22 +158,9 @@ SdFile logFile;
 
 const float MAX_VOLTAGE  = 5.0f;
 const float MAX_PRESSURE = 5000.0f;
-const float PRESSURE_OFFSETS[3] = {-40.0f, -39.0f, -55.0f};
+const float PRESSURE_OFFSETS[3] = {-40.0f, -43.0f, -62.0f};
 
 const int XBEE_OUTPUT_INTERVAL = 5;
-
-// ============================================================
-// SERIAL PORT
-// ============================================================
-
-// #define USE_SERIAL_USB
-#ifdef USE_SERIAL_USB
-  #define SERIAL_PORT Serial
-#else
-  #define SERIAL_PORT Serial1   // PA9(TX) / PA10(RX)
-#endif
-
-const long SERIAL_BAUD = 230400;
 
 // ============================================================
 // VALVE STATES
@@ -269,7 +268,7 @@ void updateLoadCell() {
   if (!scale.is_ready()) return;   // No new data yet — return immediately
 
   // get_units() returns the tared, scaled value in your calibrated units (lbs)
-  loadCelllbs = loadCelllbs = scale.get_units(1);  // or even 10;  // 1 = single reading, no averaging
+  loadCelllbs = loadCelllbs = scale.get_units(4);  // or even 10;  // 1 = single reading, no averaging
 }
 
 // ============================================================
