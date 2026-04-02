@@ -36,10 +36,7 @@
 
     <div id="connBanner">⚠ No data received — check serial connection</div>
 
-    <div id="controls">
-        <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
-        <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
-    </div>
+
 
     <div id="svg_container">
         {% include 'PID.svg' %}
@@ -49,6 +46,11 @@
         <div>rate: <span id="rate">‑</span> Hz</div>
         <div>seq: <span id="seq">‑</span></div>
         <div>last: <span id="last">‑</span></div>
+    </div>
+
+    <div id="controls">
+        <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
+        <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
     </div>
 
     <script>
