@@ -2,11 +2,10 @@
 <html>
 <head>
     <title>Rocket HMI</title>
-    <script src="https://socket.io"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <style>
         body { background-color: #fff; margin: 0; }
         #stats { margin: 8px; font-family: monospace; font-size: 13px; }
-        #controls { margin: 12px; display: flex; gap: 10px; }
         #connBanner {
             display: none;
             background: #ffe066;
@@ -16,30 +15,11 @@
             padding: 6px 12px;
             font-weight: bold;
         }
-        .btn {
-            padding: 12px 24px;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-family: sans-serif;
-            text-transform: uppercase;
-        }
-        .btn-open { background: #00cc44; }
-        .btn-open:active { background: #008a2e; }
-        .btn-close { background: #ff3333; }
-        .btn-close:active { background: #cc0000; }
     </style>
 </head>
 <body>
 
     <div id="connBanner">⚠ No data received — check serial connection</div>
-
-    <div id="controls">
-        <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
-        <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
-    </div>
 
     <div id="svg_container">
         {% include 'PID.svg' %}
@@ -54,49 +34,42 @@
     <script>
     var socket = io();
 
-    // Map of all controllable elements
-    const VALVE_MAP = [
-        { id: 'GSE_x5F_DumpValve',     target: 'gse_dump' },
-        { id: 'GSE_x5F_ReliefValve',   target: 'gse_relief' },
-        { id: 'GSE_x5F_FillValve',     target: 'gse_fill' },
-        { id: 'RKT_x5F_MainFuelValve', target: 'rocket_fuel' },
-        { id: 'RKT_x5F_MainOxValve',   target: 'rocket_ox' },
-        { id: 'RKT_x5F_ReliefValve',   target: 'rocket_relief' },
-        { id: 'RKT_x5F_DumpValve',     target: 'rocket_dump' },
-        { id: 'RKT_x5F_IGN',           target: 'ignite' }
-    ];
-
-    // Master function to set everything at once
-    function setAll(state) {
-        if (state === 1 && !confirm("Confirm: OPEN all valves and IGNITE?")) return;
-
-        VALVE_MAP.forEach(valve => {
-            var el = document.getElementById(valve.id);
-            if (el) el.dataset.state = state.toString();
-            socket.emit('command', { cmd: 'set_valve', target: valve.target, state: state });
-        });
-        console.log('Master Command: All set to ' + (state === 1 ? 'OPEN/ON' : 'CLOSED/OFF'));
-    }
-
+    // ==============================
+    // DATA STATUS CIRCLE
+    // Green  = data flowing (< 0.5 s since last packet)
+    // Orange = stale       (0.5–5 s since last packet)
+    // Red    = no data     (> 5 s or never received)
+    // Background turns yellow when stale or lost.
+    // ==============================
     var lastDataTime = null;
 
     function updateStatusCircle() {
+        // Calculate age first — used by everything below
         var age = lastDataTime === null ? Infinity : (Date.now() - lastDataTime) / 1000;
+
+        // Status circle color
         var el = document.getElementById('dataStatusCircle');
         if (el) {
             var color;
-            if      (age < 0.5) color = '#00cc44';
-            else if (age < 5)   color = 'orange';
-            else                color = 'red';
+            if      (age < 0.5) color = '#00cc44';  // live
+            else if (age < 5)   color = 'orange';   // stale
+            else                color = 'red';       // lost
             el.setAttribute('fill', color);
         }
+
+        // Background + banner
         var stale = age >= 0.5;
         document.body.style.backgroundColor = stale ? '#ffe066' : '#ffffff';
         document.getElementById('connBanner').style.display = stale ? 'block' : 'none';
     }
 
+    // Single interval — poll every 250 ms
     setInterval(updateStatusCircle, 250);
+    updateStatusCircle(); // Set initial state immediately (red/yellow before first packet)
 
+    // ==============================
+    // CLICK-TO-COMMAND SETUP
+    // ==============================
     function setupClick(id, target) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -105,24 +78,40 @@
         el.addEventListener('click', function () {
             var newState = el.dataset.state === '1' ? 0 : 1;
             el.dataset.state = newState.toString();
+            console.log('Click: ' + id + ' → ' + target + ' = ' + newState);
             socket.emit('command', { cmd: 'set_valve', target: target, state: newState });
         });
     }
 
     window.addEventListener('load', function () {
-        VALVE_MAP.forEach(v => setupClick(v.id, v.target));
-        updateStatusCircle();
+        setupClick('GSE_x5F_DumpValve',     'gse_dump');
+        setupClick('GSE_x5F_ReliefValve',   'gse_relief');
+        setupClick('GSE_x5F_FillValve',     'gse_fill');
+        setupClick('RKT_x5F_MainFuelValve', 'rocket_fuel');
+        setupClick('RKT_x5F_MainOxValve',   'rocket_ox');
+        setupClick('RKT_x5F_ReliefValve',   'rocket_relief');
+        setupClick('RKT_x5F_DumpValve',     'rocket_dump');
+        setupClick('RKT_x5F_IGN',           'ignite');
     });
 
+    // ==============================
+    // RATE / SEQUENCE DISPLAY
+    // ==============================
     var lastTs = null;
     var avgHz  = null;
     var SMOOTH = 0.15;
 
+    // ==============================
+    // HELPERS
+    // ==============================
+
+    // Valve indicator: 0 = closed (red), 1 = open (green)
     function setValveColor(id, state) {
         var el = document.getElementById(id);
         if (el) el.setAttribute('fill', state === 1 ? '#00cc44' : 'red');
     }
 
+    // Pressure indicator: green / orange / red by threshold
     function setPressureColor(id, psi) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -130,6 +119,7 @@
         el.setAttribute('fill', color);
     }
 
+    // Update text inside a group (handles tspan nesting from Inkscape SVGs)
     function setText(id, value) {
         var el = document.getElementById(id);
         if (!el) return;
@@ -138,15 +128,21 @@
         else   el.textContent = value;
     }
 
+    // Keep click-toggle in sync with real reported state
     function syncClickState(id, state) {
         var el = document.getElementById(id);
         if (el) el.dataset.state = state.toString();
     }
 
+    // ==============================
+    // TELEMETRY HANDLER
+    // ==============================
     socket.on('telemetry', function (data) {
-        lastDataTime = Date.now();
+
+        lastDataTime = Date.now();   // feed the status watchdog
         updateStatusCircle();
 
+        // Rate display
         var now = Date.now() / 1000;
         if (lastTs !== null) {
             var dt = now - lastTs;
@@ -156,14 +152,19 @@
         }
         lastTs = now;
 
-        if (data.seq !== undefined) document.getElementById('seq').textContent = data.seq;
-        document.getElementById('last').textContent = data.ts ? new Date(data.ts * 1000).toLocaleTimeString() : new Date().toLocaleTimeString();
+        if (data.seq !== undefined)
+            document.getElementById('seq').textContent = data.seq;
+
+        document.getElementById('last').textContent =
+            data.ts ? new Date(data.ts * 1000).toLocaleTimeString()
+                    : new Date().toLocaleTimeString();
 
         var en  = data.enables || {};
         var pt  = data.pressure_transducers || {};
         var gse = data.gse || {};
         var rkt = data.rocket || {};
 
+        // --- Pressures ---
         if (en.bottle_pressure && pt.bottle_pressure !== undefined) {
             setText('pressure1', pt.bottle_pressure + ' PSI');
             setPressureColor('BottleCircle', pt.bottle_pressure);
@@ -177,17 +178,22 @@
             setPressureColor('EngineCircle', pt.chamber_pressure);
         }
 
-        if (en.loadcell && gse.loadcell !== undefined) setText('loadcell', gse.loadcell.toFixed(2) + ' lbf');
+        // --- GSE ---
+        if (en.loadcell && gse.loadcell !== undefined)
+            setText('loadcell', gse.loadcell.toFixed(2) + ' lbf');
 
         if (en.gse_fill   && gse.fill    !== undefined) setValveColor('gse_x5F_fill_x5F_state',   gse.fill);
         if (en.gse_dump   && gse.dump    !== undefined) setValveColor('gse_x5F_dump_x5F_state',   gse.dump);
         if (en.gse_relief && gse.relief  !== undefined) setValveColor('gse_x5F_relief_x5F_valve', gse.relief);
+
+        // --- Rocket ---
         if (en.rocket_ox     && rkt.ox     !== undefined) setValveColor('rocket_x5F_ox_x5F_state',     rkt.ox);
         if (en.rocket_fuel   && rkt.fuel   !== undefined) setValveColor('rocket_x5F_fuel_x5F_state',   rkt.fuel);
         if (en.rocket_relief && rkt.relief !== undefined) setValveColor('rocket_x5F_relief_x5F_state', rkt.relief);
         if (en.rocket_dump   && rkt.dump   !== undefined) setValveColor('rocket_x5F_dump_x5F_state',   rkt.dump);
         if (rkt.ign !== undefined) setValveColor('ign_x5F_state', rkt.ign);
 
+        // --- Sync click-toggle state with reported hardware state ---
         syncClickState('GSE_x5F_FillValve',    gse.fill);
         syncClickState('GSE_x5F_DumpValve',     gse.dump);
         syncClickState('GSE_x5F_ReliefValve',   gse.relief);
@@ -195,8 +201,8 @@
         syncClickState('RKT_x5F_MainFuelValve', rkt.fuel);
         syncClickState('RKT_x5F_ReliefValve',   rkt.relief);
         syncClickState('RKT_x5F_DumpValve',     rkt.dump);
-        syncClickState('RKT_x5F_IGN',           rkt.ign);
     });
     </script>
+
 </body>
 </html>
