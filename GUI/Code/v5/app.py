@@ -8,6 +8,8 @@ import json
 import csv
 import os
 from datetime import datetime
+import socket
+from zeroconf import Zeroconf, ServiceInfo
 
 # ==============================
 # CONFIGURATION
@@ -46,8 +48,41 @@ ENABLE_ROCKET_RELIEF    = True
 
 # ==============================
 
+# Pick a port
+HOSTNAME = "gse-console"  # → http://gse-console.local
+PORT = 5001
+
+# Where XXXX will be webserver_port
+
+# Check to make sure that the desired website port is not already in use.
+# If so, need to edit the port.
+def check_port(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        if s.connect_ex(('localhost', port)) == 0:
+            print(f"⚠️  ERROR: Port {port} is already in use! Change the port and restart the program.")
+            exit(1)
+
+check_port(PORT)  # ← change this to match whatever port you use below
+
+def register_mdns(port):
+    zc = Zeroconf()
+    local_ip = socket.gethostbyname(socket.gethostname())
+    info = ServiceInfo(
+        "_http._tcp.local.",
+        f"{HOSTNAME}._http._tcp.local.",
+        addresses=[socket.inet_aton(local_ip)],
+        port=port,
+        properties={},
+        server=f"{HOSTNAME}.local.",
+    )
+    zc.register_service(info)
+    print(f"mDNS registered: http://{HOSTNAME}.local:{port}")
+    return zc  # keep reference alive
+
+zc = register_mdns(PORT)
+
 app       = Flask(__name__)
-socketio  = SocketIO(app)
+socketio = SocketIO(app, async_mode='threading')
 ser       = None
 ser_lock  = threading.Lock()
 
@@ -182,6 +217,9 @@ def add_enables(data: dict) -> dict:
 # ==============================
 # FLASK ROUTE
 # ==============================
+#@app.route('/')
+#def index():
+#    return "HELLO"
 
 @app.route('/')
 def index():
@@ -214,9 +252,11 @@ def fake_data_loop():
                 'ign':    0,
             },
         }
+
         csv_logger.log(data)
         socketio.emit('telemetry', add_enables(data))
-        time.sleep(1)
+
+        socketio.sleep(0.01)  # ✅ CRITICAL: prevents Flask from freezing
 
 
 # ==============================
@@ -230,48 +270,64 @@ def serial_loop():
     err_count = 0
 
     while True:
+        s = None
+
         try:
             print(f"Attempting serial connection on {SERIAL_PORT}...")
-            s = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+            s = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.2)
+
+            # Clear garbage on connect
+            s.reset_input_buffer()
+            time.sleep(0.2)
 
             with ser_lock:
                 ser = s
 
             print(f"Serial connected: {SERIAL_PORT} @ {BAUD_RATE}")
+            socketio.emit('serial_status', {'connected': True})
 
-            last_time = time.time()
+            buffer = ""
 
             # ===== ACTIVE READ LOOP =====
             while True:
-                # Detect silent disconnects
                 if not s.is_open:
                     raise serial.SerialException("Port closed")
 
-                raw = s.readline()
+                try:
+                    data_bytes = s.read(s.in_waiting or 1)
+                except Exception as read_err:
+                    raise serial.SerialException(f"Read failed: {read_err}")
 
-                if not raw:
+                if not data_bytes:
                     continue
 
-                line = raw.decode('utf-8', errors='replace').strip()
-                if not line or not line.startswith('{'):
-                    continue
+                chunk = data_bytes.decode('utf-8', errors='replace')
+                buffer += chunk
 
-                now = time.time()
-                dt = now - last_time
-                last_time = now
+                # Process complete lines only
+                while '\n' in buffer:
+                    line, buffer = buffer.split('\n', 1)
+                    line = line.strip()
 
-                msg_count += 1
-                print(f"[{msg_count}] dt={dt*1000:.1f}ms | {line[:120]}")
+                    if not line or not line.startswith('{'):
+                        continue
 
-                data = json.loads(line)
+                    try:
+                        data = json.loads(line)
 
-                # Expand compact format if needed
-                if is_compact(data):
-                    data = expand_compact(data)
+                        if is_compact(data):
+                            data = expand_compact(data)
 
-                # Log + emit
-                csv_logger.log(data)
-                socketio.emit('telemetry', add_enables(data))
+                        msg_count += 1
+                        print(f"[{msg_count}] {line[:100]}")
+
+                        csv_logger.log(data)
+                        socketio.emit('telemetry', add_enables(data))
+
+                    except json.JSONDecodeError as e:
+                        err_count += 1
+                        print(f"JSON err #{err_count}: {e} | line: {repr(line[:80])}")
+                        # DO NOT reconnect — just skip bad packet
 
         except (serial.SerialException, OSError) as e:
             print(f"Serial disconnected: {e}")
@@ -279,23 +335,21 @@ def serial_loop():
             with ser_lock:
                 ser = None
 
-            # Optional: notify frontend
             socketio.emit('serial_status', {'connected': False})
 
             try:
-                s.close()
-            except:
-                pass
+                if s and s.is_open:
+                    s.close()
+                    print("Serial port closed")
+            except Exception as close_err:
+                print(f"Error closing port: {close_err}")
 
-            time.sleep(1.5)  # small reconnect delay
-
-        except json.JSONDecodeError as e:
-            err_count += 1
-            print(f"JSON err #{err_count}: {e}")
-
-        except Exception as e:
-            print(f"Unexpected serial error: {e}")
-            time.sleep(1)
+            # Give Windows extra time if it's a permission error (port still releasing)
+            if 'PermissionError' in str(e) or 'Access is denied' in str(e):
+                print("Port still releasing, waiting longer...")
+                time.sleep(6)
+            else:
+                time.sleep(4)
 
 
 # ==============================
@@ -352,13 +406,11 @@ if __name__ == '__main__':
     csv_logger.open()
 
     try:
-        thread = threading.Thread(
-            target=fake_data_loop if USE_FAKE_DATA else serial_loop
-        )
-        thread.daemon = True
-        thread.start()
+        socketio.start_background_task(
+            fake_data_loop if USE_FAKE_DATA else serial_loop
+)
 
-        socketio.run(app, host='0.0.0.0', port=5000)
+        socketio.run(app, host='0.0.0.0', port=PORT, use_reloader=False)
 
     finally:
         csv_logger.close()
