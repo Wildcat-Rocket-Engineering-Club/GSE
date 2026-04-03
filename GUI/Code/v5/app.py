@@ -9,31 +9,20 @@ import csv
 import os
 from datetime import datetime
 import socket
-from zeroconf import Zeroconf, ServiceInfo
 
 # ==============================
 # CONFIGURATION
 # ==============================
 
-
-# The COM port is different for every computer and USB port
-# Go to the 'readme.md' file for instructions to find yours.
 USE_FAKE_DATA = False
 SERIAL_PORT   = 'COM4'
 BAUD_RATE     = 230400
 
-# CSV log location
-# Get the directory where app.py is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Define the 'datalogs' subfolder path
-LOG_DIR = os.path.join(BASE_DIR, 'datalogs')
-
-# Create the folder if it doesn't exist yet
+LOG_DIR  = os.path.join(BASE_DIR, 'datalogs')
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
-# Toggle individual graphical elements
 ENABLE_BOTTLE_PRESSURE  = True
 ENABLE_TANK_PRESSURE    = True
 ENABLE_CHAMBER_PRESSURE = True
@@ -47,44 +36,151 @@ ENABLE_ROCKET_FUEL      = True
 ENABLE_ROCKET_RELIEF    = True
 
 # ==============================
+# RETRY WATCHDOG CONFIGURATION
+# ==============================
 
-# Pick a port
-HOSTNAME = "gse-console"  # → http://gse-console.local
+# Seconds to wait for telemetry to confirm a valve state change before
+# sending one retry. Set this to at least 2-3x your expected telemetry
+# round-trip time so a slow packet doesn't cause a spurious resend.
+CONFIRM_TIMEOUT_S = 0.5
+
+# Hard cap on retries per command. 1 means at most 2 total writes per click:
+# the original send + one retry. Never raise this without careful thought.
+MAX_RETRIES = 1
+
+# ==============================
+
 PORT = 5001
 
-# Where XXXX will be webserver_port
-
-# Check to make sure that the desired website port is not already in use.
-# If so, need to edit the port.
 def check_port(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(('localhost', port)) == 0:
-            print(f"⚠️  ERROR: Port {port} is already in use! Change the port and restart the program.")
+            print(f"⚠️  ERROR: Port {port} is already in use! Change the port and restart.")
             exit(1)
 
-check_port(PORT)  # ← change this to match whatever port you use below
+check_port(PORT)
 
-def register_mdns(port):
-    zc = Zeroconf()
-    local_ip = socket.gethostbyname(socket.gethostname())
-    info = ServiceInfo(
-        "_http._tcp.local.",
-        f"{HOSTNAME}._http._tcp.local.",
-        addresses=[socket.inet_aton(local_ip)],
-        port=port,
-        properties={},
-        server=f"{HOSTNAME}.local.",
-    )
-    zc.register_service(info)
-    print(f"mDNS registered: http://{HOSTNAME}.local:{port}")
-    return zc  # keep reference alive
-
-zc = register_mdns(PORT)
-
-app       = Flask(__name__)
+app      = Flask(__name__)
 socketio = SocketIO(app, async_mode='threading')
-ser       = None
-ser_lock  = threading.Lock()
+ser      = None
+ser_lock = threading.Lock()
+
+
+# ==============================
+# VALVE WATCHDOG
+#
+# Tracks desired valve states and fires one retry if telemetry hasn't
+# confirmed the change within CONFIRM_TIMEOUT_S.
+#
+# Safety properties:
+#   - MAX_RETRIES = 1  →  at most 2 total writes per command (original + retry)
+#   - Retry is suppressed if a newer command already arrived for that target
+#     (desired state changed before the retry fired)
+#   - Retry is suppressed if the serial port is not open
+#   - Retry is suppressed if telemetry already confirmed the desired state
+#   - On serial disconnect, all pending entries are cleared so stale retries
+#     cannot fire after the port reconnects in an unknown hardware state
+# ==============================
+
+class ValveWatchdog:
+    def __init__(self):
+        # key: long target name, e.g. 'gse_fill'
+        # value: {desired, sent_at, retries, cmd_str}
+        self._pending = {}
+        self._lock    = threading.Lock()
+
+    def register(self, target_long: str, desired_state: int, cmd_str: str):
+        """Call immediately after a successful serial write."""
+        with self._lock:
+            self._pending[target_long] = {
+                'desired':  desired_state,
+                'sent_at':  time.time(),
+                'retries':  0,
+                'cmd_str':  cmd_str,
+            }
+        print(f"[watchdog] registered '{target_long}' → {desired_state}")
+
+    def confirm(self, telemetry_valve_states: dict):
+        """
+        Call once per telemetry packet with the current reported valve states.
+        Keys must be long-form target names (e.g. 'gse_fill').
+        Clears confirmed entries; queues a single retry for timed-out ones.
+        """
+        retries_to_fire = []
+
+        with self._lock:
+            to_remove = []
+            for target, entry in self._pending.items():
+                actual = telemetry_valve_states.get(target)
+
+                # ── Confirmed: hardware echoes the desired state ──────────────
+                if actual == entry['desired']:
+                    print(f"[watchdog] confirmed '{target}' = {actual}")
+                    to_remove.append(target)
+                    continue
+
+                # ── Timed out: decide whether to retry or give up ─────────────
+                if time.time() - entry['sent_at'] >= CONFIRM_TIMEOUT_S:
+                    if entry['retries'] < MAX_RETRIES:
+                        retries_to_fire.append((target, entry['cmd_str'], entry['desired']))
+                        entry['retries'] += 1
+                        entry['sent_at'] = time.time()  # won't retry again after this
+                    else:
+                        print(
+                            f"[watchdog] GAVE UP '{target}' after {entry['retries']} "
+                            f"retr{'y' if entry['retries'] == 1 else 'ies'} — "
+                            f"desired={entry['desired']}, last_seen={actual}"
+                        )
+                        to_remove.append(target)
+
+            for t in to_remove:
+                del self._pending[t]
+
+        # Write outside the lock — serial writes can block briefly
+        for target, cmd_str, desired in retries_to_fire:
+            with ser_lock:
+                local_ser = ser
+            if local_ser is None:
+                print(f"[watchdog] retry suppressed '{target}' — serial not open")
+                continue
+            try:
+                local_ser.write(cmd_str.encode())
+                print(f"[watchdog] RETRY '{target}' → {desired}  ({cmd_str.strip()})")
+            except Exception as e:
+                print(f"[watchdog] retry write error '{target}': {e}")
+
+    def clear_all(self):
+        """Call on serial disconnect to discard all pending retries."""
+        with self._lock:
+            count = len(self._pending)
+            self._pending.clear()
+        if count:
+            print(f"[watchdog] cleared {count} pending entries on disconnect")
+
+
+watchdog = ValveWatchdog()
+
+
+# ==============================
+# TELEMETRY → VALVE STATE EXTRACTOR
+# Maps canonical telemetry fields to the long-form target names used
+# by the watchdog. Must stay in sync with COMPACT_TARGET_MAP below.
+# ==============================
+
+def extract_valve_states(data: dict) -> dict:
+    gse = data.get('gse', {})
+    rkt = data.get('rocket', {})
+    return {
+        'gse_fill':      gse.get('fill',   None),
+        'gse_relief':    gse.get('relief', None),
+        'gse_dump':      gse.get('dump',   None),
+        'rocket_ox':     rkt.get('ox',     None),
+        'rocket_fuel':   rkt.get('fuel',   None),
+        'rocket_relief': rkt.get('relief', None),
+        'rocket_dump':   rkt.get('dump',   None),
+        'ignite':        rkt.get('ign',    None),
+    }
+
 
 # ==============================
 # CSV LOGGER
@@ -100,9 +196,9 @@ CSV_COLUMNS = [
 
 class CSVLogger:
     def __init__(self):
-        self.file   = None
-        self.writer = None
-        self.path   = None
+        self.file       = None
+        self.writer     = None
+        self.path       = None
         self.start_time = None
         self.row_count  = 0
 
@@ -124,26 +220,24 @@ class CSVLogger:
             gse = data.get('gse', {})
             rkt = data.get('rocket', {})
             now = datetime.now()
-
             row = {
-                'timestamp':   now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
-                'elapsed_s':   f"{time.time() - self.start_time:.3f}",
-                'bottle_psi':  pt.get('bottle_pressure',  ''),
-                'tank_psi':    pt.get('tank_pressure',    ''),
-                'chamber_psi': pt.get('chamber_pressure', ''),
+                'timestamp':    now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                'elapsed_s':    f"{time.time() - self.start_time:.3f}",
+                'bottle_psi':   pt.get('bottle_pressure',  ''),
+                'tank_psi':     pt.get('tank_pressure',    ''),
+                'chamber_psi':  pt.get('chamber_pressure', ''),
                 'loadcell_lbs': gse.get('loadcell', ''),
-                'gse_fill':    gse.get('fill',    ''),
-                'gse_relief':  gse.get('relief',  ''),
-                'gse_dump':    gse.get('dump',     ''),
-                'rkt_ox':      rkt.get('ox',      ''),
-                'rkt_fuel':    rkt.get('fuel',     ''),
-                'rkt_relief':  rkt.get('relief',   ''),
-                'rkt_dump':    rkt.get('dump',     ''),
-                'rkt_ign':     rkt.get('ign',      ''),
+                'gse_fill':     gse.get('fill',    ''),
+                'gse_relief':   gse.get('relief',  ''),
+                'gse_dump':     gse.get('dump',    ''),
+                'rkt_ox':       rkt.get('ox',      ''),
+                'rkt_fuel':     rkt.get('fuel',    ''),
+                'rkt_relief':   rkt.get('relief',  ''),
+                'rkt_dump':     rkt.get('dump',    ''),
+                'rkt_ign':      rkt.get('ign',     ''),
             }
             self.writer.writerow(row)
             self.row_count += 1
-            # Flush every 20 rows — fast enough to not lose data, slow enough to not thrash disk
             if self.row_count % 20 == 0:
                 self.file.flush()
         except Exception as e:
@@ -160,17 +254,12 @@ csv_logger = CSVLogger()
 
 # ==============================
 # COMPACT JSON → CANONICAL FORM
-# Translates short keys from the STM32 compact format
-# into the full-key format the rest of the code expects.
-# Input:  {"p":{"b":100,"t":200,"c":50},"g":{"l":0,"f":0,"r":0,"d":0},"r":{"o":0,"f":0,"r":0,"d":0,"i":0}}
-# Output: {"pressure_transducers":{...}, "gse":{...}, "rocket":{...}}
 # ==============================
 
 def expand_compact(d: dict) -> dict:
-    """Expand short-key telemetry dict into canonical long-key form."""
-    p   = d.get('p', {})
-    g   = d.get('g', {})
-    r   = d.get('r', {})
+    p = d.get('p', {})
+    g = d.get('g', {})
+    r = d.get('r', {})
     return {
         'pressure_transducers': {
             'bottle_pressure':  p.get('b', 0),
@@ -193,9 +282,7 @@ def expand_compact(d: dict) -> dict:
     }
 
 def is_compact(d: dict) -> bool:
-    """Return True if dict uses the short-key compact format."""
     return 'p' in d or 'g' in d
-
 
 def add_enables(data: dict) -> dict:
     data['enables'] = {
@@ -217,9 +304,6 @@ def add_enables(data: dict) -> dict:
 # ==============================
 # FLASK ROUTE
 # ==============================
-#@app.route('/')
-#def index():
-#    return "HELLO"
 
 @app.route('/')
 def index():
@@ -252,11 +336,9 @@ def fake_data_loop():
                 'ign':    0,
             },
         }
-
         csv_logger.log(data)
         socketio.emit('telemetry', add_enables(data))
-
-        socketio.sleep(0.01)  # ✅ CRITICAL: prevents Flask from freezing
+        socketio.sleep(0.01)
 
 
 # ==============================
@@ -265,18 +347,14 @@ def fake_data_loop():
 
 def serial_loop():
     global ser
-
     msg_count = 0
     err_count = 0
 
     while True:
         s = None
-
         try:
             print(f"Attempting serial connection on {SERIAL_PORT}...")
             s = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.2)
-
-            # Clear garbage on connect
             s.reset_input_buffer()
             time.sleep(0.2)
 
@@ -288,7 +366,6 @@ def serial_loop():
 
             buffer = ""
 
-            # ===== ACTIVE READ LOOP =====
             while True:
                 if not s.is_open:
                     raise serial.SerialException("Port closed")
@@ -304,7 +381,6 @@ def serial_loop():
                 chunk = data_bytes.decode('utf-8', errors='replace')
                 buffer += chunk
 
-                # Process complete lines only
                 while '\n' in buffer:
                     line, buffer = buffer.split('\n', 1)
                     line = line.strip()
@@ -314,12 +390,14 @@ def serial_loop():
 
                     try:
                         data = json.loads(line)
-
                         if is_compact(data):
                             data = expand_compact(data)
 
                         msg_count += 1
                         print(f"[{msg_count}] {line[:100]}")
+
+                        # Feed every packet to the watchdog before emitting
+                        watchdog.confirm(extract_valve_states(data))
 
                         csv_logger.log(data)
                         socketio.emit('telemetry', add_enables(data))
@@ -327,13 +405,15 @@ def serial_loop():
                     except json.JSONDecodeError as e:
                         err_count += 1
                         print(f"JSON err #{err_count}: {e} | line: {repr(line[:80])}")
-                        # DO NOT reconnect — just skip bad packet
 
         except (serial.SerialException, OSError) as e:
             print(f"Serial disconnected: {e}")
 
             with ser_lock:
                 ser = None
+
+            # Discard pending retries — hardware state is unknown after reconnect
+            watchdog.clear_all()
 
             socketio.emit('serial_status', {'connected': False})
 
@@ -344,7 +424,6 @@ def serial_loop():
             except Exception as close_err:
                 print(f"Error closing port: {close_err}")
 
-            # Give Windows extra time if it's a permission error (port still releasing)
             if 'PermissionError' in str(e) or 'Access is denied' in str(e):
                 print("Port still releasing, waiting longer...")
                 time.sleep(6)
@@ -354,20 +433,17 @@ def serial_loop():
 
 # ==============================
 # COMMAND HANDLER
-# Translates incoming browser command to compact or long-key JSON
-# depending on what the STM32 expects.
 # ==============================
 
-# Map from long target name → compact key used in handleSerialCommand()
 COMPACT_TARGET_MAP = {
-    'gse_fill':     'gf',
-    'gse_relief':   'gr',
-    'gse_dump':     'gd',
-    'rocket_ox':    'ro',
-    'rocket_fuel':  'rf',
-    'rocket_relief':'rr',
-    'rocket_dump':  'rd',
-    'ignite':       'ig',
+    'gse_fill':      'gf',
+    'gse_relief':    'gr',
+    'gse_dump':      'gd',
+    'rocket_ox':     'ro',
+    'rocket_fuel':   'rf',
+    'rocket_relief': 'rr',
+    'rocket_dump':   'rd',
+    'ignite':        'ig',
 }
 
 @socketio.on('command')
@@ -380,19 +456,24 @@ def handle_command(data):
         return
 
     try:
-        # Build compact command: {"cmd":"set_valve","target":"gf","state":1}
-        target_long = data.get('target', '')
+        target_long    = data.get('target', '')
+        desired_state  = data.get('state', 0)
         compact_target = COMPACT_TARGET_MAP.get(target_long, target_long)
 
         cmd = {
             'cmd':    data.get('cmd', 'set_valve'),
             'target': compact_target,
-            'state':  data.get('state', 0),
+            'state':  desired_state,
         }
-
         cmd_str = json.dumps(cmd, separators=(',', ':')) + '\n'
         local_ser.write(cmd_str.encode())
         print(f"→ STM32: {cmd_str.strip()}")
+
+        # Register with watchdog only after the write succeeded.
+        # Registering overwrites any prior pending entry for this target,
+        # which correctly cancels a stale retry if the operator clicked again.
+        if target_long in COMPACT_TARGET_MAP:
+            watchdog.register(target_long, desired_state, cmd_str)
 
     except Exception as e:
         print(f"Command error: {e}")
@@ -404,13 +485,8 @@ def handle_command(data):
 
 if __name__ == '__main__':
     csv_logger.open()
-
     try:
-        socketio.start_background_task(
-            fake_data_loop if USE_FAKE_DATA else serial_loop
-)
-
+        socketio.start_background_task(fake_data_loop if USE_FAKE_DATA else serial_loop)
         socketio.run(app, host='0.0.0.0', port=PORT, use_reloader=False)
-
     finally:
         csv_logger.close()

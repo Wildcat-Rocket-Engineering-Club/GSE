@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Rocket HMI</title>
-    <script src="https://socket.io"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         body { background-color: #fff; margin: 0; }
         #stats { margin: 8px; font-family: monospace; font-size: 13px; }
@@ -35,8 +35,6 @@
 <body>
 
     <div id="connBanner">⚠ No data received — check serial connection</div>
-
-
 
     <div id="svg_container">
         {% include 'PID.svg' %}
@@ -166,24 +164,15 @@
         var gse = data.gse || {};
         var rkt = data.rocket || {};
 
-        if (en.bottle_pressure && pt.bottle_pressure !== undefined) {
-            setText('pressure1', pt.bottle_pressure + ' PSI');
-            setPressureColor('BottleCircle', pt.bottle_pressure);
-        }
-        if (en.tank_pressure && pt.tank_pressure !== undefined) {
-            setText('pressure2', pt.tank_pressure + ' PSI');
-            setPressureColor('tankCircle', pt.tank_pressure);
-        }
-        if (en.chamber_pressure && pt.chamber_pressure !== undefined) {
-            setText('pressure3', pt.chamber_pressure + ' PSI');
-            setPressureColor('EngineCircle', pt.chamber_pressure);
-        }
+        if (en.bottle_pressure  && pt.bottle_pressure  !== undefined) { setText('pressure1', pt.bottle_pressure  + ' PSI'); setPressureColor('BottleCircle', pt.bottle_pressure); }
+        if (en.tank_pressure    && pt.tank_pressure    !== undefined) { setText('pressure2', pt.tank_pressure    + ' PSI'); setPressureColor('tankCircle',   pt.tank_pressure); }
+        if (en.chamber_pressure && pt.chamber_pressure !== undefined) { setText('pressure3', pt.chamber_pressure + ' PSI'); setPressureColor('EngineCircle', pt.chamber_pressure); }
 
         if (en.loadcell && gse.loadcell !== undefined) setText('loadcell', gse.loadcell.toFixed(2) + ' lbf');
 
-        if (en.gse_fill   && gse.fill    !== undefined) setValveColor('gse_x5F_fill_x5F_state',   gse.fill);
-        if (en.gse_dump   && gse.dump    !== undefined) setValveColor('gse_x5F_dump_x5F_state',   gse.dump);
-        if (en.gse_relief && gse.relief  !== undefined) setValveColor('gse_x5F_relief_x5F_valve', gse.relief);
+        if (en.gse_fill   && gse.fill   !== undefined) setValveColor('gse_x5F_fill_x5F_state',   gse.fill);
+        if (en.gse_dump   && gse.dump   !== undefined) setValveColor('gse_x5F_dump_x5F_state',   gse.dump);
+        if (en.gse_relief && gse.relief !== undefined) setValveColor('gse_x5F_relief_x5F_valve', gse.relief);
         if (en.rocket_ox     && rkt.ox     !== undefined) setValveColor('rocket_x5F_ox_x5F_state',     rkt.ox);
         if (en.rocket_fuel   && rkt.fuel   !== undefined) setValveColor('rocket_x5F_fuel_x5F_state',   rkt.fuel);
         if (en.rocket_relief && rkt.relief !== undefined) setValveColor('rocket_x5F_relief_x5F_state', rkt.relief);
