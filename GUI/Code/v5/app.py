@@ -10,13 +10,63 @@ import os
 from datetime import datetime
 import socket
 
+import serial.tools.list_ports
+
 # ==============================
 # CONFIGURATION
 # ==============================
 
 USE_FAKE_DATA = False
-SERIAL_PORT   = 'COM4'
 BAUD_RATE     = 230400
+
+# XBee SX 900 dev board uses an FT4232H (quad-port FTDI chip).
+# VID 0x0403 is universal to all FTDI devices.
+# PID 0x6011 is specific to the FT4232H — different from the FT232R (0x6001).
+XBEE_VID = 0x0403
+XBEE_PID = 0x6011
+
+# The FT4232H enumerates as 4 COM ports. The XBee UART is wired to port A,
+# which Windows assigns the lowest COM number of the group.
+# If your board routes the XBee to a different channel, change this index (0=A, 1=B, etc.)
+XBEE_CHANNEL_INDEX = 0
+
+def find_xbee_port() -> str:
+    """
+    Scan serial ports and return the correct channel of the FT4232H.
+    The chip enumerates as a group of 4 consecutive ports — we sort them
+    and pick by XBEE_CHANNEL_INDEX (default 0 = port A = lowest COM number).
+    Exits with a clear diagnostic if the device isn't found.
+    """
+    matches = sorted(
+        [p for p in serial.tools.list_ports.comports()
+         if p.vid == XBEE_VID and p.pid == XBEE_PID],
+        key=lambda p: p.device
+    )
+
+    if not matches:
+        print("⚠️  ERROR: No XBee SX dev board found (VID=0403, PID=6011 / FT4232H).")
+        print("           Check the USB cable and that FTDI drivers are installed.")
+        print("           Available ports:")
+        for p in serial.tools.list_ports.comports():
+            print(f"             {p.device}  —  {p.description}  "
+                  f"(VID={hex(p.vid) if p.vid else 'n/a'}, "
+                  f"PID={hex(p.pid) if p.pid else 'n/a'})")
+        exit(1)
+
+    if len(matches) % 4 != 0:
+        print(f"⚠️  WARNING: Expected a multiple of 4 ports for FT4232H, "
+              f"got {len(matches)}: {[p.device for p in matches]}")
+
+    selected = matches[XBEE_CHANNEL_INDEX]
+    all_ports = [p.device for p in matches]
+    print(f"FT4232H ports found: {all_ports}")
+    print(f"Using channel {chr(65 + XBEE_CHANNEL_INDEX)} → {selected.device}  "
+          f"(change XBEE_CHANNEL_INDEX if wrong)")
+    return selected.device
+
+SERIAL_PORT = None if USE_FAKE_DATA else find_xbee_port()
+
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR  = os.path.join(BASE_DIR, 'datalogs')
