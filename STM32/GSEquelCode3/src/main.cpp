@@ -90,13 +90,15 @@ struct ServoConfig {
 
 const long SERIAL_BAUD = 230400;
 
+// Servo endpoint calibration
+// Open | closed
 const ServoConfig SERVOS[] = {
-  { CH_GSE_FILL,   2450,  1700 },  // GSE Fill     (90°)
-  { CH_GSE_RELIEF, 2450,  1925},  // GSE Relief   (180° but turns 90)
-  { CH_GSE_DUMP,   1683,  825 },  // GSE Dump     (90°, spare)
+  { CH_GSE_FILL,   2510,  1720 },  //  GSE Fill     (90°)
+  { CH_GSE_RELIEF, 2000,  910},  //  GSE Relief   (180° but turns 90) 
+  { CH_GSE_DUMP,   1900,  1000 },  // GSE Dump     (90°, spare)
   { CH_RKT_OX,     2900,  750 },  // RKT Ox       (180°) (*opens more than needed. Can increase from 475)
-  { CH_RKT_FUEL,   2070,  960 },  // RKT Fuel     (90°)
-  { CH_RKT_RELIEF, 1900,  980 },  // RKT Relief Vent   (90°)
+  { CH_RKT_FUEL,   2200,  960 },  // RKT Fuel     (90°)
+  { CH_RKT_RELIEF, 2100,  944 },  // RKT Relief Vent   (90°)
   { CH_RKT_DUMP,   2000,  875 },  // RKT Dump     (90°)
   { CH_RKT_IGN,    2000,  875 },  // RKT Ignition (90°)
 };
@@ -192,8 +194,8 @@ LaunchState launchState = LAUNCH_IDLE;
 unsigned long launchStartTime = 0;
 
 const unsigned long IGNITION_TIME = 0;      // T+0ms
-const unsigned long OX_TIME = 200;          // T+200ms
-const unsigned long FUEL_TIME = 350;        // T+350ms (200 + 150)
+const unsigned long OX_TIME = 500;          // T+200ms
+const unsigned long FUEL_TIME = 750;        // T+350ms (200 + 250)
 
 // ============================================================
 // ADC / PRESSURE GLOBALS
