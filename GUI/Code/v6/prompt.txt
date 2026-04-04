@@ -1,0 +1,1 @@
+I need to change the way the 'open all valves' and 'close all valves' commands work, and also add a launch sequencer. This will require changing the embedded system 'main.cpp' file as well as modifying the html interface and backend app.py.
