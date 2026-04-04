@@ -506,43 +506,73 @@ def handle_command(data):
         return
 
     try:
-        cmd = data.get('cmd', '')
-        if cmd == 'set_valve':
-            target_long    = data.get('target', '')
-            desired_state  = data.get('state', 0)
-            compact_target = COMPACT_TARGET_MAP.get(target_long, target_long)
+        cmd_type = data.get('cmd', '')
 
-            cmd_str = json.dumps({
-                'cmd':    'set_valve',
-                'target': compact_target,
-                'state':  desired_state,
-            }, separators=(',', ':')) + '\n'
-            local_ser.write(cmd_str.encode())
-            print(f"→ STM32: {cmd_str.strip()}")
+        # Handle launch command with automatic resend for packet loss resilience
+        if cmd_type == 'launch':
+            cmd = {'cmd': 'launch'}
+            cmd_str = json.dumps(cmd, separators=(',', ':')) + '\n'
+            
+            # Send launch command 3 times with small delays to ensure it gets through
+            try:
+                local_ser.write(cmd_str.encode())
+                print(f"→ STM32 [1/3]: {cmd_str.strip()}")
+            except Exception as e:
+                print(f"Launch send error (attempt 1): {e}")
+                return
+            
+            # Resend after 50ms
+            time.sleep(0.05)
+            with ser_lock:
+                local_ser = ser
+            if local_ser is not None:
+                try:
+                    local_ser.write(cmd_str.encode())
+                    print(f"→ STM32 [2/3]: {cmd_str.strip()}")
+                except Exception as e:
+                    print(f"Launch send error (attempt 2): {e}")
+            
+            # Resend after another 50ms
+            time.sleep(0.05)
+            with ser_lock:
+                local_ser = ser
+            if local_ser is not None:
+                try:
+                    local_ser.write(cmd_str.encode())
+                    print(f"→ STM32 [3/3]: {cmd_str.strip()}")
+                except Exception as e:
+                    print(f"Launch send error (attempt 3): {e}")
+            return
 
-            # Register with watchdog only after the write succeeded.
-            # Registering overwrites any prior pending entry for this target,
-            # which correctly cancels a stale retry if the operator clicked again.
-            if target_long in COMPACT_TARGET_MAP:
-                watchdog.register(target_long, desired_state, cmd_str)
-        elif cmd == 'set_all_valves':
-            state = data.get('state', 0)
-            cmd_str = json.dumps({
-                'cmd': 'set_all_valves',
-                'state': state,
-            }, separators=(',', ':')) + '\n'
+        # Handle bulk valve commands (open_all / close_all) with compact command names
+        if cmd_type == 'oa' or cmd_type == 'ca' or cmd_type == 'open_all' or cmd_type == 'close_all':
+            # Normalize to compact form for STM32
+            stm32_cmd = 'oa' if cmd_type in ('oa', 'open_all') else 'ca'
+            cmd = {'cmd': stm32_cmd}
+            cmd_str = json.dumps(cmd, separators=(',', ':')) + '\n'
             local_ser.write(cmd_str.encode())
             print(f"→ STM32: {cmd_str.strip()}")
-            # For all valves, register each one with watchdog
-            for target_long in COMPACT_TARGET_MAP.keys():
-                watchdog.register(target_long, state, cmd_str)  # Note: cmd_str is the same for all
-        elif cmd == 'ignition_sequence':
-            cmd_str = json.dumps({
-                'cmd': 'ignition_sequence',
-            }, separators=(',', ':')) + '\n'
-            local_ser.write(cmd_str.encode())
-            print(f"→ STM32: {cmd_str.strip()}")
-            # No watchdog for sequence, as it's automated
+            return
+
+        # Handle individual valve control commands
+        target_long    = data.get('target', '')
+        desired_state  = data.get('state', 0)
+        compact_target = COMPACT_TARGET_MAP.get(target_long, target_long)
+
+        cmd = {
+            'cmd':    cmd_type,
+            'target': compact_target,
+            'state':  desired_state,
+        }
+        cmd_str = json.dumps(cmd, separators=(',', ':')) + '\n'
+        local_ser.write(cmd_str.encode())
+        print(f"→ STM32: {cmd_str.strip()}")
+
+        # Register with watchdog only after the write succeeded.
+        # Registering overwrites any prior pending entry for this target,
+        # which correctly cancels a stale retry if the operator clicked again.
+        if target_long in COMPACT_TARGET_MAP:
+            watchdog.register(target_long, desired_state, cmd_str)
 
     except Exception as e:
         print(f"Command error: {e}")

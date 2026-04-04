@@ -30,6 +30,11 @@
         .btn-open:active { background: #008a2e; }
         .btn-close { background: #ff3333; }
         .btn-close:active { background: #cc0000; }
+        .btn-launch { background: #0066ff; }
+        .btn-launch:active { background: #0044cc; }
+        .btn-launch:disabled { background: #cccccc; cursor: not-allowed; }
+        .btn-abort { background: #ff6600; }
+        .btn-abort:active { background: #cc5500; }
     </style>
 </head>
 <body>
@@ -49,13 +54,63 @@
     <div id="controls">
         <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
         <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
-        <button class="btn" id="launchBtn" onclick="startLaunch()" style="background: #ff6600;">LAUNCH</button>
-        <button class="btn" id="abortBtn" onclick="abortLaunch()" style="background: #666; display: none;">ABORT</button>
-        <div id="countdown" style="display: none; font-size: 24px; color: red; font-weight: bold;"></div>
+        <button id="launchBtn" class="btn btn-launch" onclick="initiateCountdown()" style="display: inline-block;">LAUNCH</button>
+        <div id="countdownWidget" style="display: none; display: inline-flex; align-items: center; gap: 12px; vertical-align: middle;">
+            <div style="font-family: monospace; font-size: 32px; font-weight: bold; color: #ff3333; min-width: 50px; text-align: center;">
+                <span id="countdownDisplay">5</span>
+            </div>
+            <button class="btn btn-abort" onclick="abortCountdown()">ABORT</button>
+        </div>
     </div>
 
     <script>
     var socket = io();
+
+    // ========== COUNTDOWN STATE ==========
+    var countdownActive = false;
+    var countdownInterval = null;
+    var countdownRemaining = 5;
+
+    function initiateCountdown() {
+        if (countdownActive) return;
+
+        countdownActive = true;
+        countdownRemaining = 5;
+        document.getElementById('launchBtn').style.display = 'none';
+        document.getElementById('countdownWidget').style.display = 'inline-flex';
+        document.getElementById('countdownDisplay').textContent = countdownRemaining;
+
+        countdownInterval = setInterval(function () {
+            countdownRemaining -= 1;
+
+            if (countdownRemaining < 0) {
+                clearInterval(countdownInterval);
+                sendLaunchCommand();
+                return;
+            }
+
+            document.getElementById('countdownDisplay').textContent = countdownRemaining;
+        }, 1000);
+    }
+
+    function abortCountdown() {
+        if (!countdownActive) return;
+        clearInterval(countdownInterval);
+        countdownActive = false;
+        document.getElementById('countdownWidget').style.display = 'none';
+        document.getElementById('launchBtn').style.display = 'inline-block';
+        console.log('Launch aborted');
+    }
+
+    function sendLaunchCommand() {
+        clearInterval(countdownInterval);
+        countdownActive = false;
+        document.getElementById('countdownWidget').style.display = 'none';
+        document.getElementById('launchBtn').style.display = 'inline-block';
+
+        socket.emit('command', { cmd: 'launch', target: 'launch' });
+        console.log('Launch command sent to STM32');
+    }
 
     // Map of all controllable elements
     const VALVE_MAP = [
@@ -71,43 +126,10 @@
 
     // Master function to set everything at once
     function setAll(state) {
-        socket.emit('command', { cmd: 'set_all_valves', state: state });
-        console.log('Master Command: All set to ' + (state === 1 ? 'OPEN/ON' : 'CLOSED/OFF'));
-    }
-
-    var launchTimeout;
-    var countdownInterval;
-
-    function startLaunch() {
-        document.getElementById('launchBtn').disabled = true;
-        document.getElementById('launchBtn').style.display = 'none';
-        document.getElementById('abortBtn').style.display = 'inline-block';
-        document.getElementById('countdown').style.display = 'block';
-        var count = 5;
-        document.getElementById('countdown').textContent = 'Launching in ' + count + ' seconds...';
-        countdownInterval = setInterval(function() {
-            count--;
-            if (count > 0) {
-                document.getElementById('countdown').textContent = 'Launching in ' + count + ' seconds...';
-            } else {
-                clearInterval(countdownInterval);
-                document.getElementById('countdown').style.display = 'none';
-                socket.emit('command', { cmd: 'ignition_sequence' });
-                document.getElementById('launchBtn').disabled = false;
-                document.getElementById('launchBtn').style.display = 'inline-block';
-                document.getElementById('abortBtn').style.display = 'none';
-            }
-        }, 1000);
-    }
-
-    function abortLaunch() {
-        clearInterval(countdownInterval);
-        clearTimeout(launchTimeout);
-        document.getElementById('countdown').style.display = 'none';
-        document.getElementById('launchBtn').disabled = false;
-        document.getElementById('launchBtn').style.display = 'inline-block';
-        document.getElementById('abortBtn').style.display = 'none';
-        console.log('Launch aborted');
+        // state: 1 = open all, 0 = close all
+        var cmd = state === 1 ? 'oa' : 'ca';  // Compact: oa=open_all, ca=close_all
+        socket.emit('command', { cmd: cmd });
+        console.log('Master Command: ' + (state === 1 ? 'OPEN ALL' : 'CLOSE ALL'));
     }
 
     var lastDataTime = null;

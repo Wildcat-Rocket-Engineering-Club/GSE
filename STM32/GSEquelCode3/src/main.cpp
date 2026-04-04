@@ -176,19 +176,24 @@ int rkt_dump_state    = 0;
 int rkt_ign_state     = 0;
 
 // ============================================================
-// IGNITION SEQUENCE
+// LAUNCH SEQUENCER STATE
 // ============================================================
 
-enum IgnitionState {
-  IDLE,
-  IGNITING,
-  OX_OPENING,
-  FUEL_OPENING,
-  SEQUENCE_DONE
+enum LaunchState {
+  LAUNCH_IDLE,           // No launch in progress
+  LAUNCH_IGNITION,       // 0ms: ignite
+  LAUNCH_OX_PENDING,     // Waiting for +200ms to open oxidizer
+  LAUNCH_OX_OPEN,        // +200ms: oxidizer opened
+  LAUNCH_FUEL_PENDING,   // Waiting for +150ms more to open fuel
+  LAUNCH_FUEL_OPEN,      // +350ms: fuel opened, launch complete
 };
 
-IgnitionState ignition_state = IDLE;
-unsigned long ignition_start_time = 0;
+LaunchState launchState = LAUNCH_IDLE;
+unsigned long launchStartTime = 0;
+
+const unsigned long IGNITION_TIME = 0;      // T+0ms
+const unsigned long OX_TIME = 200;          // T+200ms
+const unsigned long FUEL_TIME = 350;        // T+350ms (200 + 150)
 
 // ============================================================
 // ADC / PRESSURE GLOBALS
@@ -237,10 +242,13 @@ void setValve(uint8_t channel, int &stateVar, int newState) {
   for (int i = 0; i < NUM_SERVOS; i++) {
     if (SERVOS[i].channel == channel) {
       servoWriteUs(channel, newState == 1 ? SERVOS[i].openUs : SERVOS[i].closedUs);
+      // Increased delay to ensure PCA9685 I2C transaction completes before next command
+      delay(15);
       return;
     }
   }
   servoWriteUs(channel, newState == 1 ? 1900 : 975);
+  delay(15);
 }
 
 // ============================================================
@@ -359,53 +367,126 @@ void logToSD() {
 }
 
 // ============================================================
+// LAUNCH SEQUENCER
+// ============================================================
+
+void startLaunch() {
+  launchState = LAUNCH_IGNITION;
+  launchStartTime = millis();
+  SERIAL_PORT.println(F("LAUNCH SEQUENCE INITIATED"));
+}
+
+void updateLaunchSequence() {
+  if (launchState == LAUNCH_IDLE) return;
+
+  unsigned long elapsed = millis() - launchStartTime;
+
+  // T+0ms: Ignition
+  if (launchState == LAUNCH_IGNITION && elapsed >= IGNITION_TIME) {
+    setValve(CH_RKT_IGN, rkt_ign_state, 1);
+    SERIAL_PORT.println(F("[LAUNCH] T+0ms: IGNITION"));
+    launchState = LAUNCH_OX_PENDING;
+  }
+
+  // T+200ms: Open main oxidizer
+  if (launchState == LAUNCH_OX_PENDING && elapsed >= OX_TIME) {
+    setValve(CH_RKT_OX, rkt_ox_state, 1);
+    SERIAL_PORT.println(F("[LAUNCH] T+200ms: MAIN OX OPEN"));
+    launchState = LAUNCH_FUEL_PENDING;
+  }
+
+  // T+350ms: Open main fuel
+  if (launchState == LAUNCH_FUEL_PENDING && elapsed >= FUEL_TIME) {
+    setValve(CH_RKT_FUEL, rkt_fuel_state, 1);
+    SERIAL_PORT.println(F("[LAUNCH] T+350ms: MAIN FUEL OPEN"));
+    launchState = LAUNCH_FUEL_OPEN;
+  }
+}
+
+// ============================================================
+// BULK VALVE CONTROL (OPEN ALL / CLOSE ALL)
+// ============================================================
+
+void openAllValves() {
+  SERIAL_PORT.println(F("Opening all valves..."));
+  setValve(CH_GSE_FILL,   gse_fill_state,   1);
+  delay(5);
+  setValve(CH_GSE_RELIEF, gse_relief_state, 1);
+  delay(5);
+  setValve(CH_GSE_DUMP,   gse_dump_state,   1);
+  delay(5);
+  setValve(CH_RKT_OX,     rkt_ox_state,     1);
+  delay(5);
+  setValve(CH_RKT_FUEL,   rkt_fuel_state,   1);
+  delay(5);
+  setValve(CH_RKT_RELIEF, rkt_relief_state, 1);
+  delay(5);
+  setValve(CH_RKT_DUMP,   rkt_dump_state,   1);
+  delay(5);
+  setValve(CH_RKT_IGN,    rkt_ign_state,    1);
+  SERIAL_PORT.println(F("All valves opened"));
+}
+
+void closeAllValves() {
+  SERIAL_PORT.println(F("Closing all valves..."));
+  setValve(CH_GSE_FILL,   gse_fill_state,   0);
+  delay(5);
+  setValve(CH_GSE_RELIEF, gse_relief_state, 0);
+  delay(5);
+  setValve(CH_GSE_DUMP,   gse_dump_state,   0);
+  delay(5);
+  setValve(CH_RKT_OX,     rkt_ox_state,     0);
+  delay(5);
+  setValve(CH_RKT_FUEL,   rkt_fuel_state,   0);
+  delay(5);
+  setValve(CH_RKT_RELIEF, rkt_relief_state, 0);
+  delay(5);
+  setValve(CH_RKT_DUMP,   rkt_dump_state,   0);
+  delay(5);
+  setValve(CH_RKT_IGN,    rkt_ign_state,    0);
+  SERIAL_PORT.println(F("All valves closed"));
+}
+
+// ============================================================
 // SERIAL COMMAND PARSER
 // ============================================================
 
 void handleSerialCommand(String &line) {
-  if (line.indexOf("set_valve") == -1 && line.indexOf("set_all_valves") == -1 && line.indexOf("ignition_sequence") == -1) return;
-
-  if (line.indexOf("set_all_valves") != -1) {
-    int state = 0;
-    int stateIdx = line.indexOf("\"state\":");
-    if (stateIdx != -1) {
-      int valIdx = stateIdx + 8;
-      while (valIdx < (int)line.length() && line[valIdx] == ' ') valIdx++;
-      state = (line[valIdx] == '1') ? 1 : 0;
-    }
-    // Set all valves
-    setValve(CH_GSE_FILL,   gse_fill_state,   state);
-    setValve(CH_GSE_RELIEF, gse_relief_state, state);
-    setValve(CH_GSE_DUMP,   gse_dump_state,   state);
-    setValve(CH_RKT_OX,     rkt_ox_state,     state);
-    setValve(CH_RKT_FUEL,   rkt_fuel_state,   state);
-    setValve(CH_RKT_RELIEF, rkt_relief_state, state);
-    setValve(CH_RKT_DUMP,   rkt_dump_state,   state);
-    setValve(CH_RKT_IGN,    rkt_ign_state,    state);
-  } else if (line.indexOf("ignition_sequence") != -1) {
-    if (ignition_state == IDLE) {
-      ignition_state = IGNITING;
-      ignition_start_time = millis();
-      setValve(CH_RKT_IGN, rkt_ign_state, 1);
-    }
-  } else if (line.indexOf("set_valve") != -1) {
-    int state    = 0;
-    int stateIdx = line.indexOf("\"state\":");
-    if (stateIdx != -1) {
-      int valIdx = stateIdx + 8;
-      while (valIdx < (int)line.length() && line[valIdx] == ' ') valIdx++;
-      state = (line[valIdx] == '1') ? 1 : 0;
-    }
-
-    if      (line.indexOf("\"gf\"") != -1 || line.indexOf("gse_fill")      != -1) setValve(CH_GSE_FILL,   gse_fill_state,   state);
-    else if (line.indexOf("\"gr\"") != -1 || line.indexOf("gse_relief")    != -1) setValve(CH_GSE_RELIEF, gse_relief_state, state);
-    else if (line.indexOf("\"gd\"") != -1 || line.indexOf("gse_dump")      != -1) setValve(CH_GSE_DUMP,   gse_dump_state,   state);
-    else if (line.indexOf("\"ro\"") != -1 || line.indexOf("rocket_ox")     != -1) setValve(CH_RKT_OX,     rkt_ox_state,     state);
-    else if (line.indexOf("\"rf\"") != -1 || line.indexOf("rocket_fuel")   != -1) setValve(CH_RKT_FUEL,   rkt_fuel_state,   state);
-    else if (line.indexOf("\"rr\"") != -1 || line.indexOf("rocket_relief") != -1) setValve(CH_RKT_RELIEF, rkt_relief_state, state);
-    else if (line.indexOf("\"rd\"") != -1 || line.indexOf("rocket_dump")   != -1) setValve(CH_RKT_DUMP,   rkt_dump_state,   state);
-    else if (line.indexOf("\"ig\"") != -1 || line.indexOf("ignite")        != -1) setValve(CH_RKT_IGN,    rkt_ign_state,    state);
+  // Check for launch command first
+  if (line.indexOf("\"launch\"") != -1 || line.indexOf("launch") != -1) {
+    startLaunch();
+    return;
   }
+
+  // Check for bulk valve commands (compact form: oa=open_all, ca=close_all)
+  if (line.indexOf("\"oa\"") != -1 || line.indexOf("oa") != -1) {
+    openAllValves();
+    return;
+  }
+
+  if (line.indexOf("\"ca\"") != -1 || line.indexOf("ca") != -1) {
+    closeAllValves();
+    return;
+  }
+
+  if (line.indexOf("set_valve") == -1) return;
+
+  int state    = 0;
+  int stateIdx = line.indexOf("\"state\":");
+  if (stateIdx != -1) {
+    int valIdx = stateIdx + 8;
+    while (valIdx < (int)line.length() && line[valIdx] == ' ') valIdx++;
+    state = (line[valIdx] == '1') ? 1 : 0;
+  }
+
+  if      (line.indexOf("\"gf\"") != -1 || line.indexOf("gse_fill")      != -1) setValve(CH_GSE_FILL,   gse_fill_state,   state);
+  else if (line.indexOf("\"gr\"") != -1 || line.indexOf("gse_relief")    != -1) setValve(CH_GSE_RELIEF, gse_relief_state, state);
+  else if (line.indexOf("\"gd\"") != -1 || line.indexOf("gse_dump")      != -1) setValve(CH_GSE_DUMP,   gse_dump_state,   state);
+  else if (line.indexOf("\"ro\"") != -1 || line.indexOf("rocket_ox")     != -1) setValve(CH_RKT_OX,     rkt_ox_state,     state);
+  else if (line.indexOf("\"rf\"") != -1 || line.indexOf("rocket_fuel")   != -1) setValve(CH_RKT_FUEL,   rkt_fuel_state,   state);
+  else if (line.indexOf("\"rr\"") != -1 || line.indexOf("rocket_relief") != -1) setValve(CH_RKT_RELIEF, rkt_relief_state, state);
+  else if (line.indexOf("\"rd\"") != -1 || line.indexOf("rocket_dump")   != -1) setValve(CH_RKT_DUMP,   rkt_dump_state,   state);
+  else if (line.indexOf("\"ig\"") != -1 || line.indexOf("ignite")        != -1) setValve(CH_RKT_IGN,    rkt_ign_state,    state);
 }
 
 // ============================================================
@@ -477,24 +558,14 @@ void loop() {
     }
   }
 
+  // --- Non-blocking launch sequencer ---
+  // Runs every iteration without blocking telemetry
+  updateLaunchSequence();
+
   // --- HX711 non-blocking read ---
   // is_ready() returns true only when new data is available (DOUT goes low).
   // This never blocks — if no data is ready it returns immediately.
   updateLoadCell();
-
-  // --- Ignition sequence timing ---
-  unsigned long now = millis();
-  if (ignition_state == IGNITING && now - ignition_start_time >= 100) {
-    ignition_state = OX_OPENING;
-    setValve(CH_RKT_OX, rkt_ox_state, 1);
-    ignition_start_time = now;
-  } else if (ignition_state == OX_OPENING && now - ignition_start_time >= 100) {
-    ignition_state = FUEL_OPENING;
-    setValve(CH_RKT_FUEL, rkt_fuel_state, 1);
-    ignition_start_time = now;
-  } else if (ignition_state == FUEL_OPENING && now - ignition_start_time >= 100) {
-    ignition_state = SEQUENCE_DONE;
-  }
 
   // --- ADC cycling ---
   const uint8_t channels[3] = {SING_0, SING_1, SING_2};
