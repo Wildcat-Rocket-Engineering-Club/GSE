@@ -160,7 +160,7 @@ SdFile logFile;
 
 const float MAX_VOLTAGE  = 5.0f;
 const float MAX_PRESSURE = 5000.0f;
-const float PRESSURE_OFFSETS[3] = {-40.0f, -43.0f, -62.0f};
+const float PRESSURE_OFFSETS[3] = {-39.0f, -36.0f, -53.0f};
 
 const int XBEE_OUTPUT_INTERVAL = 5;
 
