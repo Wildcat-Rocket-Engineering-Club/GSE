@@ -93,14 +93,14 @@ const long SERIAL_BAUD = 230400;
 // Servo endpoint calibration
 // Open | closed
 const ServoConfig SERVOS[] = {
-  { CH_GSE_FILL,   2510,  1720 },  //  GSE Fill     (90°)
-  { CH_GSE_RELIEF, 2000,  910},  //  GSE Relief   (180° but turns 90) 
-  { CH_GSE_DUMP,   1900,  1000 },  // GSE Dump     (90°, spare)
-  { CH_RKT_OX,     2900,  750 },  // RKT Ox       (180°) (*opens more than needed. Can increase from 475)
+  { CH_GSE_FILL,   2510,  1775 },  //  GSE Fill     (90°)
+  { CH_GSE_RELIEF, 2050,  970},  //  GSE Relief   (180° but turns 90) 
+  { CH_GSE_DUMP,   1930,  970 },  // GSE Dump     (90°, spare)
+  { CH_RKT_OX,     3025,  750 },  // RKT Ox       (180°) (*opens more than needed. Can increase from 475)
   { CH_RKT_FUEL,   2200,  960 },  // RKT Fuel     (90°)
   { CH_RKT_RELIEF, 2100,  944 },  // RKT Relief Vent   (90°)
   { CH_RKT_DUMP,   2000,  875 },  // RKT Dump     (90°)
-  { CH_RKT_IGN,    2000,  875 },  // RKT Ignition (90°)
+  { CH_RKT_IGN,    875,  2000 },  // RKT Ignition (defaults OFF)
 };
 const int NUM_SERVOS = sizeof(SERVOS) / sizeof(SERVOS[0]);
 
@@ -116,6 +116,7 @@ const int NUM_SERVOS = sizeof(SERVOS) / sizeof(SERVOS[0]);
 // To re-calibrate: use scale.tare() then scale.calibrate_scale(known_mass)
 #define HX711_OFFSET  10304
 #define HX711_SCALE   1891.308715f
+#define ROCKET_DRY_WEIGHT 85.F
 
 // How often to read the load cell (every N complete ADC cycles).
 // HX711 at default 10 SPS — reading more often than ~1/10th of your
@@ -293,7 +294,7 @@ void updateLoadCell() {
   if (!scale.is_ready()) return;   // No new data yet — return immediately
 
   // get_units() returns the tared, scaled value in your calibrated units (lbs)
-  loadCelllbs = loadCelllbs = scale.get_units(4);  // or even 10;  // 1 = single reading, no averaging
+  loadCelllbs = loadCelllbs = -scale.get_units(4) - ROCKET_DRY_WEIGHT;  // or even 10;  // 1 = single reading, no averaging
 }
 
 // ============================================================
