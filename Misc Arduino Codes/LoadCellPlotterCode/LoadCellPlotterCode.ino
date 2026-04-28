@@ -1,4 +1,3 @@
-//
 //    FILE: HX_plotter.ino
 //  AUTHOR: Rob Tillaart
 // PURPOSE: HX711 demo
@@ -9,61 +8,58 @@
 
 HX711 scale;
 
-const int sampleSize = 25;
+const int sampleSize = 5;
 uint8_t dataPin = 2;
 uint8_t clockPin = 3;
 
 uint32_t start, stop;
 volatile float f;
-double urmom[sampleSize];
-int i=0;
+double values[sampleSize];
+int i = 0;
 
+bool verboseLog = false;
 
-void setup()
-{
+void setup() {
   // Initializes.
-  for (int i=0; i<sampleSize; i++)
-  {
-    urmom[i] = 0;
+  for (int i = 0; i < sampleSize; i++) {
+    values[i] = 0;
   }
   Serial.begin(9600);
-  // Serial.println(__FILE__);
-  // Serial.print("LIBRARY VERSION: ");
-  // Serial.println(HX711_LIB_VERSION);
-  // Serial.println();
+
+  if (verboseLog) {
+    Serial.println(__FILE__);
+    Serial.print("LIBRARY VERSION: ");
+    Serial.println(HX711_LIB_VERSION);
+    Serial.println();
+  }
 
   scale.begin(dataPin, clockPin);
 
   // Sets offsets and scales
-  scale.set_offset(10304);
+  scale.set_offset(11904);
   scale.set_scale(1891.308715);
-  scale.tare();  
+  //scale.tare();  
   // reset the scale to zero = 0
 }
 
 
-void loop()
-{
+void loop() {
   // continuous scale 4x per second
   f = scale.get_units(0);
-  urmom[i] = (double)f;
-  int count = 1;
-  double avg= 0;
-  if(i==sampleSize-1)
-  {
-    for(int a = 0; a<sampleSize; a++){
-        avg +=urmom[a];
-        count++;
+  values[i % sampleSize] = (double)f;
+  double total = 0;
+  if(i % sampleSize == 0) {
+    for(int a = 0; a < sampleSize; a++) {
+        total += values[a];
     }
-    avg /=count;
-    i = -1;
-      //Serial.println((String)sampleSize+"-unit avg: "+(String)avg);
-      Serial.println((String)avg);
-       for (int i=0; i<sampleSize; i++)
-  {
-    urmom[i] = 0;
-  }
-
+    double average = total / sampleSize;
+    if (verboseLog) {
+      Serial.print((String)sampleSize + "-unit avg: ");
+    }
+    Serial.println(average);
+    for (int i=0; i<sampleSize; i++) {
+      values[i] = 0;
+    }
   }
   i++;
 }
