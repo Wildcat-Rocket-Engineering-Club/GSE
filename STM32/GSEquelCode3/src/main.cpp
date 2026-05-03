@@ -195,8 +195,8 @@ LaunchState launchState = LAUNCH_IDLE;
 unsigned long launchStartTime = 0;
 
 const unsigned long IGNITION_TIME = 0;      // T+0ms
-const unsigned long OX_TIME = 500;          // T+200ms
-const unsigned long FUEL_TIME = 750;        // T+350ms (200 + 250)
+const unsigned long OX_TIME = 500;          // T+500ms
+const unsigned long FUEL_TIME = 750;        // T+750ms (500 + 250)
 
 // ============================================================
 // ADC / PRESSURE GLOBALS
