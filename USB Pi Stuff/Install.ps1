@@ -28,15 +28,13 @@ if ($vh -eq "y") {
 }
 
 # Serial Monitor
-$sm = Read-Host "Download Serial Port Monitor? (Y/N)"
+$sm = Read-Host "Download PuTTY? (Y/N)"
 if ($sm -eq "y") {
-    Write-Host "Downloading Serial Monitor..." -ForegroundColor Yellow
-    $zip = Join-Path $installPath "SerialMonitor.zip"
-    $wc.DownloadFile("https://vovsoft.com/files/serial-port-monitor-portable.zip?v=2.0", $zip)
-    Start-Sleep -Seconds 1
-    Expand-Archive -Path $zip -DestinationPath (Join-Path $installPath "SerialMonitor") -Force
-    Remove-Item $zip -Force
+    Write-Host "Downloading PuTTY..." -ForegroundColor Yellow
+    $exePath = Join-Path $installPath "putty.exe"
+    $wc.DownloadFile("https://the.earth.li/~sgtatham/putty/latest/w64/putty.exe", $exePath)
 }
+
 
 # WinDaq
 $wd = Read-Host "Download WinDaq Setup (Large File)? (Y/N)"
