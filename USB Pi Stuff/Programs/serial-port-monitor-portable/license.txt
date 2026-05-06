@@ -1,0 +1,60 @@
+﻿EULA & Privacy Policy
+
+Do not install or use this software until you have read and accepted all of the terms of this license.
+
+By installing or using the software (the "product"), the individual or entity licensing the product ("licensee") is consenting to be bound by and is becoming a party to this license agreement ("agreement"). If licensee does not agree to all of the terms of this agreement, licensee must not install or use the product. This agreement is a legal license agreement between licensee and legal owner of Vovsoft.com ("Vovsoft").
+
+The product is distributed "as is" and without any warranty as to merchantability or fitness for a particular purpose or any other warranties either expressed or implied. Vovsoft will not be liable for data loss, damages, loss of profits or any other kind of loss while using or misusing this software. To the maximum extent permitted by applicable law, in no event will Vovsoft or its suppliers or resellers be liable for any indirect, special, incidental or consequential damages arising out of the use of or inability to use the product, including, without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses, even if advised of the possibility thereof, and regardless of the legal or equitable theory (contract, tort or otherwise) upon which the claim is based.
+
+In any case, Vovsoft's entire liability under any provision of this agreement shall not exceed in the aggregate the sum of the fees licensee paid for this license (if any). Vovsoft is not responsible for any liability arising out of content provided by licensee or a third party that is accessed through the product and/or any material linked through such content.
+
+The product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org). The product includes cryptographic software written by Eric Young (eay@cryptsoft.com). Please remember that export/import and/or use of cryptography software, providing cryptography hooks or even just communicating technical details about cryptography software is illegal in some parts of the world. Vovsoft and the authors of OpenSSL are not liable for any violations you make. By downloading, installing or using any portion of the product, you agree that the product meet your local and state cryptography laws, rules and regulations.
+
+The product uses libraries from the FFmpeg project under the LGPLv3.
+
+The product supports silent installation, i.e. the application can be installed without displaying the installation windows and without showing prompts. This is a useful thing if you want to automate installation.
+
+You may copy the product and documentation as you wish, and give exact copies of the original product to anyone, and distribute the product and documentation in its unmodified form via electronic means. But you should not charge or request donations for any such copies however made, or from distributing the product and/or documentation with other software without the author's written permission. Any attempts at reverse-engineering or thwarting the license protection scheme of the product is prohibited. Any evidence of tampering will be investigated and may lead to prosecution according to all applicable laws.
+
+One licensed copy of the product may either be used by a single person who uses the software personally on one or more computers, or installed on a single workstation used non-simultaneously by multiple people, but not both. You may access the licensed edition of the product through a network, provided that you have obtained individual licenses for the software covering all workstations that will access the software through the network. Upon purchase, you should receive a license key which is necessary to enable the software. A license entitles the holder to use the program. This code must be kept in the strictest confidence and must not be given or revealed to anyone but the licensed owner. Failure to abide by these provisions may result in severe legal penalties and will result in revocation of the license which will cause the program to no longer work.
+
+Without prejudice to any other rights, Vovsoft may terminate this agreement if licensee breaches any of its terms and conditions. Upon termination, licensee shall destroy all copies of the product.
+
+Owner and Data Controller
+Fatih Ramazan Çıkan
+1751 Sk. No:14/1 32100 Merkez/Isparta Turkey
+privacy@vovsoft.com
+
+Vovsoft.com ("Vovsoft") is committed to protecting your personal information and respecting your privacy.
+
+We will never sell, rent or disclose your personally identifiable information to outside parties without your consent.
+
+We believe it is important to provide added protection for children online. We encourage parents and guardians to spend time online with their children to observe, participate in and/or monitor and guide their online activity. We do not knowingly collect any personally identifiable information from children under the age of 13. If a parent or guardian believes that we have in our database the personally identifiable information of a child under the age of 13, please contact us immediately at https://vovsoft.com/contact/ and we will use our best efforts to promptly remove such information from our records.
+
+With your permission, we may send you newsletter emails regarding new products, updates or other information. You may always opt-out of receiving newsletter emails through https://vovsoft.com/newsletter/ or by clicking on the link provided at the bottom of our email to you.
+
+We collect and process information that is reasonably necessary for our services. The types of information we collect and process depend on the specific service we provide to you. For instance, when you visit Vovsoft web site and/or submit a form, we collect and process your information. Additionally, our software products may establish connections to our web servers for license validation and update checks. In all these instances, we may collect and process data such as Cookies, Referrers, IP Addresses, and System Information.
+
+A "cookie" is an element of data that a web site can send to your browser, which may then store it on your system. It can be used to provide you with a tailored user experience. Some Vovsoft pages use cookies. Cookies are used to better personalize the content and promotions that you and other users will see. We may use the information to research and understand how our users' habits in the aggregate are similar or different so that we can enhance your experience on Vovsoft web site and with our products. With your consent, cookies can optionally store information from forms that you fill out on our site. You can set your browser to notify you when you receive a cookie, giving you the chance to decide whether or not to accept it. We do not require that you accept cookies.
+
+A "referrer" is the information passed along by a web browser that references the web URL you linked from, and is automatically collected by our web servers. This information is collected and used by us to understand the web site referring traffic to our web pages and to present appropriate content to our potential customers. Referrer information is tabulated by us on an aggregated basis to identify general trends and traffic patterns.
+
+"IP addresses" are used by your computer every time you are connected to the Internet. Your IP address is a number that is used by computers on the network to identify your computer so that data (such as the web pages you request) can be sent to you. They are automatically gathered by our web servers and used for abuse prevention purposes.
+
+"System information" we gather includes language, time, type of software/browser being used, operating system/platform. This information is sent automatically by your device when you are connected to the Internet and is used by us for statistics. This information is used in identifying trends and may be used to provide information appropriate for your computer system.
+
+At the time of product download and/or purchase, information you provide to us, including personal information and referring URL's, is collected and processed. Additionally, we may contact you via email concerning your product download and/or purchase, providing details such as the download link, license key information, and an invitation to review the product.
+
+We disclose the information we collect when required by law or to respond to legal process. When permitted or required by law, we may share information with third parties for purposes including response to legal process.
+
+Vovsoft web site contains links to other web sites. However, we are not responsible for the privacy practices or the content of such web sites.
+
+We respect your right to control your personal information. If you wish to delete your data from our records, please submit a deletion request at https://vovsoft.com/contact/. Upon receiving such a request, we will review it in accordance with applicable laws and promptly take reasonable steps to delete the requested information from our database, unless retention is necessary for legal purposes. Please note that certain data may remain in our backups or archives for a limited period even after deletion, but it will not be actively used.
+
+We revise our Privacy Policy to keep it up to date with Vovsoft products, services and web pages. We will notify you of any changes we make by posting an updated version of this policy on our web site. Any changes will take effect when they are so posted. We also post FAQ's from time to time on specific products.
+
+We will use reasonable efforts to comply with this privacy statement and will take prompt corrective action when we learn of any failure to comply with our privacy statement. Because of the complex and constantly changing nature of technology and business, we do not guarantee error-free performance under this privacy statement. We shall not be liable for any incidental, consequential or punitive damages relating to this privacy statement.
+
+If you have any questions about this privacy statement, the practices of our software or web site, or wish to make a complaint about our handling practices, you may contact us at https://vovsoft.com/contact/. We will investigate any complaints received in writing and do our best to resolve them with you as soon as possible.
+
+Please see http://vovsoft.com for more information.
