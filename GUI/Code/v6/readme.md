@@ -41,6 +41,12 @@ What changed from V4 to V5:
 
 - Plug in the XBee module via USB
 
+### Use the STM32 USB connection instead
+
+- In `app.py`, set `USE_FAKE_DATA = False` and `USE_STM_USB = True`.
+- Build and flash the STM32 firmware with `USE_SERIAL_USB` enabled.
+- Connect the Nucleo-F446RE board to the computer over USB.
+
 Now you're ready to run it!
 
 ### Actually using the script
