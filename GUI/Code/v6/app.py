@@ -16,8 +16,14 @@ import serial.tools.list_ports
 # CONFIGURATION
 # ==============================
 
+# For direct USB, disable fake data and build STM32 firmware with USE_SERIAL_USB enabled.
 USE_FAKE_DATA = False
+USE_STM_USB   = False
 BAUD_RATE     = 230400
+
+# Nucleo-F446RE boards expose the ST-LINK/V2-1 virtual COM port over USB.
+STM_USB_VID = 0x0483
+STM_USB_PID = 0x374B
 
 # XBee SX 900 dev board uses an FT4232H (quad-port FTDI chip).
 # VID 0x0403 is universal to all FTDI devices.
@@ -64,7 +70,40 @@ def find_xbee_port() -> str:
           f"(change XBEE_CHANNEL_INDEX if wrong)")
     return selected.device
 
-SERIAL_PORT = None if USE_FAKE_DATA else find_xbee_port()
+def find_stm_usb_port() -> str:
+    """Find the Nucleo-F446RE ST-LINK virtual COM port."""
+    ports = list(serial.tools.list_ports.comports())
+    matches = [p for p in ports if p.vid == STM_USB_VID and p.pid == STM_USB_PID]
+
+    if len(matches) != 1:
+        if not matches:
+            print("ERROR: No STM32 Nucleo-F446RE USB serial port found "
+                  "(VID=0483, PID=374B / ST-LINK/V2-1).")
+            print("           Check the USB cable and that the ST-LINK driver is installed.")
+            print("           Available ports:")
+            for p in ports:
+                print(f"             {p.device} - {p.description}  "
+                      f"(VID={hex(p.vid) if p.vid else 'n/a'}, "
+                      f"PID={hex(p.pid) if p.pid else 'n/a'})")
+        else:
+            print("ERROR: Multiple STM32 Nucleo-F446RE USB serial ports found: "
+                  f"{[p.device for p in matches]}")
+            print("           Connect only the intended board.")
+        raise SystemExit(1)
+
+    selected = matches[0]
+    print(f"STM32 Nucleo-F446RE USB port found: {selected.device}")
+    return selected.device
+
+if USE_FAKE_DATA and USE_STM_USB:
+    raise ValueError("USE_FAKE_DATA and USE_STM_USB cannot both be enabled.")
+
+if USE_FAKE_DATA:
+    SERIAL_PORT = None
+elif USE_STM_USB:
+    SERIAL_PORT = find_stm_usb_port()
+else:
+    SERIAL_PORT = find_xbee_port()
 
 
 

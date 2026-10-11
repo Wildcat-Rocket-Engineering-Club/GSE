@@ -1,57 +1,105 @@
-# Instructions
+# GSEquel GUI V6
 
-## REQUIRED BEFORE RUNNING
+This folder contains the V6 ground-support-equipment (GSE) web interface. The
+GUI receives telemetry and sends commands over a serial connection to the
+STM32. It can also generate simulated telemetry for development.
 
-I MADE SCRIPTS TO SET UP THE DEPENDENCIES AND VENV.
+This README describes the checked-in V6 behavior. The previous README had
+V4-to-V5 notes, but a reliable V5 baseline is not available here, so those
+notes are not presented as a V5-to-V6 changelog.
 
-### WINDOWS
+## Current V6 behavior
 
-- Make sure you have python3 installed on your computer.
-  - in microsoft store, download the newest version of python & also install vscode
-  - in vscode, download the 'python' extension
-- Make sure you have an internet connection (downloading the dependencies)
-- double-click (or run in a console) the windows_setup_venv.bat batch file.
-- Let it run
-- Click 'accept' and install the XBee drivers onto your computer.
-- Proceed to 'checking it worked'
+- Serves the control and telemetry interface at `http://localhost:5001`.
+- Reads newline-delimited JSON telemetry and writes commands over serial.
+- Selects either simulated data, the XBee adapter, or direct STM32 USB serial.
+- Reconnects when a real serial connection drops.
+- Logs received telemetry to timestamped CSV files in `datalogs/`.
+- Retries an individual valve command once if telemetry does not confirm the
+  requested state within the configured timeout.
 
-### MAC
+## Setup
 
-- Make sure you have python3 installed on your computer.
-- Make sure you have an internet connection (downloading the dependencies)
-- double-click (or run in a console) the mac_setup_venv.sh shell file.
-- Let it run
-- Install the XBee drivers for mac (if they exist)
-- Proceed to 'checking it worked'
+Install Python 3, then install the dependencies using the setup script for your
+operating system:
 
-### Checking it worked
+- **Windows:** run `windows_setup_venv.bat`.
+- **macOS:** open a terminal in this folder and run `bash mac_setup_venv.sh`.
 
-In vscode, open the "v5" folder and open a terminal in it. You should see a green "(.venv)" text appear after a second. This is how you know that the script worked. Also in "device manager" you should see "COM & LPT PORTS" after successfully installing the XBee driver.
+Both scripts create a `venv` folder and install the packages from
+`requirements.txt`. The scripts and dependency list are the setup source of
+truth; edit neither to change the runtime options described below.
 
-What changed from V4 to V5:
+Activate the environment and start the app:
 
-- Auto-reconnect to Serial if the communication drops (don't need to restart the goddamn app now)
-  - also turns yellow and tells you when signal is dropped
-- more robust UI
-- Buttons for IGNITION SEQUENCE and ALL VALVES OPEN/CLOSE (simultaneously) for testing purposes
+- **Windows:** `venv\Scripts\activate`
+- **macOS:** `source venv/bin/activate`
+- Both: `python app.py`
 
-## Usage
+The app uses port `5001` by default. Open `http://localhost:5001` in a browser.
+If startup reports that the serial device cannot be found, check the selected
+connection mode and that the device/driver is available.
 
-### Set up the XBee
+## Choose a data connection
 
-- Plug in the XBee module via USB
+Edit the configuration near the top of `app.py`. These two flags select the
+connection mode:
 
-Now you're ready to run it!
+| `USE_FAKE_DATA` | `USE_STM_USB` | Mode |
+| --- | --- | --- |
+| `True` | `False` | Simulated telemetry; no hardware connection |
+| `False` | `False` | XBee serial connection (the default) |
+| `False` | `True` | Direct USB serial connection to an STM32 Nucleo-F446RE |
 
-### Actually using the script
+Do not set both flags to `True`; the app rejects that configuration.
 
-- Make sure the Xbee is plugged in and the serial port configured (see "Set up the XBee")
-- Make sure the GSE box is on
-  - you can also verify signal integrity by looking at the XBee module for the "RSSI" indicator lights (3 vertically that will illuminate when they connect to each other)
-  - More lights = more signal strength
-  - These lights will not turn on unless the devices (STM32 and/or laptop) are actively sending data. So if they're not on, there might be an issue somewhere.
-- Run "app.py" as a task from vscode
-- In your web-browser of choice, open localhost:5001
-- You should now be seeing the interface and can use it as you see fit
-- It is now your responsibility to not kill anyone or explode the rocket
-  - be smart. be safe.
+### XBee
+
+Plug in the XBee SX 900 adapter. The app searches for its FT4232H USB serial
+interface (`VID=0403`, `PID=6011`) and selects channel A by default.
+
+### Direct STM32 USB
+
+Set `USE_FAKE_DATA = False` and `USE_STM_USB = True` in `app.py`. The STM32
+firmware must also use its USB serial interface: in the firmware source, enable
+`USE_SERIAL_USB` in the serial-port configuration section. Connect the
+Nucleo-F446RE by USB; the GUI looks for the ST-LINK virtual COM port
+(`VID=0483`, `PID=374B`).
+
+Both the GUI `BAUD_RATE` and firmware `SERIAL_BAUD` are `230400` by default.
+Keep them in sync when changing the baud rate. USB serial devices may ignore
+the baud-rate setting, but using the same configured value avoids surprises
+when switching between transports.
+
+## Editable options
+
+GUI options are near the top of `app.py`. Firmware options are in the STM32
+firmware source, not in the GUI or dependency setup files.
+
+| Option | Where | Purpose |
+| --- | --- | --- |
+| `USE_FAKE_DATA` | `app.py` | Use generated telemetry instead of hardware data. |
+| `USE_STM_USB` | `app.py` | Select direct STM32 USB instead of XBee when fake data is off. |
+| `BAUD_RATE` | `app.py` | GUI serial speed; keep in sync with firmware `SERIAL_BAUD`. |
+| `XBEE_CHANNEL_INDEX` | `app.py` | XBee FT4232H channel, where `0` selects channel A. |
+| `ENABLE_BOTTLE_PRESSURE`, `ENABLE_TANK_PRESSURE`, `ENABLE_CHAMBER_PRESSURE`, `ENABLE_LOADCELL` | `app.py` | Control which sensor readings the GUI processes/displays. |
+| `ENABLE_GSE_FILL`, `ENABLE_GSE_DUMP`, `ENABLE_GSE_RELIEF`, `ENABLE_ROCKET_DUMP`, `ENABLE_ROCKET_OX`, `ENABLE_ROCKET_FUEL`, `ENABLE_ROCKET_RELIEF` | `app.py` | Control which valve states the GUI processes/displays. These are GUI display flags, not hardware safety interlocks. |
+| `CONFIRM_TIMEOUT_S` | `app.py` | Time to wait for telemetry confirmation before a valve-command retry. |
+| `MAX_RETRIES` | `app.py` | Maximum retries for an individual valve command. The default is one retry. |
+| `PORT` | `app.py` | Local web-server port. The default is `5001`. |
+| `USE_SERIAL_USB` | STM32 firmware source, serial-port configuration | Select USB serial instead of the firmware's hardware UART. |
+| `SERIAL_BAUD` | STM32 firmware source | Firmware serial speed; keep in sync with GUI `BAUD_RATE`. |
+
+The USB/XBee vendor and product IDs in `app.py` identify the expected devices;
+they normally should not need editing. Other firmware settings, such as sensor
+calibration and pin assignments, belong in the STM32 firmware source.
+
+## Operating notes
+
+- In XBee mode, connect the XBee module and ensure the STM32/GSE box is powered.
+- The XBee RSSI lights can help indicate a radio link; they may only illuminate
+  while the devices are communicating.
+- For simulated telemetry, use fake-data mode and do not treat the display as
+  live hardware state.
+- Review the hardware state and operating procedures before sending any valve
+  or launch command. This interface does not replace the team's safety checks.
