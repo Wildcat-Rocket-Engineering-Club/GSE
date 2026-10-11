@@ -4,12 +4,13 @@
 // HX711 load cell (Rob Tillaart library)
 // SD card logging (SdFat by Greiman) + compact JSON telemetry output
 
-#include <ADS1256.h>                    // Modified ADS1256 library
 #include <Wire.h>                       // I2C (for PCA9685)
 #include <Adafruit_PWMServoDriver.h>    // Adafruit PWM Servo Driver library
-#include <HX711.h>                      // Rob Tillaart HX711 library
 #include <SdFat.h>                      // SdFat by Bill Greiman (greiman/SdFat @ ^2.2.0)
 #include <SPI.h>
+
+#include "ADS1256PressureSensor.h"
+#include "HX711LoadCell.h"
 
 #define ARDUINO_ARCH_STM32
 
@@ -105,30 +106,6 @@ const ServoConfig SERVOS[] = {
 const int NUM_SERVOS = sizeof(SERVOS) / sizeof(SERVOS[0]);
 
 // ============================================================
-// HX711 LOAD CELL
-// ============================================================
-
-// Move HX711 to PC6/PC7 to avoid any trace overlap with I2C/SPI
-#define PIN_HX711_DOUT  PC6 
-#define PIN_HX711_SCK   PC7
-
-// Calibration values — measured on your specific load cell + wiring
-// To re-calibrate: use scale.tare() then scale.calibrate_scale(known_mass)
-#define HX711_OFFSET  10304
-#define HX711_SCALE   1891.308715f
-#define ROCKET_DRY_WEIGHT 85.F
-
-// How often to read the load cell (every N complete ADC cycles).
-// HX711 at default 10 SPS — reading more often than ~1/10th of your
-// ADC cycle rate just returns stale data. At ~19 Hz XBee output and
-// 10 SPS HX711, reading every 10 cycles (~10 Hz) is appropriate.
-#define HX711_READ_INTERVAL  10
-
-HX711 scale;
-float loadCelllbs = 0.0f;
-bool  hx711Ready = false;
-
-// ============================================================
 // SD CARD PINS (SPI2)
 // ============================================================
 
@@ -145,10 +122,8 @@ TwoWire wire1(PB9, PB8);   // SDA, SCL — I2C1
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PCA9685_ADDR, wire1);
 
 SPIClass spi2(PIN_SD_MOSI, PIN_SD_MISO, PIN_SD_SCK);
-
-#define PIN_ADS1256_DRDY PA8
-
-ADS1256 A(PIN_ADS1256_DRDY, ADS1256::PIN_UNUSED, ADS1256::PIN_UNUSED, PA4, 2.500, &SPI);
+ADS1256PressureSensor pressureSensor;
+HX711LoadCell loadCell;
 
 // ============================================================
 // SD CARD
@@ -161,12 +136,7 @@ SdFile logFile;
 // CONFIGURATION
 // ============================================================
 
-const float MAX_VOLTAGE  = 5.0f;
-const float MAX_PRESSURE = 5000.0f;
-const float PRESSURE_OFFSETS[3] = {-39.0f, -36.0f, -53.0f};
-
 const int XBEE_OUTPUT_INTERVAL = 5;
-const unsigned long ADS1256_READY_TIMEOUT_MS = 1500;
 
 // ============================================================
 // VALVE STATES
@@ -205,17 +175,8 @@ const unsigned long FUEL_TIME = 750;        // T+750ms (500 + 250)
 // ADC / PRESSURE GLOBALS
 // ============================================================
 
-float bottlePressure  = 0.0f;
-float tankPressure    = 0.0f;
-float chamberPressure = 0.0f;
-
-long rawBottle  = 0;
-long rawTank    = 0;
-long rawChamber = 0;
-
 int           completeSetCounter = 0;
-unsigned long loopCounter        = 0;
-bool          ads1256Ready       = false;
+PressureReadings pressureReadings = {0.0f, 0.0f, 0.0f};
 
 // ============================================================
 // SD CARD GLOBALS
@@ -256,49 +217,6 @@ void setValve(uint8_t channel, int &stateVar, int newState) {
   }
   servoWriteUs(channel, newState == 1 ? 1900 : 975);
   delay(15);
-}
-
-// ============================================================
-// HX711 — INIT
-// ============================================================
-
-void initHX711() {
-
-  scale.begin(PIN_HX711_DOUT, PIN_HX711_SCK, true);
-
-  // Wait up to 1 second for the HX711 to become ready
-  unsigned long t = millis();
-  while (!scale.is_ready() && millis() - t < 1000);
-
-  if (!scale.is_ready()) {
-    SERIAL_PORT.println(F("HX711: not ready — check wiring"));
-    hx711Ready = false;
-    return;
-  }
-
-  scale.set_offset(HX711_OFFSET);
-  scale.set_scale(HX711_SCALE);
-
-  hx711Ready = true;
-  SERIAL_PORT.print(F("HX711: ready, offset="));
-  SERIAL_PORT.print(HX711_OFFSET);
-  SERIAL_PORT.print(F(", scale="));
-  SERIAL_PORT.println(HX711_SCALE);
-}
-
-// ============================================================
-// HX711 — NON-BLOCKING READ
-// Rob Tillaart's library has is_ready() which checks DOUT low
-// without blocking. Call this every loop; only reads when data
-// is actually available so the ADC cycle is never stalled.
-// ============================================================
-
-void updateLoadCell() {
-  if (!hx711Ready) return;
-  if (!scale.is_ready()) return;   // No new data yet — return immediately
-
-  // get_units() returns the tared, scaled value in your calibrated units (lbs)
-  loadCelllbs = loadCelllbs = -scale.get_units(4) - ROCKET_DRY_WEIGHT;  // or even 10;  // 1 = single reading, no averaging
 }
 
 // ============================================================
@@ -355,10 +273,10 @@ void logToSD() {
   logFile.flush();
   sdRowCount++;
   logFile.print(sdRowCount);            logFile.print(',');
-  logFile.print((int)bottlePressure);   logFile.print(',');
-  logFile.print((int)tankPressure);     logFile.print(',');
-  logFile.print((int)chamberPressure);  logFile.print(',');
-  logFile.print(loadCelllbs, 3);         logFile.print(',');  // 3 decimal places
+  logFile.print((int)pressureReadings.bottlePsi);   logFile.print(',');
+  logFile.print((int)pressureReadings.tankPsi);     logFile.print(',');
+  logFile.print((int)pressureReadings.chamberPsi);  logFile.print(',');
+  logFile.print(loadCell.valueLbs(), 3); logFile.print(',');  // 3 decimal places
   logFile.print(gse_fill_state);        logFile.print(',');
   logFile.print(gse_relief_state);      logFile.print(',');
   logFile.print(gse_dump_state);        logFile.print(',');
@@ -496,93 +414,38 @@ void handleSerialCommand(String &line) {
   else if (line.indexOf("\"ig\"") != -1 || line.indexOf("ignite")        != -1) setValve(CH_RKT_IGN,    rkt_ign_state,    state);
 }
 
-// ============================================================
-// PRESSURE CONVERSION
-// ============================================================
-
-float voltageToPressure(float v) {
-  if (v < 0.0f)        v = 0.0f;
-  if (v > MAX_VOLTAGE) v = MAX_VOLTAGE;
-  return (v / MAX_VOLTAGE) * MAX_PRESSURE;
-}
-
-// ============================================================
-// ADS1256 — INIT AND PRESSURE ACQUISITION
-// ============================================================
-
-bool initADS1256() {
-  // Keep an unconnected DRDY pin high so a missing module cannot look ready.
-  pinMode(PIN_ADS1256_DRDY, INPUT_PULLUP);
-  const unsigned long startTime = millis();
-  while (digitalRead(PIN_ADS1256_DRDY) != LOW &&
-         millis() - startTime < ADS1256_READY_TIMEOUT_MS) {
-    delay(1);
-  }
-
-  if (digitalRead(PIN_ADS1256_DRDY) != LOW) {
-    SERIAL_PORT.println(F("ADS1256: not detected (DRDY stayed HIGH; check module and wiring)"));
-    return false;
-  }
-
-  A.InitializeADC();
-  A.setPGA(PGA_1);
-  A.setBuffer(0);
-  A.setDRATE(DRATE_2000SPS);
-  delay(100);
-  A.sendDirectCommand(SELFCAL);
-  delay(200);
-  SERIAL_PORT.println(F("ADS1256: initialized"));
-  return true;
-}
-
 void updatePressureAcquisition() {
-  if (!ads1256Ready) return;
+  if (!pressureSensor.update(pressureReadings)) return;
 
-  const uint8_t channels[3] = {SING_0, SING_1, SING_2};
-  ADS1256::ADS1256_Result res = A.cycleSingle3Tracked(channels, 3);
-  if (res.channel == 0xFF) return;
+  completeSetCounter++;
+  logToSD();
 
-  loopCounter++;
-
-  if      (res.channel == SING_2) rawBottle  = res.value;
-  else if (res.channel == SING_0) rawTank    = res.value;
-  else if (res.channel == SING_1) {
-    rawChamber = res.value;
-    completeSetCounter++;
-
-    bottlePressure  = voltageToPressure(A.convertToVoltage(rawBottle))  + PRESSURE_OFFSETS[0];
-    tankPressure    = voltageToPressure(A.convertToVoltage(rawTank))    + PRESSURE_OFFSETS[1];
-    chamberPressure = voltageToPressure(A.convertToVoltage(rawChamber)) + PRESSURE_OFFSETS[2];
-
-    logToSD();
-
-    if (completeSetCounter % XBEE_OUTPUT_INTERVAL == 0) {
-      SERIAL_PORT.print(F("{\"p\":{\"b\":"));
-      SERIAL_PORT.print((int)bottlePressure);
-      SERIAL_PORT.print(F(",\"t\":"));
-      SERIAL_PORT.print((int)tankPressure);
-      SERIAL_PORT.print(F(",\"c\":"));
-      SERIAL_PORT.print((int)chamberPressure);
-      SERIAL_PORT.print(F("},\"g\":{\"l\":"));
-      SERIAL_PORT.print(loadCelllbs, 2);
-      SERIAL_PORT.print(F(",\"f\":"));
-      SERIAL_PORT.print(gse_fill_state);
-      SERIAL_PORT.print(F(",\"r\":"));
-      SERIAL_PORT.print(gse_relief_state);
-      SERIAL_PORT.print(F(",\"d\":"));
-      SERIAL_PORT.print(gse_dump_state);
-      SERIAL_PORT.print(F("},\"r\":{\"o\":"));
-      SERIAL_PORT.print(rkt_ox_state);
-      SERIAL_PORT.print(F(",\"f\":"));
-      SERIAL_PORT.print(rkt_fuel_state);
-      SERIAL_PORT.print(F(",\"r\":"));
-      SERIAL_PORT.print(rkt_relief_state);
-      SERIAL_PORT.print(F(",\"d\":"));
-      SERIAL_PORT.print(rkt_dump_state);
-      SERIAL_PORT.print(F(",\"i\":"));
-      SERIAL_PORT.print(rkt_ign_state);
-      SERIAL_PORT.println(F("}}"));
-    }
+  if (completeSetCounter % XBEE_OUTPUT_INTERVAL == 0) {
+    SERIAL_PORT.print(F("{\"p\":{\"b\":"));
+    SERIAL_PORT.print((int)pressureReadings.bottlePsi);
+    SERIAL_PORT.print(F(",\"t\":"));
+    SERIAL_PORT.print((int)pressureReadings.tankPsi);
+    SERIAL_PORT.print(F(",\"c\":"));
+    SERIAL_PORT.print((int)pressureReadings.chamberPsi);
+    SERIAL_PORT.print(F("},\"g\":{\"l\":"));
+    SERIAL_PORT.print(loadCell.valueLbs(), 2);
+    SERIAL_PORT.print(F(",\"f\":"));
+    SERIAL_PORT.print(gse_fill_state);
+    SERIAL_PORT.print(F(",\"r\":"));
+    SERIAL_PORT.print(gse_relief_state);
+    SERIAL_PORT.print(F(",\"d\":"));
+    SERIAL_PORT.print(gse_dump_state);
+    SERIAL_PORT.print(F("},\"r\":{\"o\":"));
+    SERIAL_PORT.print(rkt_ox_state);
+    SERIAL_PORT.print(F(",\"f\":"));
+    SERIAL_PORT.print(rkt_fuel_state);
+    SERIAL_PORT.print(F(",\"r\":"));
+    SERIAL_PORT.print(rkt_relief_state);
+    SERIAL_PORT.print(F(",\"d\":"));
+    SERIAL_PORT.print(rkt_dump_state);
+    SERIAL_PORT.print(F(",\"i\":"));
+    SERIAL_PORT.print(rkt_ign_state);
+    SERIAL_PORT.println(F("}}"));
   }
 }
 
@@ -609,10 +472,14 @@ void setup() {
   SERIAL_PORT.println(F("PCA9685: all valves closed"));
 
   // --- HX711 ---
-  initHX711();
+  loadCell.begin(SERIAL_PORT);
 
   // --- ADS1256 (SPI1) ---
-  ads1256Ready = initADS1256();
+  if (pressureSensor.begin()) {
+    SERIAL_PORT.println(F("ADS1256: initialized"));
+  } else {
+    SERIAL_PORT.println(F("ADS1256: not detected (DRDY stayed HIGH; check module and wiring)"));
+  }
 
   // --- SD card (SPI2) ---
   initSD();
@@ -642,10 +509,8 @@ void loop() {
   // Runs every iteration without blocking telemetry
   updateLaunchSequence();
 
-  // --- HX711 non-blocking read ---
-  // is_ready() returns true only when new data is available (DOUT goes low).
-  // This never blocks — if no data is ready it returns immediately.
-  updateLoadCell();
+  // --- HX711 read ---
+  loadCell.update();
 
   // --- Pressure acquisition and telemetry ---
   updatePressureAcquisition();
