@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rocket HMI</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        body { background-color: #fff; margin: 0; }
+        #stats { margin: 8px; font-family: monospace; font-size: 13px; }
+        #controls { margin: 12px; display: flex; gap: 10px; }
+        #connBanner {
+            display: none;
+            background: #ffe066;
+            color: #333;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 6px 12px;
+            font-weight: bold;
+        }
+        #modeBanner {
+            padding: 8px 12px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+        #modeBanner.simulation,
+        #modeBanner.unrecognized { background: #ffd180; color: #5c3300; }
+        #modeBanner.hardware { background: #c8e6c9; color: #174d1a; }
+        .btn {
+            padding: 12px 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+        }
+        .btn-open { background: #00cc44; }
+        .btn-open:active { background: #008a2e; }
+        .btn-close { background: #ff3333; }
+        .btn-close:active { background: #cc0000; }
+        .btn-launch { background: #0066ff; }
+        .btn-launch:active { background: #0044cc; }
+        .btn-launch:disabled { background: #cccccc; cursor: not-allowed; }
+        .btn-abort { background: #ff6600; }
+        .btn-abort:active { background: #cc5500; }
+    </style>
+</head>
+<body>
+
+    <div id="modeBanner" class="{{ 'simulation' if connection_mode == 'simulation' else ('unrecognized' if connection_mode == 'generic_serial' else 'hardware') }}">
+        {% if connection_mode == 'simulation' %}
+            SIMULATED DATA — NOT LIVE HARDWARE STATE
+        {% elif connection_mode == 'generic_serial' %}
+            UNRECOGNIZED SERIAL DEVICE — READ-ONLY; NO VALVE OR LAUNCH COMMANDS
+        {% else %}
+            Hardware connection selected: {{ connection_details }}
+        {% endif %}
+    </div>
+    <div id="connBanner">⚠ No data received — check serial connection</div>
+    {% if connection_mode == 'generic_serial' %}
+    <div id="modeBanner" class="unrecognized">
+        This port is opened at {{ connection_details }}. Incoming telemetry is
+        not verified; confirm the device and protocol before relying on it.
+    </div>
+    {% endif %}
+
+    <div id="svg_container">
+        {% include 'PID.svg' %}
+    </div>
+
+    <div id="stats">
+        <div>rate: <span id="rate">‑</span> Hz</div>
+        <div>seq: <span id="seq">‑</span></div>
+        <div>last: <span id="last">‑</span></div>
+    </div>
+
+    {% if connection_mode != 'generic_serial' %}
+    <div id="controls">
+        <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
+        <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
+        <button id="launchBtn" class="btn btn-launch" onclick="initiateCountdown()" style="display: inline-block;">LAUNCH</button>
+        <div id="countdownWidget" style="display: none; display: inline-flex; align-items: center; gap: 12px; vertical-align: middle;">
+            <div style="font-family: monospace; font-size: 32px; font-weight: bold; color: #ff3333; min-width: 50px; text-align: center;">
+                <span id="countdownDisplay">5</span>
+            </div>
+            {% endif %}
+            <button class="btn btn-abort" onclick="abortCountdown()">ABORT</button>
+        </div>
+    </div>
+
+    <script>
+    var socket = io();
+
+    // ========== COUNTDOWN STATE ==========
+    var countdownActive = false;
+    var countdownInterval = null;
+    var countdownRemaining = 5;
+
+    function initiateCountdown() {
+        if (countdownActive) return;
+
+        countdownActive = true;
+        countdownRemaining = 5;
+        document.getElementById('launchBtn').style.display = 'none';
+        document.getElementById('countdownWidget').style.display = 'inline-flex';
+        document.getElementById('countdownDisplay').textContent = countdownRemaining;
+
+        countdownInterval = setInterval(function () {
+            countdownRemaining -= 1;
+
+            if (countdownRemaining < 0) {
+                clearInterval(countdownInterval);
+                sendLaunchCommand();
+                return;
+            }
+
+            document.getElementById('countdownDisplay').textContent = countdownRemaining;
+        }, 1000);
+    }
+
+    function abortCountdown() {
+        if (!countdownActive) return;
+        clearInterval(countdownInterval);
+        countdownActive = false;
+        document.getElementById('countdownWidget').style.display = 'none';
+        document.getElementById('launchBtn').style.display = 'inline-block';
+        console.log('Launch aborted');
+    }
+
+    function sendLaunchCommand() {
+        clearInterval(countdownInterval);
+        countdownActive = false;
+        document.getElementById('countdownWidget').style.display = 'none';
+        document.getElementById('launchBtn').style.display = 'inline-block';
+
+        socket.emit('command', { cmd: 'launch', target: 'launch' });
+        console.log('Launch command sent to STM32');
+    }
+
+    // Map of all controllable elements
+    const VALVE_MAP = [
+        { id: 'GSE_x5F_DumpValve',     target: 'gse_dump' },
+        { id: 'GSE_x5F_ReliefValve',   target: 'gse_relief' },
+        { id: 'GSE_x5F_FillValve',     target: 'gse_fill' },
+        { id: 'RKT_x5F_MainFuelValve', target: 'rocket_fuel' },
+        { id: 'RKT_x5F_MainOxValve',   target: 'rocket_ox' },
+        { id: 'RKT_x5F_ReliefValve',   target: 'rocket_relief' },
+        { id: 'RKT_x5F_DumpValve',     target: 'rocket_dump' },
+        { id: 'RKT_x5F_IGN',           target: 'ignite' }
+    ];
+
+    // Master function to set everything at once
+    function setAll(state) {
+        // state: 1 = open all, 0 = close all
+        var cmd = state === 1 ? 'oa' : 'ca';  // Compact: oa=open_all, ca=close_all
+        socket.emit('command', { cmd: cmd });
+        console.log('Master Command: ' + (state === 1 ? 'OPEN ALL' : 'CLOSE ALL'));
+    }
+
+    var lastDataTime = null;
+    var connectionError = null;
+
+    socket.on('serial_status', function (status) {
+        connectionError = status.connected ? null : (status.error || null);
+        var banner = document.getElementById('connBanner');
+        if (connectionError) {
+            banner.textContent = '⚠ ' + connectionError;
+            banner.style.display = 'block';
+        }
+    });
+
+    function updateStatusCircle() {
+        var age = lastDataTime === null ? Infinity : (Date.now() - lastDataTime) / 1000;
+        var el = document.getElementById('dataStatusCircle');
+        if (el) {
+            var color;
+            if      (age < 0.5) color = '#00cc44';
+            else if (age < 5)   color = 'orange';
+            else                color = 'red';
+            el.setAttribute('fill', color);
+        }
+        var stale = age >= 0.5;
+        document.body.style.backgroundColor = stale ? '#ffe066' : '#ffffff';
+        var banner = document.getElementById('connBanner');
+        if (connectionError) {
+            banner.textContent = '⚠ ' + connectionError;
+            banner.style.display = 'block';
+        } else {
+            banner.textContent = '⚠ No data received — check serial connection';
+            banner.style.display = stale ? 'block' : 'none';
+        }
+    }
+
+    setInterval(updateStatusCircle, 250);
+
+    function setupClick(id, target) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.style.cursor = 'pointer';
+        el.dataset.state = '0';
+        el.addEventListener('click', function () {
+            var newState = el.dataset.state === '1' ? 0 : 1;
+            el.dataset.state = newState.toString();
+            socket.emit('command', { cmd: 'set_valve', target: target, state: newState });
+        });
+    }
+
+    window.addEventListener('load', function () {
+        VALVE_MAP.forEach(v => setupClick(v.id, v.target));
+        updateStatusCircle();
+    });
+
+    var lastTs = null;
+    var avgHz  = null;
+    var SMOOTH = 0.15;
+
+    function setValveColor(id, state) {
+        var el = document.getElementById(id);
+        if (el) el.setAttribute('fill', state === 1 ? '#00cc44' : 'red');
+    }
+
+    function setPressureColor(id, psi) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var color = psi < 650 ? '#00cc44' : (psi <= 830 ? 'orange' : 'red');
+        el.setAttribute('fill', color);
+    }
+
+    function setText(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var t = el.querySelector('text') || el.querySelector('tspan');
+        if (t) t.textContent = value;
+        else   el.textContent = value;
+    }
+
+    function syncClickState(id, state) {
+        var el = document.getElementById(id);
+        if (el) el.dataset.state = state.toString();
+    }
+
+    socket.on('telemetry', function (data) {
+        lastDataTime = Date.now();
+        updateStatusCircle();
+
+        var now = Date.now() / 1000;
+        if (lastTs !== null) {
+            var dt = now - lastTs;
+            var hz = dt > 0 ? 1 / dt : 0;
+            avgHz  = avgHz === null ? hz : (SMOOTH * hz + (1 - SMOOTH) * avgHz);
+            document.getElementById('rate').textContent = avgHz.toFixed(1);
+        }
+        lastTs = now;
+
+        if (data.seq !== undefined) document.getElementById('seq').textContent = data.seq;
+        document.getElementById('last').textContent = data.ts ? new Date(data.ts * 1000).toLocaleTimeString() : new Date().toLocaleTimeString();
+
+        var en  = data.enables || {};
+        var pt  = data.pressure_transducers || {};
+        var gse = data.gse || {};
+        var rkt = data.rocket || {};
+
+        if (en.bottle_pressure  && pt.bottle_pressure  !== undefined) { setText('pressure1', pt.bottle_pressure  + ' PSI'); setPressureColor('BottleCircle', pt.bottle_pressure); }
+        if (en.tank_pressure    && pt.tank_pressure    !== undefined) { setText('pressure2', pt.tank_pressure    + ' PSI'); setPressureColor('tankCircle',   pt.tank_pressure); }
+        if (en.chamber_pressure && pt.chamber_pressure !== undefined) { setText('pressure3', pt.chamber_pressure + ' PSI'); setPressureColor('EngineCircle', pt.chamber_pressure); }
+
+        if (en.loadcell && gse.loadcell !== undefined) setText('loadcell', gse.loadcell.toFixed(2) + ' lbf');
+
+        if (en.gse_fill   && gse.fill   !== undefined) setValveColor('gse_x5F_fill_x5F_state',   gse.fill);
+        if (en.gse_dump   && gse.dump   !== undefined) setValveColor('gse_x5F_dump_x5F_state',   gse.dump);
+        if (en.gse_relief && gse.relief !== undefined) setValveColor('gse_x5F_relief_x5F_valve', gse.relief);
+        if (en.rocket_ox     && rkt.ox     !== undefined) setValveColor('rocket_x5F_ox_x5F_state',     rkt.ox);
+        if (en.rocket_fuel   && rkt.fuel   !== undefined) setValveColor('rocket_x5F_fuel_x5F_state',   rkt.fuel);
+        if (en.rocket_relief && rkt.relief !== undefined) setValveColor('rocket_x5F_relief_x5F_state', rkt.relief);
+        if (en.rocket_dump   && rkt.dump   !== undefined) setValveColor('rocket_x5F_dump_x5F_state',   rkt.dump);
+        if (rkt.ign !== undefined) setValveColor('ign_x5F_state', rkt.ign);
+
+        syncClickState('GSE_x5F_FillValve',    gse.fill);
+        syncClickState('GSE_x5F_DumpValve',     gse.dump);
+        syncClickState('GSE_x5F_ReliefValve',   gse.relief);
+        syncClickState('RKT_x5F_MainOxValve',   rkt.ox);
+        syncClickState('RKT_x5F_MainFuelValve', rkt.fuel);
+        syncClickState('RKT_x5F_ReliefValve',   rkt.relief);
+        syncClickState('RKT_x5F_DumpValve',     rkt.dump);
+        syncClickState('RKT_x5F_IGN',           rkt.ign);
+    });
+    </script>
+</body>
+</html>

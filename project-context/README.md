@@ -7,9 +7,9 @@ single application:
   `GSEquelCode1` through `GSEquelCode4` folders are separate snapshots; do not
   assume that a change to one is meant to update the others.
 - `GUI/Code/` contains successive ground-station GUI versions. `GUI/Code/v6`
-  is the documented Flask/Socket.IO interface that communicates with the
-  STM32 over newline-delimited JSON on a serial connection. It also supports
-  simulated telemetry.
+  is the reference Flask/Socket.IO interface; `GUI/Code/v7` is its separate
+  working copy. Both communicate with the STM32 over newline-delimited JSON on
+  a serial connection and support simulated telemetry.
 - Hardware drawings, test data, and other supporting material live in their
   own top-level folders.
 
@@ -48,3 +48,6 @@ presence-check does not protect against the ADC being disconnected later.
 - Build and test the selected application where its toolchain is available.
   Hardware behavior, especially ADC timing and valve control, still requires
   hardware validation.
+- `GUI/CHANGELOG.md` and `STM32/CHANGELOG.md` record the changes and their
+  rationale separately for each application. Use them alongside the selected
+  version's README when planning bench or integration tests.

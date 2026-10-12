@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rocket HMI</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body { background-color: #fff; margin: 0; }
+        #stats { margin: 8px; font-family: monospace; font-size: 13px; }
+        #connBanner {
+            display: none;
+            background: #ffe066;
+            color: #333;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 6px 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="connBanner">⚠ No data received — check serial connection</div>
+
+    <div id="svg_container">
+        {% include 'PID.svg' %}
+    </div>
+
+    <div id="stats">
+        <div>rate: <span id="rate">‑</span> Hz</div>
+        <div>seq: <span id="seq">‑</span></div>
+        <div>last: <span id="last">‑</span></div>
+    </div>
+
+    <script>
+    var socket = io();
+
+    // ==============================
+    // DATA STATUS CIRCLE
+    // Green  = data flowing (< 0.5 s since last packet)
+    // Orange = stale       (0.5–5 s since last packet)
+    // Red    = no data     (> 5 s or never received)
+    // Background turns yellow when stale or lost.
+    // ==============================
+    var lastDataTime = null;
+
+    function updateStatusCircle() {
+        // Calculate age first — used by everything below
+        var age = lastDataTime === null ? Infinity : (Date.now() - lastDataTime) / 1000;
+
+        // Status circle color
+        var el = document.getElementById('dataStatusCircle');
+        if (el) {
+            var color;
+            if      (age < 0.5) color = '#00cc44';  // live
+            else if (age < 5)   color = 'orange';   // stale
+            else                color = 'red';       // lost
+            el.setAttribute('fill', color);
+        }
+
+        // Background + banner
+        var stale = age >= 0.5;
+        document.body.style.backgroundColor = stale ? '#ffe066' : '#ffffff';
+        document.getElementById('connBanner').style.display = stale ? 'block' : 'none';
+    }
+
+    // Single interval — poll every 250 ms
+    setInterval(updateStatusCircle, 250);
+    updateStatusCircle(); // Set initial state immediately (red/yellow before first packet)
+
+    // ==============================
+    // CLICK-TO-COMMAND SETUP
+    // ==============================
+    function setupClick(id, target) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.style.cursor = 'pointer';
+        el.dataset.state = '0';
+        el.addEventListener('click', function () {
+            var newState = el.dataset.state === '1' ? 0 : 1;
+            el.dataset.state = newState.toString();
+            console.log('Click: ' + id + ' → ' + target + ' = ' + newState);
+            socket.emit('command', { cmd: 'set_valve', target: target, state: newState });
+        });
+    }
+
+    window.addEventListener('load', function () {
+        setupClick('GSE_x5F_DumpValve',     'gse_dump');
+        setupClick('GSE_x5F_ReliefValve',   'gse_relief');
+        setupClick('GSE_x5F_FillValve',     'gse_fill');
+        setupClick('RKT_x5F_MainFuelValve', 'rocket_fuel');
+        setupClick('RKT_x5F_MainOxValve',   'rocket_ox');
+        setupClick('RKT_x5F_ReliefValve',   'rocket_relief');
+        setupClick('RKT_x5F_DumpValve',     'rocket_dump');
+        setupClick('RKT_x5F_IGN',           'ignite');
+    });
+
+    // ==============================
+    // RATE / SEQUENCE DISPLAY
+    // ==============================
+    var lastTs = null;
+    var avgHz  = null;
+    var SMOOTH = 0.15;
+
+    // ==============================
+    // HELPERS
+    // ==============================
+
+    // Valve indicator: 0 = closed (red), 1 = open (green)
+    function setValveColor(id, state) {
+        var el = document.getElementById(id);
+        if (el) el.setAttribute('fill', state === 1 ? '#00cc44' : 'red');
+    }
+
+    // Pressure indicator: green / orange / red by threshold
+    function setPressureColor(id, psi) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var color = psi < 650 ? '#00cc44' : (psi <= 830 ? 'orange' : 'red');
+        el.setAttribute('fill', color);
+    }
+
+    // Update text inside a group (handles tspan nesting from Inkscape SVGs)
+    function setText(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var t = el.querySelector('text') || el.querySelector('tspan');
+        if (t) t.textContent = value;
+        else   el.textContent = value;
+    }
+
+    // Keep click-toggle in sync with real reported state
+    function syncClickState(id, state) {
+        var el = document.getElementById(id);
+        if (el) el.dataset.state = state.toString();
+    }
+
+    // ==============================
+    // TELEMETRY HANDLER
+    // ==============================
+    socket.on('telemetry', function (data) {
+
+        lastDataTime = Date.now();   // feed the status watchdog
+        updateStatusCircle();
+
+        // Rate display
+        var now = Date.now() / 1000;
+        if (lastTs !== null) {
+            var dt = now - lastTs;
+            var hz = dt > 0 ? 1 / dt : 0;
+            avgHz  = avgHz === null ? hz : (SMOOTH * hz + (1 - SMOOTH) * avgHz);
+            document.getElementById('rate').textContent = avgHz.toFixed(1);
+        }
+        lastTs = now;
+
+        if (data.seq !== undefined)
+            document.getElementById('seq').textContent = data.seq;
+
+        document.getElementById('last').textContent =
+            data.ts ? new Date(data.ts * 1000).toLocaleTimeString()
+                    : new Date().toLocaleTimeString();
+
+        var en  = data.enables || {};
+        var pt  = data.pressure_transducers || {};
+        var gse = data.gse || {};
+        var rkt = data.rocket || {};
+
+        // --- Pressures ---
+        if (en.bottle_pressure && pt.bottle_pressure !== undefined) {
+            setText('pressure1', pt.bottle_pressure + ' PSI');
+            setPressureColor('BottleCircle', pt.bottle_pressure);
+        }
+        if (en.tank_pressure && pt.tank_pressure !== undefined) {
+            setText('pressure2', pt.tank_pressure + ' PSI');
+            setPressureColor('tankCircle', pt.tank_pressure);
+        }
+        if (en.chamber_pressure && pt.chamber_pressure !== undefined) {
+            setText('pressure3', pt.chamber_pressure + ' PSI');
+            setPressureColor('EngineCircle', pt.chamber_pressure);
+        }
+
+        // --- GSE ---
+        if (en.loadcell && gse.loadcell !== undefined)
+            setText('loadcell', gse.loadcell.toFixed(2) + ' lbf');
+
+        if (en.gse_fill   && gse.fill    !== undefined) setValveColor('gse_x5F_fill_x5F_state',   gse.fill);
+        if (en.gse_dump   && gse.dump    !== undefined) setValveColor('gse_x5F_dump_x5F_state',   gse.dump);
+        if (en.gse_relief && gse.relief  !== undefined) setValveColor('gse_x5F_relief_x5F_valve', gse.relief);
+
+        // --- Rocket ---
+        if (en.rocket_ox     && rkt.ox     !== undefined) setValveColor('rocket_x5F_ox_x5F_state',     rkt.ox);
+        if (en.rocket_fuel   && rkt.fuel   !== undefined) setValveColor('rocket_x5F_fuel_x5F_state',   rkt.fuel);
+        if (en.rocket_relief && rkt.relief !== undefined) setValveColor('rocket_x5F_relief_x5F_state', rkt.relief);
+        if (en.rocket_dump   && rkt.dump   !== undefined) setValveColor('rocket_x5F_dump_x5F_state',   rkt.dump);
+        if (rkt.ign !== undefined) setValveColor('ign_x5F_state', rkt.ign);
+
+        // --- Sync click-toggle state with reported hardware state ---
+        syncClickState('GSE_x5F_FillValve',    gse.fill);
+        syncClickState('GSE_x5F_DumpValve',     gse.dump);
+        syncClickState('GSE_x5F_ReliefValve',   gse.relief);
+        syncClickState('RKT_x5F_MainOxValve',   rkt.ox);
+        syncClickState('RKT_x5F_MainFuelValve', rkt.fuel);
+        syncClickState('RKT_x5F_ReliefValve',   rkt.relief);
+        syncClickState('RKT_x5F_DumpValve',     rkt.dump);
+    });
+    </script>
+
+</body>
+</html>
