@@ -1,11 +1,16 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template, request, url_for
 from flask_socketio import SocketIO
-import random
 import json
+import random
 import socket
+import threading
 
 from csv_logger import CSVLogger
-from serial_connection import SerialConnection
+from serial_connection import (
+    SerialConnection,
+    discover_devices,
+    discover_other_serial_ports,
+)
 from telemetry_processing import (
     add_enables,
     expand_compact,
@@ -18,9 +23,6 @@ from valve_commands import ValveCommandService
 # CONFIGURATION
 # ==============================
 
-# For direct USB, disable fake data and build STM32 firmware with USE_SERIAL_USB enabled.
-USE_FAKE_DATA = False
-USE_STM_USB   = False
 BAUD_RATE     = 230400
 
 # Nucleo-F446RE boards expose the ST-LINK/V2-1 virtual COM port over USB.
@@ -38,18 +40,14 @@ XBEE_PID = 0x6011
 # If your board routes the XBee to a different channel, change this index (0=A, 1=B, etc.)
 XBEE_CHANNEL_INDEX = 0
 
-serial_connection = SerialConnection(
-    use_fake_data=USE_FAKE_DATA,
-    use_stm_usb=USE_STM_USB,
-    baud_rate=BAUD_RATE,
-    stm_usb_vid=STM_USB_VID,
-    stm_usb_pid=STM_USB_PID,
-    xbee_vid=XBEE_VID,
-    xbee_pid=XBEE_PID,
-    xbee_channel_index=XBEE_CHANNEL_INDEX,
-)
-
 csv_logger = CSVLogger()
+selection_lock = threading.Lock()
+connection_state = {
+    "mode": None,
+    "details": None,
+    "serial_connection": None,
+    "valve_commands": None,
+}
 
 ENABLE_BOTTLE_PRESSURE  = True
 ENABLE_TANK_PRESSURE    = True
@@ -92,21 +90,16 @@ MAX_RETRIES = 1
 
 # ==============================
 
-valve_commands = ValveCommandService(
-    serial_connection,
-    confirm_timeout_s=CONFIRM_TIMEOUT_S,
-    max_retries=MAX_RETRIES,
-)
-
 PORT = 5001
 
 def check_port(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(('localhost', port)) == 0:
-            print(f"⚠️  ERROR: Port {port} is already in use! Change the port and restart.")
-            exit(1)
-
-check_port(PORT)
+            raise SystemExit(
+                f"ERROR: Web port {port} is already in use. Another GUI instance "
+                f"or application may already be running on that port. Close it "
+                f"or change PORT in app.py before restarting."
+            )
 
 app      = Flask(__name__)
 socketio = SocketIO(app, async_mode='threading')
@@ -118,7 +111,118 @@ socketio = SocketIO(app, async_mode='threading')
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    with selection_lock:
+        mode = connection_state["mode"]
+        details = connection_state["details"]
+    if mode is None:
+        devices = discover_connections()
+        return render_template(
+            "connection_setup.html",
+            devices=devices,
+            other_ports=discover_other_connections() if not devices else [],
+            baud_rate=BAUD_RATE,
+            error=None,
+        )
+    return render_template(
+        'index.html', connection_mode=mode, connection_details=details
+    )
+
+
+@app.route('/select-connection', methods=['POST'])
+def select_connection():
+    selection = request.form.get("device_id")
+    if selection == "refresh":
+        return redirect(url_for("index"))
+
+    if selection == "simulation":
+        mode = "simulation"
+        details = "SIMULATION — telemetry is generated and is not live hardware data."
+        selected_port = None
+    elif selection and selection.startswith("serial:"):
+        other_ports = discover_other_connections()
+        selected_device = next(
+            (device for device in other_ports if device["id"] == selection), None
+        )
+        if selected_device is None:
+            return render_template(
+                "connection_setup.html",
+                devices=[],
+                other_ports=other_ports,
+                baud_rate=BAUD_RATE,
+                error="That serial port is no longer available. Scan again and choose a detected port.",
+            ), 400
+        mode = "generic_serial"
+        selected_port = selected_device["port"]
+        details = (
+            f'Unrecognized serial device on {selected_port} '
+            f'({selected_device["description"]})'
+        )
+    else:
+        devices = discover_connections()
+        selected_device = next(
+            (device for device in devices if device["id"] == selection), None
+        )
+        if selected_device is None:
+            return render_template(
+                "connection_setup.html",
+                devices=devices,
+                other_ports=[],
+                baud_rate=BAUD_RATE,
+                error="That device is no longer available. Scan again and choose a detected device.",
+            ), 400
+        mode = selected_device["mode"]
+        details = f'{selected_device["name"]} — {selected_device["details"]}'
+        selected_port = selected_device["port"]
+
+    with selection_lock:
+        if connection_state["mode"] is not None:
+            return redirect(url_for("index"))
+
+        serial_connection = SerialConnection(
+            use_fake_data=mode == "simulation",
+            use_stm_usb=mode == "stm_usb",
+            baud_rate=BAUD_RATE,
+            stm_usb_vid=STM_USB_VID,
+            stm_usb_pid=STM_USB_PID,
+            xbee_vid=XBEE_VID,
+            xbee_pid=XBEE_PID,
+            xbee_channel_index=XBEE_CHANNEL_INDEX,
+            selected_port=selected_port,
+        )
+        valve_commands = ValveCommandService(
+            serial_connection,
+            confirm_timeout_s=CONFIRM_TIMEOUT_S,
+            max_retries=MAX_RETRIES,
+        )
+        connection_state.update(
+            {
+                "mode": mode,
+                "details": details,
+                "serial_connection": serial_connection,
+                "valve_commands": valve_commands,
+            }
+        )
+
+    socketio.start_background_task(
+        fake_data_loop if mode == "simulation" else serial_loop
+    )
+    return redirect(url_for("index"))
+
+
+def discover_connections():
+    return discover_devices(
+        STM_USB_VID,
+        STM_USB_PID,
+        XBEE_VID,
+        XBEE_PID,
+        XBEE_CHANNEL_INDEX,
+    )
+
+
+def discover_other_connections():
+    return discover_other_serial_ports(
+        STM_USB_VID, STM_USB_PID, XBEE_VID, XBEE_PID
+    )
 
 
 # ==============================
@@ -157,6 +261,8 @@ def fake_data_loop():
 # ==============================
 
 def serial_loop():
+    serial_connection = connection_state["serial_connection"]
+    valve_commands = connection_state["valve_commands"]
     message_count = 0
     error_count = 0
 
@@ -188,7 +294,12 @@ def serial_loop():
         valve_commands.clear_all()
         socketio.emit('serial_status', {'connected': False})
 
-    serial_connection.run(process_line, on_connect, on_disconnect)
+    def on_error(message):
+        socketio.emit(
+            'serial_status', {'connected': False, 'error': message}
+        )
+
+    serial_connection.run(process_line, on_connect, on_disconnect, on_error)
 
 
 # ==============================
@@ -197,16 +308,23 @@ def serial_loop():
 
 @socketio.on('command')
 def handle_command(data):
-    valve_commands.handle_command(data)
+    if connection_state["mode"] == "generic_serial":
+        print("Command blocked: unrecognized serial device is read-only")
+        return
+    commands = connection_state["valve_commands"]
+    if commands is None:
+        print("Command dropped: connection mode has not been selected")
+        return
+    commands.handle_command(data)
 
 # ==============================
 # MAIN
 # ==============================
 
 if __name__ == '__main__':
+    check_port(PORT)
     csv_logger.open()
     try:
-        socketio.start_background_task(fake_data_loop if USE_FAKE_DATA else serial_loop)
         socketio.run(app, host='0.0.0.0', port=PORT, use_reloader=False)
     finally:
         csv_logger.close()

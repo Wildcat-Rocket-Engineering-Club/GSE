@@ -1,10 +1,126 @@
 """Serial port discovery and newline-delimited serial transport."""
 
-import time
+import re
 import threading
+import time
 
 import serial
 import serial.tools.list_ports
+
+
+def _port_sort_key(port):
+    match = re.fullmatch(r"COM(\d+)", port.device.upper())
+    if match:
+        return 0, int(match.group(1))
+    return 1, port.device.casefold()
+
+
+def serial_open_error_message(port, error):
+    error_text = str(error)
+    lower_error = error_text.lower()
+    if (
+        isinstance(error, PermissionError)
+        or "permissionerror" in lower_error
+        or "access is denied" in lower_error
+        or "resource busy" in lower_error
+        or "device or resource busy" in lower_error
+    ):
+        return (
+            f"ERROR: Could not open serial port {port}; it may already be in use "
+            "by another GUI instance or serial-monitor application. Close the "
+            f"other application and retry. Details: {error_text}"
+        )
+    return f"ERROR: Could not open serial port {port}. Details: {error_text}"
+
+
+def discover_devices(
+    stm_usb_vid, stm_usb_pid, xbee_vid, xbee_pid, xbee_channel_index
+):
+    """Return recognized USB serial connections for the browser setup screen."""
+    ports = list(serial.tools.list_ports.comports())
+    devices = []
+
+    for port in ports:
+        if port.vid == stm_usb_vid and port.pid == stm_usb_pid:
+            devices.append(
+                {
+                    "id": f"stm32:{port.device}",
+                    "mode": "stm_usb",
+                    "name": "STM32 Nucleo USB",
+                    "port": port.device,
+                    "details": port.description,
+                }
+            )
+
+    xbee_ports = sorted(
+        (
+            port for port in ports
+            if port.vid == xbee_vid and port.pid == xbee_pid
+        ),
+        key=_port_sort_key,
+    )
+    xbee_groups = {}
+    ungrouped_xbee_ports = []
+    for port in xbee_ports:
+        location = getattr(port, "location", None)
+        serial_number = getattr(port, "serial_number", None)
+        if location:
+            group_id = f"location:{location.split(':', 1)[0]}"
+        elif serial_number:
+            group_id = f"serial:{serial_number}"
+        else:
+            ungrouped_xbee_ports.append(port)
+            continue
+        xbee_groups.setdefault(group_id, []).append(port)
+
+    for offset in range(0, len(ungrouped_xbee_ports), 4):
+        group = ungrouped_xbee_ports[offset:offset + 4]
+        group_id = f"ports:{group[0].device}"
+        xbee_groups[group_id] = group
+
+    for group_id, group_ports in sorted(xbee_groups.items()):
+        group_ports = sorted(group_ports, key=_port_sort_key)
+        if group_ports:
+            if xbee_channel_index >= len(group_ports):
+                raise ValueError(
+                    f"Configured XBee channel index {xbee_channel_index} is not "
+                    f"available for adapter ports "
+                    f"{', '.join(port.device for port in group_ports)}."
+                )
+            selected_port = group_ports[xbee_channel_index]
+            devices.append(
+                {
+                    "id": f"xbee:{group_id}",
+                    "mode": "xbee",
+                    "name": "XBee serial adapter",
+                    "port": selected_port.device,
+                    "details": (
+                        f"Using configured channel "
+                        f"{chr(65 + xbee_channel_index)} ({selected_port.device}); "
+                        f"adapter ports: {', '.join(p.device for p in group_ports)}"
+                    ),
+                }
+            )
+
+    return devices
+
+
+def discover_other_serial_ports(stm_usb_vid, stm_usb_pid, xbee_vid, xbee_pid):
+    """Return serial ports not identified as the supported STM32 or XBee."""
+    ports = serial.tools.list_ports.comports()
+    return [
+        {
+            "id": f"serial:{port.device}",
+            "port": port.device,
+            "description": port.description or "Unidentified serial device",
+            "hardware_id": port.hwid or "Hardware ID unavailable",
+        }
+        for port in sorted(ports, key=_port_sort_key)
+        if (port.vid, port.pid) not in {
+            (stm_usb_vid, stm_usb_pid),
+            (xbee_vid, xbee_pid),
+        }
+    ]
 
 
 class SerialConnection:
@@ -18,9 +134,10 @@ class SerialConnection:
         xbee_vid,
         xbee_pid,
         xbee_channel_index,
+        selected_port=None,
     ):
         self.baud_rate = baud_rate
-        self.port = None
+        self.port = selected_port
         self._serial = None
         self._lock = threading.Lock()
 
@@ -28,6 +145,8 @@ class SerialConnection:
             raise ValueError("USE_FAKE_DATA and USE_STM_USB cannot both be enabled.")
 
         if use_fake_data:
+            return
+        if selected_port is not None:
             return
         if use_stm_usb:
             self.port = self._find_stm_usb_port(stm_usb_vid, stm_usb_pid)
@@ -43,7 +162,7 @@ class SerialConnection:
                 port for port in serial.tools.list_ports.comports()
                 if port.vid == vid and port.pid == pid
             ],
-            key=lambda port: port.device,
+            key=_port_sort_key,
         )
 
         if not matches:
@@ -115,7 +234,7 @@ class SerialConnection:
             self._serial.write(line.encode())
             return True
 
-    def run(self, on_line, on_connect, on_disconnect):
+    def run(self, on_line, on_connect, on_disconnect, on_error=None):
         while True:
             current_serial = None
             try:
@@ -134,7 +253,13 @@ class SerialConnection:
                 self._read_lines(current_serial, on_line)
 
             except (serial.SerialException, OSError) as error:
-                print(f"Serial disconnected: {error}")
+                if current_serial is None:
+                    error_message = serial_open_error_message(self.port, error)
+                else:
+                    error_message = f"Serial disconnected on {self.port}: {error}"
+                print(error_message)
+                if on_error is not None:
+                    on_error(error_message)
 
                 with self._lock:
                     if self._serial is current_serial:
@@ -149,7 +274,10 @@ class SerialConnection:
                 except (serial.SerialException, OSError) as close_error:
                     print(f"Error closing port: {close_error}")
 
-                if "PermissionError" in str(error) or "Access is denied" in str(error):
+                if (
+                    "PermissionError" in str(error)
+                    or "Access is denied" in str(error)
+                ):
                     print("Port still releasing, waiting longer...")
                     time.sleep(6)
                 else:

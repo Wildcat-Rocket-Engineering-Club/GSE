@@ -1,0 +1,46 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run GUI v7",
+			"type": "process",
+			"command": "${workspaceFolder}/GUI/Code/v7/venv/bin/python",
+			"windows": {
+				"command": "${workspaceFolder}\\GUI\\Code\\v7\\venv\\Scripts\\python.exe"
+			},
+			"args": [
+				"app.py"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/GUI/Code/v7"
+			},
+			"presentation": {
+				"close": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Test GUI v7",
+			"type": "process",
+			"command": "${workspaceFolder}/GUI/Code/v7/venv/bin/python",
+			"windows": {
+				"command": "${workspaceFolder}\\GUI\\Code\\v7\\venv\\Scripts\\python.exe"
+			},
+			"args": [
+				"-m",
+				"unittest",
+				"discover",
+				"-s",
+				"tests",
+				"-v"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/GUI/Code/v7"
+			},
+			"presentation": {
+				"close": true
+			},
+			"problemMatcher": []
+		}
+	]
+}

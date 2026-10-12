@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Choose GSE connection</title>
+    <style>
+        body {
+            max-width: 760px;
+            margin: 48px auto;
+            padding: 0 20px;
+            color: #222;
+            font: 16px/1.5 sans-serif;
+        }
+        h1 { margin-bottom: 8px; }
+        .notice {
+            padding: 12px 16px;
+            margin: 20px 0;
+            background: #fff3cd;
+            border-left: 5px solid #e0a800;
+        }
+        .device {
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+        }
+        button {
+            padding: 10px 16px;
+            margin: 8px 8px 0 0;
+            border: 0;
+            border-radius: 4px;
+            color: white;
+            background: #175a9c;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button.secondary { color: #222; background: #ddd; }
+        button.simulation { background: #a15b00; }
+        .error { color: #a40000; font-weight: bold; }
+        .details { color: #555; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Choose a GSE data connection</h1>
+    <p>Select the data source for this session before opening the control panel.</p>
+
+    <div class="notice">
+        Simulation generates artificial telemetry only. It is not live hardware
+        state, and simulated mode does not send commands to a device.
+    </div>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if devices|length == 1 %}
+    <h2>One supported device detected</h2>
+    <p>Do you want to use this connection?</p>
+    {% elif devices|length > 1 %}
+    <h2>Multiple supported connections detected</h2>
+    <p>Choose the connection to use for this session.</p>
+    {% else %}
+    <h2>No supported device detected</h2>
+    <p>Choose an unrecognized serial port to try receiving telemetry, or use simulated data.</p>
+    {% endif %}
+
+    {% if not devices and other_ports %}
+    <section class="device">
+        <strong>Other detected serial ports</strong>
+        <p>
+            These devices are not identified as the supported STM32 or XBee.
+            They will be opened at {{ baud_rate }} baud for telemetry only;
+            valve and launch commands are disabled.
+        </p>
+        <form method="post" action="{{ url_for('select_connection') }}">
+            <label for="serial-port">Detected port:</label>
+            <select id="serial-port" name="device_id" required>
+                {% for port in other_ports %}
+                <option value="{{ port.id }}">
+                    {{ port.port }} — {{ port.description }} ({{ port.hardware_id }})
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Try this serial port (read-only)</button>
+        </form>
+    </section>
+    {% elif not devices %}
+    <p>No other serial ports are currently available.</p>
+    {% endif %}
+
+    {% for device in devices %}
+    <section class="device">
+        <strong>{{ device.name }}</strong>
+        <div class="details">{{ device.details }}</div>
+        <p>Port: {{ device.port }}</p>
+        <form method="post" action="{{ url_for('select_connection') }}">
+            <input type="hidden" name="device_id" value="{{ device.id }}">
+            <button type="submit">
+                {% if devices|length == 1 %}Yes, use this device{% else %}Use this connection{% endif %}
+            </button>
+        </form>
+    </section>
+    {% endfor %}
+
+    {% if devices %}
+    <form method="post" action="{{ url_for('select_connection') }}">
+        <input type="hidden" name="device_id" value="refresh">
+        <button class="secondary" type="submit">No / rescan devices</button>
+    </form>
+    <form method="post" action="{{ url_for('select_connection') }}">
+        <input type="hidden" name="device_id" value="simulation">
+        <button class="simulation" type="submit">Use simulated data instead</button>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('select_connection') }}">
+        <input type="hidden" name="device_id" value="simulation">
+        <button class="simulation" type="submit">Yes, use simulated data</button>
+    </form>
+    <form method="post" action="{{ url_for('select_connection') }}">
+        <input type="hidden" name="device_id" value="refresh">
+        <button class="secondary" type="submit">No, scan again</button>
+    </form>
+    {% endif %}
+</body>
+</html>

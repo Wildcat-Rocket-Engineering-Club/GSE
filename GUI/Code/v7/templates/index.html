@@ -16,6 +16,14 @@
             padding: 6px 12px;
             font-weight: bold;
         }
+        #modeBanner {
+            padding: 8px 12px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+        #modeBanner.simulation,
+        #modeBanner.unrecognized { background: #ffd180; color: #5c3300; }
+        #modeBanner.hardware { background: #c8e6c9; color: #174d1a; }
         .btn {
             padding: 12px 24px;
             font-weight: bold;
@@ -39,7 +47,22 @@
 </head>
 <body>
 
+    <div id="modeBanner" class="{{ 'simulation' if connection_mode == 'simulation' else ('unrecognized' if connection_mode == 'generic_serial' else 'hardware') }}">
+        {% if connection_mode == 'simulation' %}
+            SIMULATED DATA — NOT LIVE HARDWARE STATE
+        {% elif connection_mode == 'generic_serial' %}
+            UNRECOGNIZED SERIAL DEVICE — READ-ONLY; NO VALVE OR LAUNCH COMMANDS
+        {% else %}
+            Hardware connection selected: {{ connection_details }}
+        {% endif %}
+    </div>
     <div id="connBanner">⚠ No data received — check serial connection</div>
+    {% if connection_mode == 'generic_serial' %}
+    <div id="modeBanner" class="unrecognized">
+        This port is opened at {{ connection_details }}. Incoming telemetry is
+        not verified; confirm the device and protocol before relying on it.
+    </div>
+    {% endif %}
 
     <div id="svg_container">
         {% include 'PID.svg' %}
@@ -51,6 +74,7 @@
         <div>last: <span id="last">‑</span></div>
     </div>
 
+    {% if connection_mode != 'generic_serial' %}
     <div id="controls">
         <button class="btn btn-open" onclick="setAll(1)">Open All Valves</button>
         <button class="btn btn-close" onclick="setAll(0)">Close All Valves</button>
@@ -59,6 +83,7 @@
             <div style="font-family: monospace; font-size: 32px; font-weight: bold; color: #ff3333; min-width: 50px; text-align: center;">
                 <span id="countdownDisplay">5</span>
             </div>
+            {% endif %}
             <button class="btn btn-abort" onclick="abortCountdown()">ABORT</button>
         </div>
     </div>
@@ -133,6 +158,16 @@
     }
 
     var lastDataTime = null;
+    var connectionError = null;
+
+    socket.on('serial_status', function (status) {
+        connectionError = status.connected ? null : (status.error || null);
+        var banner = document.getElementById('connBanner');
+        if (connectionError) {
+            banner.textContent = '⚠ ' + connectionError;
+            banner.style.display = 'block';
+        }
+    });
 
     function updateStatusCircle() {
         var age = lastDataTime === null ? Infinity : (Date.now() - lastDataTime) / 1000;
@@ -146,7 +181,14 @@
         }
         var stale = age >= 0.5;
         document.body.style.backgroundColor = stale ? '#ffe066' : '#ffffff';
-        document.getElementById('connBanner').style.display = stale ? 'block' : 'none';
+        var banner = document.getElementById('connBanner');
+        if (connectionError) {
+            banner.textContent = '⚠ ' + connectionError;
+            banner.style.display = 'block';
+        } else {
+            banner.textContent = '⚠ No data received — check serial connection';
+            banner.style.display = stale ? 'block' : 'none';
+        }
     }
 
     setInterval(updateStatusCircle, 250);
