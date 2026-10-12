@@ -40,6 +40,18 @@ The app uses port `5001` by default. Open `http://localhost:5001` in a browser.
 If startup reports that the serial device cannot be found, check the selected
 connection mode and that the device/driver is available.
 
+## Automated tests
+
+From this folder with the v7 virtual environment activated, run:
+
+```text
+python -m unittest discover -s tests -v
+```
+
+These unit tests cover serial framing and command writes, telemetry
+normalization, CSV output, and valve-command retry behavior using test doubles;
+they do not connect to hardware or replace approved bench validation.
+
 ## Choose a data connection
 
 Edit the configuration near the top of `app.py`. These two flags select the
@@ -110,6 +122,9 @@ Make new GUI changes in this folder so `GUI/Code/v6` stays available as the
 unchanged reference. Keep protocol changes coordinated with the selected STM32
 firmware version, and validate both simulated mode and an approved hardware
 test setup before treating a change as ready.
+
+See the [GUI changelog](../../CHANGELOG.md) for the change rationale and
+validation history.
 
 Serial device discovery, connection/reconnection, and newline-delimited serial
 I/O are implemented in `serial_connection.py`. `app.py` handles incoming

@@ -29,6 +29,9 @@ scope and behavior with the user. Keep each change focused, build the firmware,
 and preserve the existing serial protocol and behavior unless an intentional
 change is agreed.
 
+See the [STM32 changelog](../CHANGELOG.md) for the change rationale and
+validation history.
+
 - [x] **Extract ADS1256 pressure acquisition.** Move ADC setup, channel
   acquisition, and pressure conversion out of `main.cpp`; preserve pipeline
   alignment and the missing-module safeguard.
