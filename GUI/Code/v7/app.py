@@ -40,6 +40,8 @@ XBEE_PID = 0x6011
 # If your board routes the XBee to a different channel, change this index (0=A, 1=B, etc.)
 XBEE_CHANNEL_INDEX = 0
 
+DISABLE_SIMULATION_LOGGING = True
+
 csv_logger = CSVLogger()
 selection_lock = threading.Lock()
 connection_state = {
@@ -225,6 +227,14 @@ def discover_other_connections():
     )
 
 
+def log_telemetry(data, simulated=False):
+    if simulated and DISABLE_SIMULATION_LOGGING:
+        return
+    if csv_logger.writer is None:
+        csv_logger.open()
+    csv_logger.log(data)
+
+
 # ==============================
 # FAKE DATA LOOP
 # ==============================
@@ -251,7 +261,7 @@ def fake_data_loop():
                 'ign':    0,
             },
         }
-        csv_logger.log(data)
+        log_telemetry(data, simulated=True)
         socketio.emit('telemetry', add_enables(data, TELEMETRY_ENABLE_FLAGS))
         socketio.sleep(0.01)
 
@@ -279,7 +289,7 @@ def serial_loop():
             # Feed every packet to the watchdog before emitting.
             valve_commands.confirm(extract_valve_states(data))
 
-            csv_logger.log(data)
+            log_telemetry(data)
             socketio.emit('telemetry', add_enables(data, TELEMETRY_ENABLE_FLAGS))
 
         except json.JSONDecodeError as error:
@@ -323,7 +333,6 @@ def handle_command(data):
 
 if __name__ == '__main__':
     check_port(PORT)
-    csv_logger.open()
     try:
         socketio.run(app, host='0.0.0.0', port=PORT, use_reloader=False)
     finally:

@@ -17,33 +17,38 @@ STM32. It can also generate simulated telemetry for development.
 - Offers simulated telemetry only as an explicit startup choice; simulation
   is labeled as not-live data and is not selected automatically on disconnect.
 - Reconnects when a real serial connection drops.
-- Logs received telemetry to timestamped CSV files in `datalogs/`.
+- Logs hardware telemetry to timestamped CSV files in `datalogs/`; simulated
+  telemetry is not logged by default.
 - Retries an individual valve command once if telemetry does not confirm the
   requested state within the configured timeout.
 
-## Setup
+## Quickstart
 
-Install Python 3, then install the dependencies using the setup script for your
-operating system:
+### Windows
 
-- **Windows:** run `windows_setup_venv.bat`.
-- **macOS:** open a terminal in this folder and run `bash mac_setup_venv.sh`.
+1. Install Python 3 if it is not already installed.
+2. Double-click `run_gui.bat`.
+3. If dependencies are missing, choose **Y** to run the Windows setup. Approve
+   the UAC prompt so it can install the Python dependencies and, if needed, the
+   Digi USB/RF driver.
+4. The launcher starts the GUI and opens the local setup page in your default
+   browser. Leave the **GSE GUI v7** console window open while using it.
 
-Both scripts create a `venv` folder and install the packages from
-`requirements.txt`. The scripts and dependency list are the setup source of
-truth; edit neither to change the runtime options described below.
+On later launches, just run `run_gui.bat` again; the installer is offered only
+if the virtual environment or required packages are missing.
 
-Activate the environment and start the app:
+### macOS
 
-- **Windows:** `venv\Scripts\activate`
-- **macOS:** `source venv/bin/activate`
-- Both: `python app.py`
+Install Python 3, open a terminal in this folder, and run:
 
-On Windows, you can alternatively double-click `run_gui.bat`. It creates the
-venv if needed, activates it, installs/checks the pinned requirements, and
-starts the app in a separate console, then opens the default browser to the
-local setup page. Leave the app console open while using the GUI. It does not
-run the administrator-only Digi driver setup.
+```text
+bash mac_setup_venv.sh
+source venv/bin/activate
+python app.py
+```
+
+The setup scripts and `requirements.txt` are the source of truth for package
+installation; edit neither to change the runtime options described below.
 
 In VS Code, you can instead run **Terminal > Run Task > Run GUI v7**. The task
 uses the v7 virtual-environment interpreter directly, so activation is not
@@ -127,6 +132,7 @@ firmware source, not in the GUI or dependency setup files.
 | `CONFIRM_TIMEOUT_S` | `app.py` | Time to wait for telemetry confirmation before a valve-command retry. |
 | `MAX_RETRIES` | `app.py` | Maximum retries for an individual valve command. The default is one retry. |
 | `PORT` | `app.py` | Local web-server port. The default is `5001`. |
+| `DISABLE_SIMULATION_LOGGING` | `app.py` | When `True` (the default), do not write simulated telemetry to CSV files. Set to `False` to log simulation data. Hardware telemetry logging is unaffected. |
 | `USE_SERIAL_USB` | STM32 firmware source, serial-port configuration | Select USB serial instead of the firmware's hardware UART. |
 | `SERIAL_BAUD` | STM32 firmware source | Firmware serial speed; keep in sync with GUI `BAUD_RATE`. |
 

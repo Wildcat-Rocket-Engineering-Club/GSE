@@ -43,6 +43,13 @@ operating instructions remain in each GUI version's README.
 - Verified 36 GUI v7 unit tests pass, including web-port collision reporting
   and serial permission-denied diagnostics. This is software-only validation;
   serial hardware remains untested.
+- Added `DISABLE_SIMULATION_LOGGING` (default `True`) so generated telemetry
+  does not create CSV log files unless explicitly enabled. Hardware telemetry
+  logging remains unchanged; the v7 README documents the option.
+- Added a Windows Quickstart centered on `run_gui.bat`. The launcher prompts
+  to run the dependency/driver installer when required, waits for setup to
+  complete, then starts the GUI and opens the browser. The setup script now
+  waits for UAC elevation to finish and reports setup failures to the launcher.
 
 ### V7 baseline and service separation (`c71c73b`)
 

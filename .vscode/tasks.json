@@ -60,6 +60,90 @@
 				"close": true
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Check simulation log patch",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"diff",
+				"--check"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Review telemetry log changes",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"--no-pager",
+				"diff",
+				"--",
+				"GUI/Code/v7/app.py",
+				"GUI/Code/v7/tests/test_app_connection_setup.py",
+				"GUI/Code/v7/readme.md",
+				"GUI/CHANGELOG.md"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check lazy log patch",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"diff",
+				"--check"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check working tree before quickstart",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"status",
+				"--short",
+				"--branch"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check quickstart patch whitespace",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"diff",
+				"--check"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run GUI v7 unit tests",
+			"type": "process",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"cd /d GUI\\Code\\v7 && venv\\Scripts\\python.exe -m unittest discover -s tests -v"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check quickstart git status",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"status",
+				"--short",
+				"--branch"
+			],
+			"isBackground": false,
+			"problemMatcher": []
 		}
 	]
 }

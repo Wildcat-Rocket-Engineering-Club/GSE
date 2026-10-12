@@ -91,6 +91,41 @@ class AppConnectionSetupTests(unittest.TestCase):
         self.assertIn(b"SIMULATED DATA", dashboard.data)
         start_task.assert_called_once()
 
+    def test_simulated_telemetry_logging_is_disabled_by_default(self):
+        with (
+            patch.object(gui_app.csv_logger, "open") as open_log,
+            patch.object(gui_app.csv_logger, "log") as log,
+        ):
+            gui_app.log_telemetry({"sample": "data"}, simulated=True)
+
+        open_log.assert_not_called()
+        log.assert_not_called()
+
+    def test_simulated_telemetry_logging_can_be_enabled(self):
+        with (
+            patch.object(gui_app, "DISABLE_SIMULATION_LOGGING", False),
+            patch.object(gui_app.csv_logger, "writer", None),
+            patch.object(gui_app.csv_logger, "open") as open_log,
+            patch.object(gui_app.csv_logger, "log") as log,
+        ):
+            data = {"sample": "data"}
+            gui_app.log_telemetry(data, simulated=True)
+
+        open_log.assert_called_once_with()
+        log.assert_called_once_with(data)
+
+    def test_real_telemetry_is_logged_when_simulation_logging_is_disabled(self):
+        with (
+            patch.object(gui_app.csv_logger, "writer", None),
+            patch.object(gui_app.csv_logger, "open") as open_log,
+            patch.object(gui_app.csv_logger, "log") as log,
+        ):
+            data = {"sample": "data"}
+            gui_app.log_telemetry(data)
+
+        open_log.assert_called_once_with()
+        log.assert_called_once_with(data)
+
     def test_stale_hardware_choice_is_rejected(self):
         with (
             patch("app.discover_connections", return_value=[]),
