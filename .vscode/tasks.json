@@ -41,6 +41,25 @@
 				"close": true
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Inspect app diff",
+			"type": "process",
+			"command": "git",
+			"args": [
+				"--no-pager",
+				"diff",
+				"--",
+				"GUI/Code/v7/app.py",
+				"GUI/Code/v7/serial_connection.py",
+				"GUI/Code/v7/templates/index.html",
+				"GUI/Code/v7/tests/test_serial_connection.py",
+				"GUI/CHANGELOG.md"
+			],
+			"presentation": {
+				"close": true
+			},
+			"problemMatcher": []
 		}
 	]
 }
