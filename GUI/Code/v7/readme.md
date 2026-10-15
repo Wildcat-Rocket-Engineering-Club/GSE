@@ -75,10 +75,27 @@ python -m unittest discover -s tests -v
 In VS Code, **Terminal > Run Task > Test GUI v7** runs the same tests using the
 v7 virtual environment.
 
-These unit tests cover browser startup selection, serial-device discovery and
-framing, command writes, telemetry normalization, CSV output, and valve-command
-retry behavior using test doubles. They do not connect to hardware or replace
-approved bench validation.
+The suite currently contains 39 unit tests across five files. They use mocked
+device discovery, fake serial ports, and patched clocks/sleeps so that expected
+behavior can be checked without connecting to hardware.
+
+| Test file | What it checks | Pass criteria |
+| --- | --- | --- |
+| `tests/test_app_connection_setup.py` (12 tests) | Startup page and connection selection, simulation labeling, telemetry logging policy, read-only handling of unknown serial devices, and port-in-use reporting. | The page shows the appropriate devices/options; valid choices set the expected connection and start its background task; stale or missing devices return HTTP 400 without starting it; unknown devices cannot issue commands; simulation is not logged by default but can be enabled; real telemetry is logged; an occupied web port is reported. |
+| `tests/test_serial_connection.py` (13 tests) | Serial error messages, discovery/filtering and XBee channel selection, configuration validation, writing, and newline-delimited input. | Discovery returns the expected supported devices and ports (including numerically sorted XBee channels), excludes supported devices from the unknown-port list, and rejects unavailable channels or conflicting modes; writes are UTF-8 bytes only while open; only complete valid JSON lines are dispatched; initial open errors identify a port-in-use condition. |
+| `tests/test_telemetry_processing.py` (5 tests) | Compact-packet expansion, missing-value defaults, compact-format detection, watchdog valve-state names, and UI enable flags. | The expanded telemetry matches the expected UI schema and values; missing fields default to zero; compact packets are recognized by `p` or `g` (not `r` alone); valve states map to watchdog names and absent states are `None`; enable flags are copied onto the original data object. |
+| `tests/test_csv_logger.py` (2 tests) | CSV header and telemetry-row output, plus logging before the logger is opened. | An opened logger writes exactly one row with the canonical columns, expected sample values, a non-empty timestamp, and non-negative elapsed time; logging before open creates no file and does not increment the row count. |
+| `tests/test_valve_commands.py` (7 tests) | Valve-command serialization, bulk/launch command handling, telemetry confirmation and retries, disconnect cleanup, and closed-serial behavior. | Individual valve names map to firmware names and are tracked pending confirmation; bulk commands are normalized; launch is sent three times; a valve command is retried at most once after the timeout, cleared on matching confirmation or disconnect, and not written when serial is closed. |
+
+**Overall pass/fail:** the command passes when all discovered tests finish with
+no failed assertions or unexpected errors (the process exits successfully).
+Any failed assertion or uncaught error makes the run fail. With `-v`, unittest
+prints each test result and a final run summary.
+
+These tests verify isolated software behavior; they do not prove that a physical
+STM32/XBee link works, that hardware responds correctly or safely to commands,
+or that the complete GUI works with real devices. They do not replace approved
+bench validation.
 
 ## Choose a data connection
 
