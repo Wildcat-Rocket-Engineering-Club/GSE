@@ -17,7 +17,7 @@
  *  =============================================
  *  [USED] SPI1 (ADS1256):    PA4(CS), PA5(SCK), PA6(MISO), PA7(MOSI), PA8(DRDY)
  *  [USED] SPI2 (SD CARD):    PB12(CS), PB13(SCK), PB14(MISO), PB15(MOSI)
- *  [USED] UART1 (SERIAL):    PA9(TX), PA10(RX)  actually PA2, PA3
+ *  [USED] UART1 (SERIAL):    PA9(TX), PA10(RX)
  *  [USED] I2C1 (PCA9685):    PB8(SCL), PB9(SDA)
  *  [USED] HX711:             PC6(DOUT), PC7(SCK)  
  *
