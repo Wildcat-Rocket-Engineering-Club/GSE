@@ -1,7 +1,12 @@
 #include <Arduino.h>
 
 #include "HX711LoadCell.h"
-
+/**
+* E+ -> Red
+* E- -> Black
+* A- -> Green
+* A+ -> White
+*/
 namespace {
 constexpr uint8_t PIN_HX711_DOUT = PC6;
 constexpr uint8_t PIN_HX711_SCK = PC7;
