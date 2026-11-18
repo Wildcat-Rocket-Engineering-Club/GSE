@@ -41,7 +41,7 @@ XBEE_PID = 0x6011
 # If your board routes the XBee to a different channel, change this index (0=A, 1=B, etc.)
 # TODO: Make this actually search for which channel has the correct port instead of 
 # hardcoding platform-specific defaults that aren't guaranteed to work
-if sys.platform == "nt": # Windows
+if sys.platform == "win32": # Windows
     XBEE_CHANNEL_INDEX = 0
 else: # Linux and macOS, maybe
     XBEE_CHANNEL_INDEX = 2
