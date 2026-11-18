@@ -3,6 +3,7 @@ from flask_socketio import SocketIO
 import json
 import random
 import socket
+import sys
 import threading
 
 from csv_logger import CSVLogger
@@ -38,7 +39,12 @@ XBEE_PID = 0x6011
 # The FT4232H enumerates as 4 COM ports. The XBee UART is wired to port A,
 # which Windows assigns the lowest COM number of the group.
 # If your board routes the XBee to a different channel, change this index (0=A, 1=B, etc.)
-XBEE_CHANNEL_INDEX = 0
+# TODO: Make this actually search for which channel has the correct port instead of 
+# hardcoding platform-specific defaults that aren't guaranteed to work
+if sys.platform == "nt": # Windows
+    XBEE_CHANNEL_INDEX = 0
+else: # Linux and macOS, maybe
+    XBEE_CHANNEL_INDEX = 2
 
 DISABLE_SIMULATION_LOGGING = True
 
